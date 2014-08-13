@@ -1,6 +1,6 @@
 # Matta
 
-An artist for your IPython notebook that provides _ready-made_ visualizations with [http://d3js.org](d3.js) for you to modify. 
+An artist for your IPython notebook that provides _ready-made_ visualizations with [d3.js](http://d3js.org) for you to modify. 
 The basic idea is to generate template-based visualizations and to modify them in the notebook. 
 A future idea is to export the generated visualization (plus modifications) into a stand-alone visualization.
 
@@ -8,7 +8,7 @@ Currently Matta supports some visualizations that I have needed to implement in 
 
 Contributions are welcome.
 
-*[http://nbviewer.ipython.org/github/carnby/matta/blob/master/matta/notebooks/examples.ipynb](See the basic notebook examples here)*
+**[See the basic notebook examples here](http://nbviewer.ipython.org/github/carnby/matta/blob/master/matta/notebooks/examples.ipynb)**
 
 ## Initialization
 
@@ -90,16 +90,17 @@ The _pcoordinates_ visualization takes a pandas DataFrame as input.
 
 ## About the name
 
-See https://en.wikipedia.org/wiki/Roberto_Matta
+See [here](https://en.wikipedia.org/wiki/Roberto_Matta).
 
 ## Credits
 
- * [http://www.jasondavies.com/](Jason Davies) and [http://bost.ocks.org/mike/](Mike Bostock) -- many code from them is being used, reused and abused (not to mention `d3.js` itself). Thanks!
- * [https://github.com/upphiminn/d3.ForceBundle](Force Bundle Layout)
+ * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- many code from them is being used, reused and abused (not to mention `d3.js` itself). Thanks!
+ * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
  * All the great devs behind IPython, numpy, scipy, pandas, networkx, d3.js...
 
 ## License
 
+```
 (Some parts Copyright (C) 2014 Eduardo Graells-Garrido)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -107,6 +108,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+```
 
 
