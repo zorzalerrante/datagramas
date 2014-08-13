@@ -8,6 +8,8 @@ Currently Matta supports some visualizations that I have needed to implement in 
 
 Contributions are welcome.
 
+*[http://nbviewer.ipython.org/github/carnby/matta/blob/master/matta/notebooks/examples.ipynb](See the basic notebook examples here)*
+
 ## Initialization
 
 ```python
