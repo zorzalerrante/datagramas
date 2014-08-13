@@ -71,9 +71,7 @@ def _render_visualization(name, data, label=None, **kwargs):
     if os.path.exists('{0}/templates/matta.{1}.html'.format(SRC_DIR, name)):
         template = env.get_template('matta.{0}.html'.format(name))
     else:
-        template = env.get_template('base.html')
-    
-    print template    
+        template = env.get_template('base.html')   
     
     if not 'container_type' in kwargs:
         kwargs['container_type'] = 'svg'
