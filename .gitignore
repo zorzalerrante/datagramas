@@ -42,3 +42,5 @@ Thumbs.db
 *.js~
 *.css~
 *.py~
+*.html~
+*.kate-swp
