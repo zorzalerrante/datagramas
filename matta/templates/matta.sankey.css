@@ -1,0 +1,26 @@
+.sankey-container path {
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+.sankey-container .node {
+    fill: {{ node_color }};
+}
+
+.sankey-container .node rect {
+  fill-opacity: {{ node_opacity }};
+  shape-rendering: crispEdges;
+}
+
+.sankey-container .node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+  fill: black;
+  font-size: {{ font_size }}px;
+}
+
+.sankey-container .link {
+  fill: none;
+  stroke: {{ link_color }};
+  stroke-opacity: {{ link_opacity }}
+}
