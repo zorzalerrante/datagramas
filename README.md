@@ -1,6 +1,6 @@
 # Matta
 
-An artist for your IPython notebook that provides _ready-made_ visualizations for you to modify. 
+An artist for your IPython notebook that provides _ready-made_ visualizations with [http://d3js.org](d3.js) for you to modify. 
 The basic idea is to generate template-based visualizations and to modify them in the notebook. 
 A future idea is to export the generated visualization (plus modifications) into a stand-alone visualization.
 
@@ -10,7 +10,7 @@ Contributions are welcome.
 
 ## Initialization
 
-```
+```python
 import matta
 matta.init(lib_path='http://localhost:8001', d3_url='http://localhost:8001/libs/d3.v3.min.js')
 ```
@@ -22,7 +22,7 @@ cd ~/resources/matta
 python -m SimpleHTTPServer 8001
 ```
 
-`d3_url` points to the d3.v3.min.js script.
+`d3_url` points to the `d3.v3.min.js` script.
 
 ## Usage
 
@@ -36,7 +36,7 @@ A visualization is defined by its name, default settings plus and two templates:
 
 For instance, the sankey visualization takes as input a networkx graph and is defined as follows:
 
-```
+```python
 def draw_sankey(data, **kwargs):
     defaults = {
         'fig_id':'sankey-graph',
@@ -89,6 +89,12 @@ The _pcoordinates_ visualization takes a pandas DataFrame as input.
 ## About the name
 
 See https://en.wikipedia.org/wiki/Roberto_Matta
+
+## Credits
+
+ * [http://www.jasondavies.com/](Jason Davies) and [http://bost.ocks.org/mike/](Mike Bostock) -- many code from them is being used, reused and abused (not to mention `d3.js` itself). Thanks!
+ * [https://github.com/upphiminn/d3.ForceBundle](Force Bundle Layout)
+ * All the great devs behind IPython, numpy, scipy, pandas, networkx, d3.js...
 
 ## License
 
