@@ -26,7 +26,7 @@ define("matta", ["d3"], function(d3) {
         };
     };
     
-    matta.prepare_graph = function (graph) {
+    matta.prepare_graph = function(graph) {
         var node_map = d3.map();
 
         graph.nodes.forEach(function(d) {
