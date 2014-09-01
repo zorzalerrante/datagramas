@@ -36,8 +36,8 @@ console.log('target angle', target_angle);
 
 var treemap = d3.layout.treemap()
     .size([width, height])
-    .value(function(d) { return d.size; })
-    .children(function(d) { return d.children; })
+    .value(function(d) { return d.{{ value }}; })
+    .children(function(d) { return d.{{ children }}; })
     .padding({{ padding }})
     .ratio({{ ratio }})
     .mode("{{ treemap_mode }}")
@@ -45,7 +45,7 @@ var treemap = d3.layout.treemap()
     
 var cell = container.datum(json)
     .selectAll("div.node")
-    .data(treemap.nodes, function(d) { return d.name; });
+    .data(treemap.nodes, function(d, i) { return d.{{ node_id }}; });
 
 cell.enter()
     .append("div")
@@ -55,8 +55,13 @@ cell.enter()
         var node_tweet = node.append("div")
             .attr("class", "node-text");
     })
-    .style("background", function(d) { return d.children ? color(d.name) : null; })
     .style("font-size", function(d) { return calc_fontsize(d) + "px"; });
+
+{% if not fill %}
+    cell.style("background", function(d) { return d.{{ children }} ? color(d.{{ node_id }}) : null; });
+{% else %}
+    cell.call(matta.styler('background', '{{ fill }}'));
+{% endif %}
 
 cell.selectAll("div.node-text").call(matta.labeler());
     

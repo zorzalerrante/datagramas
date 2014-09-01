@@ -112,6 +112,10 @@ def draw_treemap(data, **kwargs):
         'padding': 0.0,
         'fit_labels': False,
         'font_size': 10,
+        'value': 'value',
+        'children': 'children',
+        'node_id': 'label',
+        'fill': None,
         'requirements': ['d3', 'matta'],
     }
     defaults.update(kwargs)
