@@ -63,6 +63,7 @@ var link = sankey_svg.append("g").selectAll(".link")
 link.enter().append("path")
     .attr("class", "link")
     .style("stroke-width", function(d){ return Math.max(1, d.dy); })
+    .style('opacity', {{ link_opacity }})
     .sort(function(a, b){ return b.dy - a.dy; });
 
 link.attr("d", sankey_path);

@@ -76,6 +76,15 @@ The _pcoordinates_ visualization takes a pandas DataFrame as input.
  * force directed graph
  * graph with tiled background map and force/hierarchical edge bundling.
 
+## Included Libraries
+
+ * d3.js
+ * d3.sankey
+ * d3.layout.cloud
+ * d3.geo.tile
+ * d3.ForceEdgeBundling
+ * topojson 1.6.18
+
 ## Dependencies
 
  * IPython
@@ -97,6 +106,7 @@ See [here](https://en.wikipedia.org/wiki/Roberto_Matta).
  * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- many code from them is being used, reused and abused (not to mention `d3.js` itself). Thanks!
  * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
  * All the great devs behind IPython, numpy, scipy, pandas, networkx, d3.js...
+ * [webcolors](https://bitbucket.org/ubernostrum/webcolors/overview/) -- the list of css3 color names was extracted from the library.
 
 ## License
 
