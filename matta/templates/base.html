@@ -6,46 +6,67 @@
 {% endblock style %}
 </style>
 
-<div id="{{ fig_id }}"></div>
+<script type="text/javascript">
+require(['d3', function(d3) {
+    console.log('fig id', d3.select('#{{ fig_id }}'));
+    if (!d3.select('#{{ fig_id }}')) {
+        document.write('<div id="{{ fig_id }}"></div>');
+    }
+}]);
+</script>
+
+<div id="{{ vis_uuid }}"></div>
 
 <script type="text/javascript">
 !function() {
-    var main = function ({{ requirements|join(', ') }}) {   
+    var main = function ({{ requirements|join(', ') }}) {
+        if (d3.select('#{{ fig_id }}').empty()) {
+            d3.select('#{{ vis_uuid }}')
+                .append('div')
+                .attr('id', '{{ fig_id }}');
+        }
+
         var draw = function(json) {
             var width = {{ width }};
             var height = {{ height }};
-            
-            {% if container_type == 'svg' %}
-                var svg = d3.select("#{{ fig_id }}").append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
-                        
-                {% if background_color %}
-                    svg.append('rect')
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('fill', "{{ background_color }}");
-                {% endif %}
-                
-                var container = svg.append("g")
+            var container = null;
+
+            if (d3.select("#{{ fig_id }} {{ container_type }}.{{ visualization_name }}-container").empty()) {
+                {% if container_type == 'svg' %}
+                    var svg = d3.select("#{{ fig_id }}").append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
                         .attr('class', '{{ visualization_name }}-container');
-                        
-            {% elif container_type == 'div' %}
-                var div = d3.select("#{{ fig_id }}").append("div")
-                    .style("width", width + "px")
-                    .style("height", height + "px")
-                    .attr('class', '{{ visualization_name }}-container');
-                
-                {% if background_color %}
-                    div.style("background", "{{ background_color }}");
+
+                    {% if background_color %}
+                        svg.append('rect')
+                            .attr('width', width)
+                            .attr('height', height)
+                            .attr('fill', "{{ background_color }}");
+                    {% endif %}
+
+                    container = svg.append("g")
+                        .attr('class', '{{ visualization_name }}-container');
+
+                {% elif container_type == 'div' %}
+                    var div = d3.select("#{{ fig_id }}").append("div")
+                        .style("width", width + "px")
+                        .style("height", height + "px")
+                        .attr('class', '{{ visualization_name }}-container');
+
+                    {% if background_color %}
+                        div.style("background", "{{ background_color }}");
+                    {% endif %}
+
+                    container = div;
+
+                {% else %}
+                    console.log('unsupported container type!');
+                    return;
                 {% endif %}
-                
-                var container = div;
-                    
-            {% else %}
-                console.log('unsupported container type!');
-                return;
-            {% endif %}
+            } else {
+                container = d3.select("#{{ fig_id }} {{ container_type }}.{{ visualization_name }}-container");
+            }
     
             {% block js_code %}
                 {% if js_file %}
