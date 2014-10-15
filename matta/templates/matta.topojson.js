@@ -3,6 +3,11 @@ console.log('geometry', geometry);
 
 var path = d3.geo.path();
 
+var legend_container;
+
+var legend = matta.symbol_legend()
+    .position({x: width * 0.5, y: height - 20 });
+
 var draw_topojson = function() {
     console.log('map container', map_container);
 
@@ -83,8 +88,21 @@ var draw_topojson = function() {
                 symbol_positions.set(d.properties[property_id], path.centroid(d));
             });
 
-            var symbol_scale = d3.scale.{{ symbol_scale }}().range([{{ symbol_min_ratio }}, {{ symbol_max_ratio }}]).domain(d3.extent(symbols, function(d) { return Math.sqrt(d[property_value]); }));
-            console.log('symbol scale', symbol_scale.domain());
+            var symbol_scale = d3.scale.{{ symbol_scale }}()
+                .range([{{ symbol_min_ratio }}, {{ symbol_max_ratio }}])
+                .domain(d3.extent(symbols, function(d) { return d[property_value]; }));
+
+            console.log('symbol scale', symbol_scale.domain(), symbol_scale.range());
+
+            var legend_g = null;
+
+            if (legend_container.select('g.axis').empty()) {
+                legend_g = legend_container.append('g').classed('axis', true);
+            } else {
+                legend_g = legend_container.select('g.axis');
+            }
+
+            legend_g.data([symbol_scale]).call(legend);
 
             var symbol_g = map_container.select('g.symbols');
             if (symbol_g.empty()) {
@@ -104,7 +122,7 @@ var draw_topojson = function() {
                 'class': 'symbol',
                 'cx': function(d) { return symbol_positions.get(d[property_id])[0]; },
                 'cy': function(d) { return symbol_positions.get(d[property_id])[1]; },
-                'r': function(d) { return symbol_scale(Math.sqrt(d[property_value])); },
+                'r': function(d) { return symbol_scale(d[property_value]); },
                 {% if symbol_color_property %}
                 'fill': function(d) { return d['{{ symbol_color_property }}']; },
                 {% elif symbol_color %}
@@ -120,7 +138,7 @@ var draw_topojson = function() {
             symbol.transition(1000).attr({
                 'cx': function(d) { return symbol_positions.get(d[property_id])[0]; },
                 'cy': function(d) { return symbol_positions.get(d[property_id])[1]; },
-                'r': function(d) { return symbol_scale(Math.sqrt(d[property_value])); },
+                'r': function(d) { return symbol_scale(d[property_value]); },
                 {% if symbol_color_property %}
                 'fill': function(d) { return d['{{ symbol_color_property }}']; },
                 {% elif symbol_color %}
@@ -183,6 +201,14 @@ var draw_topojson = function() {
     reset();
 {% else %}
     var map_container = container;
+
+    if (!container.select('g.legend').empty()) {
+        legend_container = container.select('g.legend');
+    } else {
+        legend_container = container.append('g').classed('legend', true);
+    }
+
+    console.log('legend_container', legend_container);
 
     var projection = d3.geo.mercator()
         .center([0,0])

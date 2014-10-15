@@ -14,7 +14,7 @@ env = jinja2.environment.Environment()
 env.loader = jinja2.FileSystemLoader([SRC_DIR + '/templates', SRC_DIR + '/libs'])
 
 
-# from http://stackoverflow.com/questions/3488934/simplejson-and-numpy-array
+# based on http://stackoverflow.com/questions/3488934/simplejson-and-numpy-array
 class MattaJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray) and obj.ndim == 1:
@@ -43,12 +43,16 @@ def init(d3_url='http://d3js.org/d3.v3.min.js', lib_path='http://localhost:8000'
     }
 
     template = '''<script>
+
         require.config({{
           paths: {0}
         }});
-        console.log({0});
+
+        require(['matta'], function(matta) {{
+            matta.add_css('{1}');
+        }});
         </script>
-        '''.format(_dump_json(paths))
+        '''.format(_dump_json(paths), lib_path  + '/libs/matta.css')
 
     return HTML(template)
 
