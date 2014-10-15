@@ -7,10 +7,11 @@ import numpy as np
 import networkx as nx
 from networkx.readwrite import json_graph
 import pandas as pd
+import uuid
 
 SRC_DIR = os.path.dirname(os.path.realpath(__file__))
 env = jinja2.environment.Environment()
-env.loader = jinja2.FileSystemLoader(SRC_DIR + '/templates')
+env.loader = jinja2.FileSystemLoader([SRC_DIR + '/templates', SRC_DIR + '/libs'])
 
 
 # from http://stackoverflow.com/questions/3488934/simplejson-and-numpy-array
@@ -37,12 +38,15 @@ def init(d3_url='http://d3js.org/d3.v3.min.js', lib_path='http://localhost:8000'
         'matta': '{0}/libs/matta.js?noext'.format(lib_path),
         'force_directed': '{0}/libs/matta.force-directed.js?noext'.format(lib_path),
         'force_edge_bundling': '{0}/libs/d3.ForceEdgeBundling.js?noext'.format(lib_path),
+        'topojson': '{0}/libs/topojson.js?noext'.format(lib_path),
+        'leaflet': '{0}/libs/leaflet-0.7.3/leaflet-src.js?noext'.format(lib_path),
     }
 
     template = '''<script>
         require.config({{
           paths: {0}
         }});
+        console.log({0});
         </script>
         '''.format(_dump_json(paths))
 
@@ -77,6 +81,9 @@ def _render_visualization(name, data, label=None, **kwargs):
         kwargs['container_type'] = 'svg'
         
     kwargs['visualization_name'] = name
+
+    if not 'vis_uuid' in kwargs:
+        kwargs['vis_uuid'] = 'matta-vis-{0}'.format(uuid.uuid4())
     
     rendered = template.render(data=_dump_json(data), **kwargs)
     return HTML(rendered)
@@ -175,6 +182,7 @@ def draw_force_directed_graph(data, **kwargs):
         'font_size': 10,
         'node_radius': 12,
         'avoid_collisions': True,
+        'clamp_to_viewport': True,
         'requirements': ['d3', 'matta', 'force_directed'],
     }
 
@@ -201,3 +209,50 @@ def draw_sankey(data, **kwargs):
 
     defaults.update(kwargs)
     return _render_visualization('sankey', data, **defaults)
+
+
+def draw_topojson(data, **kwargs):
+    defaults = {
+        'fig_id':'topojson',
+        'width': 800,
+        'height': 800,
+        'feature_id': 'id',
+        'label': None,
+        'path_opacity': 1.0,
+        'path_stroke': 'gray',
+        'path_stroke_width': 1.0,
+        'fill_color': None,
+        'feature_data': None,
+        # name of the column in the data frame that maps to the id column in the topojson features
+        'property_name': 'id',
+        'property_value': None,
+        'property_color': None,
+        'symbol_scale': 'linear',
+        'symbol_color': 'steelblue',
+        'symbol_color_property': None,
+        'symbol_opacity': 1.0,
+        'symbol_stroke': 'gray',
+        'symbol_stroke_width': 1,
+        'symbol_min_ratio': 1,
+        'symbol_max_ratio': 20,
+        # leaflet background
+        'leaflet': False,
+        'leaflet_tile_layer': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'leaflet_map_link': '<a href="http://openstreetmap.org">OpenStreetMap</a>',
+        'requirements': ['d3', 'matta', 'topojson'],
+    }
+
+    defaults.update(kwargs)
+
+    if defaults['leaflet']:
+        defaults['requirements'].append('leaflet')
+        defaults['container_type'] = 'div'
+
+    if not 'feature_name' in defaults:
+        defaults['feature_name'] = data['objects'].keys()[0]
+
+    if defaults['feature_data'] is not None:
+        defaults['feature_data'] = _dump_json(defaults['feature_data'])
+
+
+    return _render_visualization('topojson', data, **defaults)
