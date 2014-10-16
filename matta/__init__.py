@@ -222,6 +222,7 @@ def draw_topojson(data, **kwargs):
         'height': 800,
         'feature_id': 'id',
         'label': None,
+        'legend': True,
         'path_opacity': 1.0,
         'path_stroke': 'gray',
         'path_stroke_width': 1.0,

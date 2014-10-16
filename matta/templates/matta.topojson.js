@@ -3,10 +3,12 @@ console.log('geometry', geometry);
 
 var path = d3.geo.path();
 
+{% if legend %}
 var legend_container;
 
 var legend = matta.symbol_legend()
     .position({x: width * 0.5, y: height - 20 });
+{% endif %}
 
 var draw_topojson = function() {
     console.log('map container', map_container);
@@ -94,6 +96,7 @@ var draw_topojson = function() {
 
             console.log('symbol scale', symbol_scale.domain(), symbol_scale.range());
 
+            {% if legend %}
             var legend_g = null;
 
             if (legend_container.select('g.axis').empty()) {
@@ -103,6 +106,7 @@ var draw_topojson = function() {
             }
 
             legend_g.data([symbol_scale]).call(legend);
+            {% endif %}
 
             var symbol_g = map_container.select('g.symbols');
             if (symbol_g.empty()) {
@@ -161,13 +165,28 @@ var draw_topojson = function() {
 {% if leaflet %}
     // code adapted from https://github.com/mbostock/bost.ocks.org/blob/gh-pages/mike/leaflet/index.html#L131-171
     var L = leaflet;
+    var map;
+    var map_initialized = false;
+    var map_svg;
+    var map_container;
 
-    var map = L.map(container.node()).setView([0, 0], 12);
-    var mapLink = '{{ leaflet_map_link }}';
-    L.tileLayer('{{ leaflet_tile_layer }}', {attribution: '&copy; ' + mapLink + ' Contributors'}).addTo(map);
+    if (container.select('div.leaflet-map-pane').empty()) {
+        map = L.map(container.node()).setView([0, 0], 12);
+        container.node()['__leaflet_map__'] = map;
+        var mapLink = '{{ leaflet_map_link }}';
+        L.tileLayer('{{ leaflet_tile_layer }}', {attribution: '&copy; ' + mapLink + ' Contributors'}).addTo(map);
+        map_initialized = true;
+        map_svg = d3.select(map.getPanes().overlayPane).append('svg');
+        map_container = map_svg.append('g').attr('class', 'leaflet-zoom-hide');
 
-    var map_svg = d3.select(map.getPanes().overlayPane).append("svg");
-    var map_container = map_svg.append("g").attr("class", "leaflet-zoom-hide");
+
+
+
+    } else {
+        map = container.node()['__leaflet_map__'];
+        map_svg = d3.select(map.getPanes().overlayPane).select('svg');
+        map_container = map_svg.select('g.leaflet-zoom-hide');
+    }
 
     var projection = d3.geo.transform({point: function(x, y) {
         var point = map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -191,22 +210,37 @@ var draw_topojson = function() {
         draw_topojson();
     };
 
-    map.on("viewreset", reset);
-
     path.projection(d3.geo.transform());
     var map_bounds = path.bounds(geometry);
     path.projection(projection);
     console.log('bounds', map_bounds);
-    map.fitBounds(map_bounds.map(function(d) { return d.reverse(); }));
+
+    if (map_initialized) {
+        map.fitBounds(map_bounds.map(function(d) { return d.reverse(); }));
+    }
+
+    {% if legend %}
+    if (!container.select('div.leaflet-top.leaflet-left svg.legend').empty()) {
+        legend_container = container.select('div.leaflet-top.leaflet-left').select('svg.legend');
+    } else {
+        legend_container = container.select('div.leaflet-top.leaflet-left')
+            .append('svg').classed('legend', true)
+            .attr({'width': width, 'height': height});
+    }
+    {% endif %}
+
+    map.on("viewreset", reset);
     reset();
 {% else %}
     var map_container = container;
 
+    {% if legend %}
     if (!container.select('g.legend').empty()) {
         legend_container = container.select('g.legend');
     } else {
         legend_container = container.append('g').classed('legend', true);
     }
+    {% endif %}
 
     console.log('legend_container', legend_container);
 
