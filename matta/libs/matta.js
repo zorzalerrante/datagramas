@@ -68,12 +68,6 @@ define("matta", ["d3"], function(d3) {
     matta.symbol_legend = function() {
         var position = {x: 0, y: 0};
         var width = 300;
-        var scale = d3.scale.pow().exponent(1).range([0, width]);
-
-        var axis = d3.svg.axis()
-            .orient('bottom')
-            .scale(scale)
-            .tickSize(5);
 
         var symbol_legend = function(sel) {
             console.log('selection', sel);
@@ -82,14 +76,12 @@ define("matta", ["d3"], function(d3) {
                 var range = d.range();
                 var domain = d.domain()
                 var scale_size = range[1] * 2.05;
-                d3.select(this).attr('transform', 'translate(' + (position.x - 0.5 * width) + ',' + (position.y) + ')');
+                var ticks = d.ticks(4).filter(function(tick) { return tick > 0; });
+                var max_r = d(d3.max(ticks));
 
-                var ticks = d.ticks(4);
-                //axis.ticks(4);
+                d3.select(this).attr('transform', 'translate(' + (position.x - 0.5 * max_r) + ',' + (position.y - max_r - 10) + ')');
 
-                scale.domain(domain);
                 console.log('ticks', ticks);
-                axis.tickValues(ticks);
 
                 var symbol = d3.select(this).selectAll('circle.symbol-legend')
                     .data(ticks);
@@ -99,11 +91,11 @@ define("matta", ["d3"], function(d3) {
                     .classed('symbol-legend', true);
 
                 symbol.attr({
-                        cx: scale,
-                        cy: -scale_size * 0.5,
+                        cx: 0.0,
+                        cy: function(tick) { return max_r - d(tick); },
                         r: function(tick) { return d(tick); },
                         fill: '#afafaf',
-                        stroke: '#444',
+                        'stroke': '#444',
                         'stroke-width': 1,
                         'opacity': 0.75
                     });
@@ -114,17 +106,48 @@ define("matta", ["d3"], function(d3) {
                     .attr('r', 0)
                     .remove();
 
-                d3.select(this).call(axis);
-            });
-        };
+                symbol.sort(function(a, b) { return d3.descending(a, b); });
 
-        symbol_legend.width = function(_) {
-            if (arguments.length) {
-                width = _;
-                scale.range([0, width]);
-                return symbol_legend;
-            }
-            return width;
+                var label = d3.select(this).selectAll('text.legend-label')
+                    .data(ticks);
+
+                label.enter()
+                    .append('text')
+                    .classed('legend-label', true);
+
+                label.attr({
+                    x: 0.0 + max_r + 10,
+                    y: function(tick) { return max_r - 2.0 * d(tick); },
+                    dy: '0.35em',
+                    })
+                    .text(function(d) { return d; });
+
+                label.exit()
+                    .remove();
+
+                var line = d3.select(this).selectAll('line.symbol-tick')
+                    .data(ticks);
+
+                line.enter()
+                    .append('line')
+                    .classed('symbol-tick', true);
+
+                line.attr({
+                        x1: 0.0,
+                        x2: 0.0 + max_r + 8,
+                        y1: function(tick) { return max_r - 2.0 * d(tick); },
+                        y2: function(tick) { return max_r - 2.0 * d(tick); },
+                    }).style({
+                        'stroke': '#444',
+                        'stroke-width': 1,
+                        'opacity': 0.75,
+                    });
+
+                line.exit()
+                    .remove();
+
+                //d3.select(this).call(axis);
+            });
         };
 
         symbol_legend.position = function(_) {
