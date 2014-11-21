@@ -86,6 +86,9 @@ def _render_visualization(name, data, label=None, **kwargs):
         
     kwargs['visualization_name'] = name
 
+    if not 'fig_id' in kwargs:
+        kwargs['fig_id'] = 'fig-{0}'.format(uuid.uuid4())
+
     if not 'vis_uuid' in kwargs:
         kwargs['vis_uuid'] = 'matta-vis-{0}'.format(uuid.uuid4())
     
@@ -95,7 +98,6 @@ def _render_visualization(name, data, label=None, **kwargs):
 
 def draw_wordcloud(data, **kwargs):
     defaults = {
-        'fig_id':'wordcloud',
         'width': 600,
         'height': 400,
         'min_size': 12,
@@ -117,7 +119,6 @@ def draw_wordcloud(data, **kwargs):
 
 def draw_treemap(data, **kwargs):
     defaults = {
-        'fig_id': 'treemap',
         'treemap_mode': 'squarify',
         'ratio': 1.0,
         'padding': 0.0,
@@ -137,7 +138,6 @@ def draw_treemap(data, **kwargs):
 
 def draw_parallel_coordinates(data, **kwargs):
     defaults = {
-        'fig_id': 'pcoordinates',
         'requirements': ['d3', 'matta'],
         'opacity': 0.5,
         'exclude': [],
@@ -151,7 +151,6 @@ def draw_parallel_coordinates(data, **kwargs):
 
 def draw_graph_map(data, **kwargs):
     defaults = {
-        'fig_id':'graph-map',
         'width': 800,
         'height': 800,
         'tension': 0.8,
@@ -176,7 +175,6 @@ def draw_graph_map(data, **kwargs):
 
 def draw_force_directed_graph(data, **kwargs):
     defaults = {
-        'fig_id':'force-directed-graph',
         'width': 800,
         'height': 800,
         'links': True,
@@ -196,7 +194,6 @@ def draw_force_directed_graph(data, **kwargs):
 
 def draw_sankey(data, **kwargs):
     defaults = {
-        'fig_id':'sankey-graph',
         'width': 800,
         'height': 400,
         'layout_iterations': 32,
@@ -217,7 +214,6 @@ def draw_sankey(data, **kwargs):
 
 def draw_topojson(data, **kwargs):
     defaults = {
-        'fig_id':'topojson',
         'width': 800,
         'height': 800,
         'feature_id': 'id',
