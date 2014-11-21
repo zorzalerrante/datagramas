@@ -228,6 +228,7 @@ def draw_topojson(data, **kwargs):
         'property_name': 'id',
         'property_value': None,
         'property_color': None,
+        'area_opacity': 1.0,
         'symbol_scale': 'linear',
         'symbol_color': 'steelblue',
         'symbol_color_property': None,

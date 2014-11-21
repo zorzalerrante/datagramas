@@ -1,13 +1,20 @@
 var geometry = topojson.feature(json, json.objects['{{ feature_name }}']);
 console.log('geometry', geometry);
 
+var available_ids = d3.set();
+geometry.features.forEach(function(d) {
+    available_ids.add(d['{{ feature_id }}']);
+});
+
+console.log('available ids', available_ids);
+
 var path = d3.geo.path();
 
 {% if legend %}
 var legend_container;
 
 var legend = matta.symbol_legend()
-    .position({x: width * 0.5, y: height - 20 });
+    .position({x: 20 + {{ symbol_max_ratio }}, y: height - 20 });
 {% endif %}
 
 var draw_topojson = function() {
@@ -59,9 +66,9 @@ var draw_topojson = function() {
     {% endif %}
 
     {% if feature_data %}
-        var symbols = {{ feature_data }};
-        console.log('symbols', symbols);
         var property_id = '{{ property_name }}';
+        var symbols = {{ feature_data }}.filter(function(d) { console.log(d, d[property_id], available_ids.has(d[property_id])); return available_ids.has(d[property_id]); });
+        console.log('symbols', symbols);
         {% if property_color %}
             var property_color = '{{ property_color }}';
             var area_colors = d3.map();
@@ -76,7 +83,10 @@ var draw_topojson = function() {
 
             p.each(function(d) {
                 if (area_colors.has(d['{{ feature_id }}'])) {
-                    d3.select(this).attr('fill', area_colors.get(d['{{ feature_id }}']));
+                    d3.select(this).attr({
+                        'fill': area_colors.get(d['{{ feature_id }}']),
+                        'opacity': {{ area_opacity }}
+                    });
                 }
             });
         {% endif %}
@@ -87,8 +97,10 @@ var draw_topojson = function() {
             var symbol_positions = d3.map();
 
             geometry.features.forEach(function(d) {
-                symbol_positions.set(d.properties[property_id], path.centroid(d));
+                symbol_positions.set(d['{{ feature_id }}'], path.centroid(d));
             });
+
+            console.log('positions', symbol_positions);
 
             var symbol_scale = d3.scale.{{ symbol_scale }}()
                 .range([{{ symbol_min_ratio }}, {{ symbol_max_ratio }}])
@@ -114,32 +126,16 @@ var draw_topojson = function() {
             }
 
             var symbol = symbol_g.selectAll('circle.symbol')
-                .data(symbols, function(d) { return d[property_id]; });
+                .data(symbols, function(d) { console.log('symbol', d); return d[property_id]; });
 
             symbol.enter()
-                .append('circle');
+                .append('circle')
+                .attr('class', 'symbol');
 
             symbol.exit()
                 .remove();
 
             symbol.attr({
-                'class': 'symbol',
-                'cx': function(d) { return symbol_positions.get(d[property_id])[0]; },
-                'cy': function(d) { return symbol_positions.get(d[property_id])[1]; },
-                'r': function(d) { return symbol_scale(d[property_value]); },
-                {% if symbol_color_property %}
-                'fill': function(d) { return d['{{ symbol_color_property }}']; },
-                {% elif symbol_color %}
-                'fill': '{{ symbol_color }}',
-                {% else %}
-                'fill': 'none',
-                {% endif %}
-                'opacity': {{ symbol_opacity }},
-                'stroke-width': {{ symbol_stroke_width }},
-                'stroke': '{{ symbol_stroke }}',
-            });
-
-            symbol.transition(1000).attr({
                 'cx': function(d) { return symbol_positions.get(d[property_id])[0]; },
                 'cy': function(d) { return symbol_positions.get(d[property_id])[1]; },
                 'r': function(d) { return symbol_scale(d[property_value]); },
@@ -189,11 +185,12 @@ var draw_topojson = function() {
     }
 
     var projection = d3.geo.transform({point: function(x, y) {
-        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-        this.stream.point(point.x, point.y);
+            var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+            this.stream.point(point.x, point.y);
         }
     });
 
+    console.log('projection', projection);
     // Reposition the SVG to cover the features.
     var reset = function() {
         var bounds = path.bounds(geometry),
@@ -225,7 +222,8 @@ var draw_topojson = function() {
     } else {
         legend_container = container.select('div.leaflet-top.leaflet-left')
             .append('svg').classed('legend', true)
-            .attr({'width': width, 'height': height});
+            .attr({'width': width, 'height': height})
+            .style({'z-index': 1100, 'position': 'absolute', 'top': 0, 'left': 0});
     }
     {% endif %}
 
