@@ -2,3 +2,12 @@
 {% include 'leaflet-0.7.3/leaflet.css' %}
 .rendered_html #{{ fig_id }} img { margin: 0 !important; }
 {% endif %}
+
+g.legend path {
+  display: none;
+}
+
+g.legend line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}

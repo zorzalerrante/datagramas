@@ -160,6 +160,100 @@ define("matta", ["d3"], function(d3) {
 
         return symbol_legend;
     };
+
+    // threshold legend
+    // based on http://bl.ocks.org/mbostock/4573883
+    matta.color_thresholds = function(){
+        var threshold_width = 200;
+        var threshold_height = 8;
+        var threshold_position = {x: 0, y: 0};
+        var extent = [0, 1];
+        var title = null;
+        var tick_size = 13;
+        var font_size = 11;
+
+        var color_thresholds = function(sel) {
+            sel.each(function(color_scale) {
+                console.log('threshold scale', color_scale, d3.select(this));
+                var g = d3.select(this);
+                d3.select(this)
+                    .attr('transform', 'translate(' + threshold_position.x + ',' + (threshold_position.y + 6 + font_size) + ')');
+                var x = d3.scale.linear()
+                    .domain(extent)
+                    .range([0, threshold_width]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom")
+                    .tickSize(tick_size)
+                    .tickValues(color_scale.domain());
+                    //.tickFormat(function(d) { return d === .5 ? formatPercent(d) : formatNumber(100 * d); });
+
+                g.selectAll("rect")
+                    .data(color_scale.range().map(function(color) {
+                      var d = color_scale.invertExtent(color);
+                      if (d[0] == null) d[0] = x.domain()[0];
+                      if (d[1] == null) d[1] = x.domain()[1];
+                      return d;
+                    }))
+                  .enter().append("rect")
+                    .attr("height", threshold_height)
+                    .attr("x", function(d) { return x(d[0]); })
+                    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+                    .style("fill", function(d) { return color_scale(d[0]); });
+
+                g.call(xAxis).append("text")
+                    .attr({
+                        'class': 'caption',
+                        'y': -6,
+                        'font-size': font_size
+                    })
+                    .text(title);
+            });
+        };
+
+        color_thresholds.position = function(_) {
+            if (arguments.length) {
+                threshold_position = _;
+                return color_thresholds;
+            }
+            return threshold_position;
+        };
+
+        color_thresholds.extent = function(_) {
+            if (arguments.length) {
+                extent = _;
+                return color_thresholds;
+            }
+            return extent;
+        };
+
+        color_thresholds.width = function(_) {
+            if (arguments.length) {
+                threshold_width = _;
+                return color_thresholds;
+            }
+            return threshold_width;
+        };
+
+        color_thresholds.height = function(_) {
+            if (arguments.length) {
+                threshold_height = _;
+                return color_thresholds;
+            }
+            return threshold_height;
+        };
+
+        color_thresholds.title = function(_) {
+            if (arguments.length) {
+                title = _;
+                return color_thresholds;
+            }
+            return title;
+        };
+
+        return color_thresholds;
+    };
     
     return matta;
 });

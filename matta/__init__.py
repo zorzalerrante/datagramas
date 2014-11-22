@@ -18,7 +18,7 @@ env.loader = jinja2.FileSystemLoader([SRC_DIR + '/templates', SRC_DIR + '/libs']
 class MattaJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray) and obj.ndim == 1:
-                return obj.tolist()
+            return obj.tolist()
         elif isinstance(obj, np.generic):
             return obj.item()
         elif isinstance(obj, nx.Graph) or isinstance(obj, nx.DiGraph):
@@ -228,7 +228,10 @@ def draw_topojson(data, **kwargs):
         'property_name': 'id',
         'property_value': None,
         'property_color': None,
+        'area_color_thresholds': None,
+        'area_color_legend': True,
         'area_opacity': 1.0,
+        'color_scale': 'threshold',
         'symbol_scale': 'linear',
         'symbol_color': 'steelblue',
         'symbol_color_property': None,
@@ -255,6 +258,9 @@ def draw_topojson(data, **kwargs):
 
     if defaults['feature_data'] is not None:
         defaults['feature_data'] = _dump_json(defaults['feature_data'])
+
+    if defaults['area_color_thresholds'] is not None:
+        defaults['area_color_thresholds'] = _dump_json(defaults['area_color_thresholds']);
 
 
     return _render_visualization('topojson', data, **defaults)

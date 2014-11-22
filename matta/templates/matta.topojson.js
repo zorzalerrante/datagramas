@@ -1,3 +1,6 @@
+var map_width = width;
+var map_height = height;
+
 var geometry = topojson.feature(json, json.objects['{{ feature_name }}']);
 console.log('geometry', geometry);
 
@@ -12,20 +15,38 @@ var path = d3.geo.path();
 
 {% if legend %}
 var legend_container;
-
 var legend = matta.symbol_legend()
     .position({x: 20 + {{ symbol_max_ratio }}, y: height - 20 });
 {% endif %}
 
+{% if property_color and area_color_thresholds %}
+    var area_color_thresholds = {{ area_color_thresholds }};
+
+    var threshold_container;
+    var threshold_legend = matta.color_thresholds()
+        .extent(area_color_thresholds['extent'])
+        .width(area_color_thresholds['width'])
+        .height(area_color_thresholds['height'])
+        .title(area_color_thresholds['title']);
+
+    {% if leaflet %}
+        threshold_legend.position({x: map_width - area_color_thresholds['width'] - 20, y: 20})
+    {% else %}
+        map_height -= area_color_thresholds['height'] + 50;
+        threshold_legend.position({x: (map_width - area_color_thresholds['width']) * 0.5, y: map_height })
+    {% endif %}
+
+    var threshold = d3.scale.threshold()
+        .domain(area_color_thresholds['domain'])
+        .range(area_color_thresholds['colors']);
+    var property_color = '{{ property_color }}';
+    var area_colors = d3.map();
+    console.log('area colors', area_color_thresholds);
+    console.log('threshold', threshold, threshold.domain());
+{% endif %}
+
 var draw_topojson = function() {
     console.log('map container', map_container);
-
-    var path_g = map_container.select('g.geo-paths');
-
-    if (path_g.empty()) {
-        path_g = map_container.append('g').attr('class', 'geo-paths');
-    }
-
     var p = path_g.selectAll('path')
         .data(geometry.features, function(d, i) { return d['{{ feature_id }}']; });
 
@@ -69,17 +90,13 @@ var draw_topojson = function() {
         var property_id = '{{ property_name }}';
         var symbols = {{ feature_data }}.filter(function(d) { console.log(d, d[property_id], available_ids.has(d[property_id])); return available_ids.has(d[property_id]); });
         console.log('symbols', symbols);
-        {% if property_color %}
-            var property_color = '{{ property_color }}';
-            var area_colors = d3.map();
+        {% if property_color and area_color_thresholds %}
 
             symbols.forEach(function(d) {
                 if (d.hasOwnProperty(property_color)) {
-                    area_colors.set(d[property_id], d[property_color]);
+                    area_colors.set(d[property_id], threshold(d[property_color]));
                 }
             });
-
-            console.log('area colors', area_colors);
 
             p.each(function(d) {
                 if (area_colors.has(d['{{ feature_id }}'])) {
@@ -89,6 +106,10 @@ var draw_topojson = function() {
                     });
                 }
             });
+            console.log('threshold', threshold);
+            {% if area_color_legend %}
+                threshold_container.data([threshold]).call(threshold_legend);
+            {% endif %}
         {% endif %}
 
         {% if property_value %}
@@ -174,14 +195,16 @@ var draw_topojson = function() {
         map_initialized = true;
         map_svg = d3.select(map.getPanes().overlayPane).append('svg');
         map_container = map_svg.append('g').attr('class', 'leaflet-zoom-hide');
-
-
-
-
     } else {
         map = container.node()['__leaflet_map__'];
         map_svg = d3.select(map.getPanes().overlayPane).select('svg');
         map_container = map_svg.select('g.leaflet-zoom-hide');
+    }
+
+    var path_g = map_container.select('g.geo-paths');
+
+    if (path_g.empty()) {
+        path_g = map_container.append('g').attr('class', 'geo-paths');
     }
 
     var projection = d3.geo.transform({point: function(x, y) {
@@ -216,15 +239,23 @@ var draw_topojson = function() {
         map.fitBounds(map_bounds.map(function(d) { return d.reverse(); }));
     }
 
-    {% if legend %}
-    if (!container.select('div.leaflet-top.leaflet-left svg.legend').empty()) {
-        legend_container = container.select('div.leaflet-top.leaflet-left').select('svg.legend');
-    } else {
-        legend_container = container.select('div.leaflet-top.leaflet-left')
-            .append('svg').classed('legend', true)
-            .attr({'width': width, 'height': height})
-            .style({'z-index': 1100, 'position': 'absolute', 'top': 0, 'left': 0});
-    }
+    {% if legend or (property_color and area_color_thresholds) %}
+        if (!container.select('div.leaflet-top.leaflet-left svg.legend').empty()) {
+            legend_container = container.select('div.leaflet-top.leaflet-left').select('svg.legend');
+        } else {
+            legend_container = container.select('div.leaflet-top.leaflet-left')
+                .append('svg').classed('legend', true)
+                .attr({'width': width, 'height': height})
+                .style({'z-index': 1100, 'position': 'absolute', 'top': 0, 'left': 0});
+        }
+
+        {% if property_color and area_color_thresholds %}
+            if (!legend_container.select('g.threshold-legend').empty()) {
+                threshold_container = legend_container.select('g.threshold-legend');
+            } else {
+                threshold_container = legend_container.append('g').classed('threshold-legend legend', true);
+            }
+        {% endif %}
     {% endif %}
 
     map.on("viewreset", reset);
@@ -232,15 +263,29 @@ var draw_topojson = function() {
 {% else %}
     var map_container = container;
 
-    {% if legend %}
-    if (!container.select('g.legend').empty()) {
-        legend_container = container.select('g.legend');
-    } else {
-        legend_container = container.append('g').classed('legend', true);
+    var path_g = map_container.select('g.geo-paths');
+
+    if (path_g.empty()) {
+        path_g = map_container.append('g').attr('class', 'geo-paths');
     }
+
+    {% if legend %}
+    if (!container.select('g.symbol-legend').empty()) {
+        legend_container = container.select('g.symbol-legend');
+    } else {
+        legend_container = container.append('g').classed('symbol-legend legend', true);
+    }
+    console.log('legend_container', legend_container);
     {% endif %}
 
-    console.log('legend_container', legend_container);
+    {% if property_color and area_color_thresholds %}
+    if (!container.select('g.threshold-legend').empty()) {
+        threshold_container = container.select('g.threshold-legend');
+    } else {
+        threshold_container = container.append('g').classed('threshold-legend legend', true);
+    }
+    console.log('threshold_container', threshold_container);
+    {% endif %}
 
     var projection = d3.geo.mercator()
         .center([0,0])
@@ -249,7 +294,7 @@ var draw_topojson = function() {
 
     path.projection(projection);
 
-    var st = matta.fit_projection(width, height, path.bounds(geometry));
+    var st = matta.fit_projection(map_width, map_height, path.bounds(geometry));
     projection.scale(st[0]).translate(st[1]);
     draw_topojson();
 {% endif %}
