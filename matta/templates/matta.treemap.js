@@ -1,17 +1,11 @@
 
+var color = d3.scale.category20();
 
-{% if categories %}
-    var categories = {{ categories }};
-    var color = d3.scale.category20b().domain(d3.keys(categories));
-{% else %}
-    var color = d3.scale.category20c();
-{% endif %}
+{% if options.fit_labels %}
+    var target_angle = Math.atan2(1.0 / _target_ratio, 1.0);
+    console.log('target angle', target_angle);
 
-var target_angle = Math.atan2(1.0 / {{ ratio }}, 1.0);
-console.log('target angle', target_angle);
-
-{% if fit_labels %}
-    var font_scale = d3.scale.linear().domain([width * height * 0.05, width * height]).range([{{ font_size}}, 120]).clamp(true);
+    var font_scale = d3.scale.linear().domain([_width * _height * 0.05, _width * _height]).range([_font_size, 120]).clamp(true);
     var font_ratio = d3.scale.linear().domain([0, target_angle]).range([80, 8]).clamp(true);
 
     var calc_fontsize = function(d) {
@@ -27,67 +21,60 @@ console.log('target angle', target_angle);
         var width = node.scrollWidth;
         var height = node.scrollHeight;
         console.log(node, target_fs, height, target_h);
-        var ratio = target_h / height;
+        var ratio = target_h / _height;
         d3.select(node).style("font-size", (target_fs * Math.sqrt(ratio)) + "px")
     };
 {% else %}
-    var calc_fontsize = d3.functor({{ font_size }});
+    var calc_fontsize = d3.functor(_font_size);
 {% endif %}
 
 var treemap = d3.layout.treemap()
-    .size([width, height])
-    .value(function(d) { return d.{{ value }}; })
-    .children(function(d) { return d.{{ children }}; })
-    .padding({{ padding }})
-    .ratio({{ ratio }})
-    .mode("{{ treemap_mode }}")
-    .sticky(true);
+    .size([_width, _height])
+    .value(function(d) { return d[_node_value]; })
+    .children(function(d) { return d[_node_children]; })
+    .padding(_node_padding)
+    .ratio(_target_ratio)
+    .mode(_mode)
+    .sticky(_sticky);
     
-var cell = container.datum(json)
+var cell = container.datum(_data_tree)
     .selectAll("div.node")
-    .data(treemap.nodes, function(d, i) { return d.{{ node_id }}; });
+    .data(treemap.nodes, function(d, i) { return d[_node_id]; });
 
 cell.enter()
     .append("div")
-    .each(function(d) {
-        var node = d3.select(this);
-
-        var node_tweet = node.append("div")
-            .attr("class", "node-text");
+    .classed('node', true)
+    .style({
+        'font-size': function(d) { return calc_fontsize(d) + 'px'; },
+        'position': 'absolute',
+        'background-color': function(d) {
+            console.log('background', d, d.hasOwnProperty(_node_children) && d[_node_children] != null ? color(d[_node_id]) : null);
+            return d.hasOwnProperty(_node_children) && d[_node_children] != null ? color(d[_node_id]) : null; },
+        'border': _border_color + ' ' + _node_border + 'px solid',
+        'overflow': 'hidden'
     })
-    .style("font-size", function(d) { return calc_fontsize(d) + "px"; });
+    .text(function(d) {
+        if (_label_leaves_only && d.hasOwnProperty(_node_children) && d[_node_children] != null) {
+            return null;
+        }
+        return _node_label != null ? d[_node_label] : null;
+    });
 
-{% if not fill %}
-    cell.style("background", function(d) { return d.{{ children }} ? color(d.{{ node_id }}) : null; });
-{% else %}
-    cell.call(matta.styler('background', '{{ fill }}'));
+cell.style({
+    'left': function(d) { return d.x + 'px'; },
+    'top': function(d) { return d.y + 'px'; },
+    'width': function(d) { return Math.max(0, d.dx - (2 * _node_border)) + 'px'; },
+    'height': function(d) { return Math.max(0, d.dy - (2 * _node_border)) + 'px'; }
+});
+
+cell.sort(function(a, b) { return d3.ascending(a.depth, b.depth); });
+
+{% if options.fit_labels %}
+cell.each(function(d) {
+    adapt_fontsize(this, calc_fontsize(d), d.dx, d.dy);
+})
 {% endif %}
 
-cell.selectAll("div.node-text").call(matta.labeler());
-    
-cell.attr("class", function(d) {
-        var base_class = "node node-depth-" + d.depth;
-        if (d.dx < d.dy) {
-            base_class += ' tall-node';
-        } else {
-            base_class += ' wide-node';
-        }
-
-        if (d.dx < 100 || d.dy < 100) {
-            base_class += ' small-node';
-        }
-        return base_class;
-    })
-    .style("left", function(d) { return d.x + "px"; })
-    .style("top", function(d) { return d.y + "px"; })
-    .style("width", function(d) { return Math.max(0, d.dx - (2 * {{ border }})) + "px"; })
-    .style("height", function(d) { return Math.max(0, d.dy - (2 * {{ border }})) + "px"; })
-    {% if fit_labels %}
-    .each(function(d) {
-        adapt_fontsize(this, calc_fontsize(d), d.dx, d.dy);
-    })
-    {% endif %}
-    ;
 
 
 
