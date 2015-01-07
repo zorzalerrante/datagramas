@@ -1,4 +1,6 @@
 define("matta", ["d3"], function(d3) {
+    "use strict";
+
     var matta = {};
 
     matta.add_css = function(url) {
@@ -29,7 +31,8 @@ define("matta", ["d3"], function(d3) {
             });
         };
     };
-    
+
+    // set's the expected structure for d3 to a networkx graph
     matta.prepare_graph = function(graph) {
         var node_map = d3.map();
 
@@ -48,12 +51,21 @@ define("matta", ["d3"], function(d3) {
             d.target = graph.nodes[d.target];
         });
 
-    // graph attributes
+        // graph attributes
         graph.graph.forEach(function(d) {
             graph[d[0]] = d[1];
         });
 
         console.log('prepared graph', graph);
+    };
+
+    // helper function to build scales. in this way, in python we can define scales by name ('linear', 'sqrt', 'log') or exponent (e.g., 0.5).
+    matta.scale = function(name) {
+        if (d3.scale.hasOwnProperty(name)) {
+            return d3.scale[name]();
+        }
+
+        return d3.scale.pow().exponent(name);
     };
     
     // from Mike Bostock
@@ -72,23 +84,30 @@ define("matta", ["d3"], function(d3) {
         var symbol_legend = function(sel) {
             console.log('selection', sel);
             sel.each(function(d) {
-                console.log('sel each', this, d);
+                var g;
+                if (!d3.select(this).select('g.axis.symbol-legend').empty()) {
+                    g = d3.select(this).select('g.axis.symbol-legend');
+                } else {
+                    g = d3.select(this).append('g')
+                        .classed('axis symbol-legend', true);
+                }
+
                 var range = d.range();
                 var domain = d.domain()
                 var scale_size = range[1] * 2.05;
                 var ticks = d.ticks(4).filter(function(tick) { return tick > 0; });
                 var max_r = d(d3.max(ticks));
 
-                d3.select(this).attr('transform', 'translate(' + (position.x - 0.5 * max_r) + ',' + (position.y - max_r - 10) + ')');
+                g.attr('transform', 'translate(' + (position.x - 0.5 * max_r) + ',' + (position.y - max_r - 10) + ')');
 
                 console.log('ticks', ticks);
 
-                var symbol = d3.select(this).selectAll('circle.symbol-legend')
+                var symbol = g.selectAll('circle.symbol-legend')
                     .data(ticks);
 
                 symbol.enter()
                     .append('circle')
-                    .classed('symbol-legend', true);
+                    .classed('symbol-legend ', true);
 
                 symbol.attr({
                         cx: 0.0,
@@ -108,7 +127,7 @@ define("matta", ["d3"], function(d3) {
 
                 symbol.sort(function(a, b) { return d3.descending(a, b); });
 
-                var label = d3.select(this).selectAll('text.legend-label')
+                var label = g.selectAll('text.legend-label')
                     .data(ticks);
 
                 label.enter()
@@ -125,7 +144,7 @@ define("matta", ["d3"], function(d3) {
                 label.exit()
                     .remove();
 
-                var line = d3.select(this).selectAll('line.symbol-tick')
+                var line = g.selectAll('line.symbol-tick')
                     .data(ticks);
 
                 line.enter()
@@ -145,8 +164,6 @@ define("matta", ["d3"], function(d3) {
 
                 line.exit()
                     .remove();
-
-                //d3.select(this).call(axis);
             });
         };
 
@@ -175,11 +192,19 @@ define("matta", ["d3"], function(d3) {
         var color_thresholds = function(sel) {
             sel.each(function(color_scale) {
                 console.log('threshold scale', color_scale, d3.select(this));
-                var g = d3.select(this);
-                d3.select(this)
-                    .attr('transform', 'translate(' + threshold_position.x + ',' + (threshold_position.y + 6 + font_size) + ')');
+                var g;
+
+                if (!d3.select(this).select('g.axis.threshold-legend').empty()) {
+                    g = d3.select(this).select('g.axis.threshold-legend');
+                } else {
+                    g = d3.select(this).append('g')
+                        .classed('axis threshold-legend', true);
+                }
+
+                g.attr('transform', 'translate(' + threshold_position.x + ',' + (threshold_position.y + 6 + font_size) + ')');
+
                 var x = d3.scale.linear()
-                    .domain(extent)
+                    .domain([extent[0], extent[extent.length - 1]])
                     .range([0, threshold_width]);
 
                 var xAxis = d3.svg.axis()
