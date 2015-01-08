@@ -225,7 +225,7 @@ __treemap_args = {
         'node_id': 'id',
         'node_label': None,
         'font_size': 14,
-        'node_border': 0.5,
+        'node_border': 1,
         'border_color': '#777',
         'sticky': True,
         'label_leaves_only': True
@@ -238,7 +238,7 @@ treemap = build_sketch(__treemap_args)
 
 __parallel_coordinates_args = {
     'requirements': ['d3', 'matta'],
-    'visualization_name': 'matta.pcoordinates',
+    'visualization_napame': 'matta.pcoordinates',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

@@ -1,7 +1,0 @@
-.force-directed-container line.link {
-    stroke: grey;
-}
-
-.force-directed-container g.node circle {
-    fill: steelblue;
-}

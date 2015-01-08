@@ -1,23 +1,30 @@
 from distutils.core import setup
 
 setup(name = "matta",
-    version = "0.1.0",
-    description = 'Ready-made visualizations for your IPython notebook',
+    version = "0.9.0",
+    description = 'Ready-made visualization usage and scaffolding for your IPython notebook',
     author = 'Eduardo Graells-Garrido',
     author_email = 'eduardo.graells@gmail.com',
     license = 'MIT License',
-    url = 'http://github.com/carnbymatta',
+    url = 'http://github.com/carnby/matta',
     packages = ['matta'],
     package_dir = {'matta': 'matta'},
     include_package_data = True,
     package_data = {
         'matta' : [
+            'LICENSE',
             'libs/*',
+            'libs/leaflet-0.7.3/*',
+            'libs/leaflet-0.7.3/images/*',
             'templates/base.html',
+            'templates/base.js',
+            'templates/scaffold.js',
             'templates/matta.*.js',
-            'templates/matta.*.css'
+            'templates/matta.*.css',
+            'examples/*.ipynb'
         ]},
     scripts = [],
     long_description = """A set of ready-made visualizations written
-        in d3.js for usage inside the IPython notebook."""
+        in d3.js for usage inside the IPython notebook, as well as tools to
+        scaffold visualizations."""
 )
