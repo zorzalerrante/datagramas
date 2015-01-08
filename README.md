@@ -1,23 +1,47 @@
-# Matta
+# matta
 
-An artist for your IPython notebook that helps you to scaffold visualizations with [d3.js](http://d3js.org).
+An artist for your IPython notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org).
 
 Currently Matta supports some visualizations that I have needed to implement in my on-going doctoral thesis.
 But the main idea is to have a generalizable template to build visualizations on.
 
 Contributions are welcome.
 
-**[See the basic notebook examples here](http://nbviewer.ipython.org/github/carnby/matta/blob/master/matta/notebooks/examples.ipynb)**
+## Examples / Documentation
 
-## Initialization
+Although there is no official documentation yet, you can explore the following resources for examples and descriptions.
 
-Make a symbolic link in your IPython profile to matta libs:
+### IPython Notebooks
+
+The following notebooks serve as examples/documentation:
+
+    * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
+    * [Let's Make a Map Too](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
+    * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
+
+### In the Wild
+
+    * [2|S: Los Dos Santiagos](http://dcc.uchile.cl/~egraells/abrecl/): this is a project where we scaffolded many
+      visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile. All visualizations in
+      the page were scaffolded with matta! _Note: the site is in spanish_.
+
+
+## Initialization / Installation
+
+First, install the python package:
+
+```
+pip install -r requirements.txt
+python setup.py install
+```
+
+Then make a symbolic link in your IPython profile to matta libs:
 
 ```
 ~/.ipython/profile_default/static/custom$ ln -s ~/phd/apps/matta/matta/libs/ matta
 ```
 
-Then edit the custom.js file and add the following lines:
+And finally, edit the `custom.js` file and add the following lines:
 
 ```javascript
 require.config({
@@ -29,7 +53,6 @@ require.config({
         "tile": "/static/custom/matta/d3.geo.tile",
         "force_edge_bundling": "/static/custom/matta/d3.ForceEdgeBundling",
         "topojson": "/static/custom/matta/topojson",
-        "force_directed": "/static/custom/matta/matta.force-directed",
         "d3": "/static/custom/matta/d3.v3.min"
     }
 });
@@ -39,41 +62,16 @@ require(['matta'], function(matta) {
 });
 ```
 
-## Visualizing Data
-
-We work with pandas DataFrames, networkx Graphs, and bags of words. As long as you can convert your data to those
- formats, then you will we able to use matta.
-
-All visualizations make use of the same invocation paradigm (treemap in the example):
-
-```
-visualization(dataframe=DF, graph=GRAPH, items=BOW, **kwargs)
-```
-
-Where **kwargs is the set of options available for each visualization.
-
-## Current Visualizations
-
- * wordcloud (directly from Jason Davies code)
- * parallel coordinates (adapted from Jason Davies code)
- * treemap (directly from d3js)
- * force directed graph
- * graph with tiled background map and force/hierarchical edge bundling.
-
-# Scaffolding Visualizations
-
-Here I briefly describe how to scaffold visualizations.
-
 ## Credits
 
 ### Included Libraries
 
- * d3.js
- * d3.sankey
- * d3.layout.cloud
- * d3.geo.tile
- * d3.ForceEdgeBundling
- * topojson 1.6.18
+ * [d3.js](http://d3js.org)
+ * [d3.sankey](http://bost.ocks.org/mike/sankey/)
+ * [d3.layout.cloud](http://www.jasondavies.com/wordcloud/#%2F%2Fwww.jasondavies.com%2Fwordtree%2Fcat-in-the-hat.txt)
+ * [d3.ForceEdgeBundling](https://github.com/upphiminn/d3.ForceBundle)
+ * [topojson 1.6.18](https://github.com/mbostock/topojson)
+ * [leaflet](http://leafletjs.com)
 
 ### Credits
 
@@ -84,5 +82,6 @@ Here I briefly describe how to scaffold visualizations.
 
 ### About the name
 
-See [here](https://en.wikipedia.org/wiki/Roberto_Matta).
+See [Roberto Matta @ Wikipedia](https://en.wikipedia.org/wiki/Roberto_Matta).
+He has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/photos/83257355@N00/1352671334/?rb=1) (_desarrolladores_ is spanish for developers).
 
