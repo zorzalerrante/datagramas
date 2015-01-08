@@ -40,7 +40,7 @@ class MattaJSONEncoder(json.JSONEncoder):
             else:
                 return json_graph.node_link_data(obj)
         elif isinstance(obj, pd.DataFrame):
-            return obj.to_dict(outtype='records')
+            return obj.to_dict(orient='records')
         return json.JSONEncoder.default(self, obj)
 
 _dump_json = lambda x: json.dumps(x, cls=MattaJSONEncoder)
