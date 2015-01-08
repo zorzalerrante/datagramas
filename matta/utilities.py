@@ -1,5 +1,3 @@
-__author__ = 'egraells'
-
 import networkx as nx
 
 def graph_from_dataframe(df, src_col, dst_col, edge_col='weight', src_label_format=None, dst_label_format=None,
