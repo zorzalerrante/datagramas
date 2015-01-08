@@ -238,7 +238,7 @@ treemap = build_sketch(__treemap_args)
 
 __parallel_coordinates_args = {
     'requirements': ['d3', 'matta'],
-    'visualization_napame': 'matta.pcoordinates',
+    'visualization_name': 'matta.pcoordinates',
     'figure_id': None,
     'container_type': 'svg',
     'data': {
