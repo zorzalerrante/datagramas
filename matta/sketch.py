@@ -1,4 +1,4 @@
-from cytoolz.dicttoolz import valmap
+from cytoolz.dicttoolz import valmap, merge
 from IPython.display import HTML, display_html
 import os
 import uuid
@@ -65,8 +65,8 @@ class sketch(object):
         self.configuration['__data_variables__'] = self.configuration['data'].keys()
         self.configuration['data'] = _dump_json(self.configuration['data'])
 
-    def _render_(self, template_name):
-        repr_args = self.configuration.copy()
+    def _render_(self, template_name, **extra_args):
+        repr_args = merge(self.configuration.copy(), extra_args)
 
         if self.configuration['visualization_css']:
             try:
@@ -87,14 +87,17 @@ class sketch(object):
         if not 'vis_uuid' in repr_args or not repr_args['vis_uuid']:
             repr_args['vis_uuid'] = 'matta-vis-{0}'.format(uuid.uuid4())
 
+        if not 'define_js_module' in repr_args:
+            repr_args['define_js_module'] = True
+
         return template.render(**repr_args)
 
     def _ipython_display_(self):
         rendered = self._render_('base.html')
         display_html(HTML(rendered))
 
-    def scaffold(self, filename=None, style=None, append=False):
-        rendered = self._render_('scaffold.js')
+    def scaffold(self, filename=None, define_js_module=True, style=None, append=False):
+        rendered = self._render_('scaffold.js', define_js_module=define_js_module)
 
         if filename is None:
             return rendered
