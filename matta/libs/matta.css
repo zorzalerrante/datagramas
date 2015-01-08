@@ -3,6 +3,8 @@ legend styling
 from http://bl.ocks.org/mbostock/1166403
 */
 
+@import url(./leaflet-0.7.3/leaflet.css);
+
 .axis line, .axis path {
   fill: none;
   stroke: none;
