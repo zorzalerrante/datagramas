@@ -8,7 +8,7 @@
  * will fill the variables _data_graph and _data_dataframe.
  */
 
-var mod_{{ visualization_name }} = function() {
+var matta_{{ visualization_name }} = function() {
     var __fill_data__ = function(__data__) {
         {% for var_name in __data_variables__ %}
             func_{{ visualization_name }}.{{ var_name }}(__data__.{{ var_name }});
