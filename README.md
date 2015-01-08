@@ -15,15 +15,15 @@ Although there is no official documentation yet, you can explore the following r
 
 The following notebooks serve as examples/documentation:
 
-    * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
-    * [Let's Make a Map Too](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
-    * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
+  * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
+  * [Let's Make a Map Too](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
+  * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
 
 ### In the Wild
 
-    * [2|S: Los Dos Santiagos](http://dcc.uchile.cl/~egraells/abrecl/): this is a project where we scaffolded many
-      visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile. All visualizations in
-      the page were scaffolded with matta! _Note: the site is in spanish_.
+  * [2|S: Los Dos Santiagos](http://dcc.uchile.cl/~egraells/abrecl/): this is a project where we scaffolded many
+    visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile. 
+    All visualizations in the page were scaffolded with matta! _Note: the site is in spanish_.
 
 
 ## Initialization / Installation
