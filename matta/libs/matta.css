@@ -1,0 +1,28 @@
+/*
+legend styling
+from http://bl.ocks.org/mbostock/1166403
+*/
+
+.axis line, .axis path {
+  fill: none;
+  stroke: none;
+}
+
+.axis .minor {
+  stroke-opacity: .5;
+  stroke: black;
+}
+
+.axis text {
+    font-size: 10px;
+}
+
+.axis path.domain {
+  display: none;
+}
+
+.axis line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+

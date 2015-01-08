@@ -1,199 +1,305 @@
+from sketch import build_sketch, _dump_json
 from IPython.display import HTML
-import codecs
-import jinja2
-import os
-import json
-import numpy as np
-import networkx as nx
-from networkx.readwrite import json_graph
-import pandas as pd
+from scipy.constants import golden_ratio
 
-SRC_DIR = os.path.dirname(os.path.realpath(__file__))
-env = jinja2.environment.Environment()
-env.loader = jinja2.FileSystemLoader(SRC_DIR + '/templates')
+__version__ = '1.0.0'
 
+def init_javascript(path='/static/custom/matta'):
+    '''
+    Returns the Javascript code needed to load matta libraries.
 
-# from http://stackoverflow.com/questions/3488934/simplejson-and-numpy-array
-class MattaJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray) and obj.ndim == 1:
-                return obj.tolist()
-        elif isinstance(obj, np.generic):
-            return obj.item()
-        elif isinstance(obj, nx.Graph) or isinstance(obj, nx.DiGraph):
-            return json_graph.node_link_data(obj)
-        elif isinstance(obj, pd.DataFrame):
-            return obj.to_dict(outtype='records')
-        return json.JSONEncoder.default(self, obj)
-
-_dump_json = lambda x: json.dumps(x, cls=MattaJSONEncoder)
-
-def init(d3_url='http://d3js.org/d3.v3.min.js', lib_path='http://localhost:8000'):
+    In the IPython notebook this is loaded automatically by adding the output
+    of this function to custom.js script.
+    '''
     paths = {
-        'd3': '{0}?noext'.format(d3_url),
-        'wordcloud': '{0}/libs/d3.layout.cloud.js?noext'.format(lib_path),
-        'tile': '{0}/libs/d3.geo.tile.js?noext'.format(lib_path),
-        'sankey': '{0}/libs/d3.sankey.js?noext'.format(lib_path),
-        'matta': '{0}/libs/matta.js?noext'.format(lib_path),
-        'force_directed': '{0}/libs/matta.force-directed.js?noext'.format(lib_path),
-        'force_edge_bundling': '{0}/libs/d3.ForceEdgeBundling.js?noext'.format(lib_path),
+        'd3': '{0}/d3.v3.min'.format(path),
+        'wordcloud': '{0}/d3.layout.cloud'.format(path),
+        'tile': '{0}/d3.geo.tile'.format(path),
+        'sankey': '{0}/d3.sankey'.format(path),
+        'matta': '{0}/matta'.format(path),
+        'force_directed': '{0}/matta.force-directed'.format(path),
+        'force_edge_bundling': '{0}/d3.ForceEdgeBundling'.format(path),
+        'topojson': '{0}/topojson'.format(path),
+        'leaflet': '{0}/leaflet-0.7.3/leaflet-src'.format(path),
     }
 
-    template = '''<script>
+    template = '''
+<script>
+$(document).ready(function() {{
+    if (!require.defined('matta')) {{
         require.config({{
           paths: {0}
         }});
-        </script>
-        '''.format(_dump_json(paths))
+
+        require(['matta'], function(matta) {{
+            matta.add_css('{1}');
+        }});
+    }}
+}});
+</script>
+<span class="label label-info">matta</span> Javascript code added.
+        '''.format(_dump_json(paths), path  + '/matta.css')
 
     return HTML(template)
 
+def dump_data(data, json_name):
+    with open(json_name, 'w') as f:
+        f.write(_dump_json(data))
 
-def _draw(template_file, data, label=None, **kwargs):
-    with codecs.open(template_file, 'r', 'utf-8') as f:
-        template = jinja2.Template(f.read())
+# Visualizations
 
-    rendered = template.render(data=_dump_json(data), **kwargs)
-    return HTML(rendered)
-
-
-def _render_visualization(name, data, label=None, **kwargs):
-    global env
-    
-    files = {'style_file': 'matta.{0}.css'.format(name),
-                'js_file': 'matta.{0}.js'.format(name),
-                }
-                
-    for key, filename in files.iteritems():
-        if os.path.exists('{0}/templates/{1}'.format(SRC_DIR, filename)):
-            kwargs[key] = filename
-     
-    if os.path.exists('{0}/templates/matta.{1}.html'.format(SRC_DIR, name)):
-        template = env.get_template('matta.{0}.html'.format(name))
-    else:
-        template = env.get_template('base.html')   
-    
-    if not 'container_type' in kwargs:
-        kwargs['container_type'] = 'svg'
-        
-    kwargs['visualization_name'] = name
-    
-    rendered = template.render(data=_dump_json(data), **kwargs)
-    return HTML(rendered)
-
-
-def draw_wordcloud(data, **kwargs):
-    defaults = {
-        'fig_id':'wordcloud',
-        'width': 600,
-        'height': 400,
-        'min_size': 12,
-        'max_size': 64,
-        'scaling_type': 'linear',
-        'font': 'serif',
-        'rotate': 0,
-        'time_interval': 10,
-        'requirements': ['d3', 'matta', 'wordcloud'],
-    }
-
-    defaults.update(kwargs)
-
-    if 'label' in kwargs:
-        defaults['label'] = _dump_json(kwargs['label'])
-
-    return _render_visualization('wordcloud', data, **defaults)
-
-
-def draw_treemap(data, **kwargs):
-    defaults = {
-        'fig_id': 'treemap',
-        'treemap_mode': 'squarify',
-        'ratio': 1.0,
-        'padding': 0.0,
-        'fit_labels': False,
+## Sankey Diagram
+__sankey_args = {
+    'requirements': ['d3', 'matta', 'sankey'],
+    'visualization_name': 'matta.sankey',
+    'figure_id': None,
+    'container_type': 'svg',
+    'data': {
+        'graph': None,
+    },
+    'options': {
+        'horizontal': False,
+        'background_color': None,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 150, 'top': 10, 'right': 150, 'bottom': 10},
         'font_size': 10,
-        'requirements': ['d3', 'matta'],
-    }
-    defaults.update(kwargs)
-    defaults['container_type'] = 'div'
-    
-    return _render_visualization('treemap', data, **defaults)
+        'layout_iterations': 64,
+        'link_opacity': 0.95,
+        'node_opacity': 0.85,
+        'node_color': 'steelblue',
+        'node_width': 15,
+        'node_padding': 10,
+        'node_label': 'name',
+        'link_color': '#efefef',
+        'link_weight': 'weight',
+        'link_color_scale_width': None,
+        'link_color_scale_height': None,
+        'link_color_scale_extent': None,
+        'link_color_scale_title': None,
+        'link_color_scale_domain': None,
+        'link_color_scale_range': None,
+        'link_color_variable': None,
+    },
+}
+
+sankey = build_sketch(__sankey_args)
 
 
-def draw_parallel_coordinates(data, **kwargs):
-    defaults = {
-        'fig_id': 'pcoordinates',
-        'requirements': ['d3', 'matta'],
-        'opacity': 0.5,
-        'exclude': [],
-        'stroke_width': 1,
-    }
-    defaults.update(kwargs)
-    defaults['container_type'] = 'svg'
-    defaults['columns'] = [c for c in data.columns.tolist() if not c in defaults['exclude']]
+## Maps using TopoJSON
 
-    return _render_visualization('pcoordinates', data, **defaults)
-
-def draw_graph_map(data, **kwargs):
-    defaults = {
-        'fig_id':'graph-map',
-        'width': 800,
-        'height': 800,
-        'tension': 0.8,
-        'bundle_links': False,
-        'force_bundle_links': False,
-        'force_edge_step_size': 0.1,
-        'force_edge_compatibility_threshold': 0.6,
+__topojson_args = {
+    'requirements': ['d3', 'matta', 'topojson'],
+    'visualization_name': 'matta.topojson',
+    'figure_id': None,
+    'container_type': 'div',
+    'data': {
+        'geometry': None,
+        'area_dataframe': None,
+        'mark_dataframe': None,
+        'graph': None,
+    },
+    'options': {
+        'leaflet': False,
+        'background_color': False,
+        'graph_bundle_links': False,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 0, 'top': 0, 'right': 0, 'bottom': 0},
+        'feature_id': 'id',
+        'label': None,
+        'legend': True,
+        'path_opacity': 1.0,
+        'path_stroke': 'gray',
+        'path_stroke_width': 1.0,
+        'fill_color': 'none',
+        'area_feature_name': None,
+        'area_value': None,
+        'area_color_legend': True,
+        'area_opacity': 0.75,
+        'area_color_scale_width': 150,
+        'area_color_scale_height': 8,
+        'area_color_scale_extent': [0.0, 1.0],
+        'area_color_scale_domain': None,
+        'area_color_scale_title': None,
+        'area_color_scale_range': None,
+        'mark_value': None,
+        'mark_scale': 0.5,
+        'mark_feature_name': None,
+        'mark_position': ['lat', 'lon'],
+        'mark_color': None,
+        'mark_color_property': None,
+        'mark_opacity': 0.8,
+        'mark_stroke': 'gray',
+        'mark_stroke_width': 1,
+        'mark_min_ratio': 0,
+        'mark_max_ratio': 20,
+        'feature_name': None,
+        'label_font_size': 10,
+        'label_color': 'black',
+        'leaflet_default_zoom': 11,
+        'leaflet_center': None,
+        'bounding_box': None,
+        'leaflet_map_link': "&copy; OpenStreetMap",
+        'leaflet_tile_layer': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'force_edge_step_size': 0.0015,
+        'force_edge_compatibility_threshold': 0.75,
         'force_edge_bundling_stiffness': 0.1,
         'force_edge_cycles': 6,
-        'force_edge_iterations': 60,
-        'links': True,
-        'background_tiles': True,
-        'tile_opacity': 0.5,
-        'n_tile_alternatives': 2,
-        'tile_base_url': 'tile.stamen.com/toner',
-        'requirements': ['d3', 'matta', 'tile', 'force_edge_bundling'],
-    }
+        'force_edge_iterations': 30,
+        'link_color': 'steelblue',
+        'link_opacity': 0.25,
+        'link_width': 1,
+    },
+    'read_only': {'L', 'map'}
+}
 
-    defaults.update(kwargs)
-    return _render_visualization('graph-map', data, **defaults)
+def __topojson_options(config):
+    if config['options']['leaflet'] is True:
+        config['container_type'] = 'div'
+        config['requirements'].append('leaflet')
+    else:
+        config['container_type'] = 'svg'
+    if config['options']['graph_bundle_links'] is True:
+        config['requirements'].append('force_edge_bundling')
 
-
-def draw_force_directed_graph(data, **kwargs):
-    defaults = {
-        'fig_id':'force-directed-graph',
-        'width': 800,
-        'height': 800,
-        'links': True,
-        'force_gravity': 0.05,
-        'force_charge': -100,
-        'link_distance': 100,
-        'font_size': 10,
-        'node_radius': 12,
-        'avoid_collisions': True,
-        'requirements': ['d3', 'matta', 'force_directed'],
-    }
-
-    defaults.update(kwargs)
-    return _render_visualization('force-directed', data, **defaults)
+topojson = build_sketch(__topojson_args, opt_process=__topojson_options)
 
 
-def draw_sankey(data, **kwargs):
-    defaults = {
-        'fig_id':'sankey-graph',
-        'width': 800,
-        'height': 400,
-        'layout_iterations': 32,
-        'link_color': '#000',
-        'link_opacity': 0.02,
+## Wordclouds
+
+__wordcloud_args = {
+    'requirements': ['d3', 'matta', 'wordcloud'],
+    'visualization_name': 'matta.wordcloud',
+    'figure_id': None,
+    'container_type': 'svg',
+    'data': {
+        'items': None,
+    },
+    'options': {
+        'background_color': None,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 0, 'top': 0, 'right': 0, 'bottom': 0},
+        'typeface': 'Arial',
         'font_size': 12,
-        'label_margins': 50,
-        'node_opacity': 0.9,
-        'node_color': 'steelblue',
-        'node_width': 30,
-        'node_padding': 20,
-        'requirements': ['d3', 'matta', 'sankey'],
-    }
+        'font_scale': 'sqrt',
+        'min_font_size': 8,
+        'max_font_size': 64,
+        'font_opacity': 1.0,
+        'rotation': 0.0
+    },
+}
 
-    defaults.update(kwargs)
-    return _render_visualization('sankey', data, **defaults)
+wordcloud = build_sketch(__wordcloud_args)
+
+## Treemap
+
+__treemap_args = {
+    'requirements': ['d3', 'matta'],
+    'visualization_name': 'matta.treemap',
+    'figure_id': None,
+    'container_type': 'div',
+    'data': {
+        'tree': None,
+    },
+    'options': {
+        'background_color': None,
+        'fit_labels': False,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 0, 'top': 0, 'right': 0, 'bottom': 0},
+        'target_ratio': golden_ratio,
+        'node_padding': 0,
+        'mode': 'squarify',
+        'node_value': 'value',
+        'node_children': 'children',
+        'node_id': 'id',
+        'node_label': None,
+        'font_size': 14,
+        'node_border': 0.5,
+        'border_color': '#777',
+        'sticky': True,
+        'label_leaves_only': True
+    },
+}
+
+treemap = build_sketch(__treemap_args)
+
+## Parallel Coordinates
+
+__parallel_coordinates_args = {
+    'requirements': ['d3', 'matta'],
+    'visualization_name': 'matta.pcoordinates',
+    'figure_id': None,
+    'container_type': 'svg',
+    'data': {
+        'dataframe': None,
+    },
+    'options': {
+        'background_color': None,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 30, 'top': 30, 'right': 30, 'bottom': 30},
+        'line_opacity': 0.75,
+        'exclude': [],
+        'line_stroke_width': 1.0
+    },
+}
+
+def _pc_opts(options):
+    #print options
+    options['variables']['columns'] = [c for c in options['data']['dataframe'].columns.tolist() if not c in options['variables']['exclude']]
+
+parallel_coordinates = build_sketch(__parallel_coordinates_args, opt_process=_pc_opts)
+
+## Force Directed
+
+__force_directed_args = {
+    'requirements': ['d3', 'matta'],
+    'visualization_name': 'matta.force',
+    'figure_id': None,
+    'container_type': 'svg',
+    'data': {
+        'graph': None,
+    },
+    'options': {
+        'background_color': None,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 30, 'top': 30, 'right': 30, 'bottom': 30},
+        'force_gravity': 0.1,
+        'force_charge': -30,
+        'link_distance': 30,
+        'link_strength': 1,
+        'charge_distance': 1000,
+        'friction': 0.9,
+        'font_size': 10,
+        'node_id': 'id',
+        'node_ratio': 12,
+        'node_value': None,
+        'node_min_ratio': 8,
+        'node_max_ratio': 24,
+        'node_scale': 'linear',
+        'theta': 0.8,
+        'alpha': 0.1,
+        'node_padding': 16,
+        'avoid_collisions': False,
+        'clamp_to_viewport': False,
+    },
+}
+
+force_directed = build_sketch(__force_directed_args)
+

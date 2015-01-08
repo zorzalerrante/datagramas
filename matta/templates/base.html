@@ -1,62 +1,29 @@
 <style>
-{% block style %}
-    {% if style_file %}
-        {% include style_file %}    
-    {% endif %}
-{% endblock style %}
+{% if visualization_css %}
+    {{ visualization_css }}
+{% endif %}
 </style>
 
-<div id="{{ fig_id }}"></div>
+<div id="{{ vis_uuid }}"></div>
 
 <script type="text/javascript">
 !function() {
-    var main = function ({{ requirements|join(', ') }}) {   
-        var draw = function(json) {
-            var width = {{ width }};
-            var height = {{ height }};
-            
-            {% if container_type == 'svg' %}
-                var svg = d3.select("#{{ fig_id }}").append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
-                        
-                {% if background_color %}
-                    svg.append('rect')
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('fill', "{{ background_color }}");
-                {% endif %}
-                
-                var container = svg.append("g")
-                        .attr('class', '{{ visualization_name }}-container');
-                        
-            {% elif container_type == 'div' %}
-                var div = d3.select("#{{ fig_id }}").append("div")
-                    .style("width", width + "px")
-                    .style("height", height + "px")
-                    .attr('class', '{{ visualization_name }}-container');
-                
-                {% if background_color %}
-                    div.style("background", "{{ background_color }}");
-                {% endif %}
-                
-                var container = div;
-                    
-            {% else %}
-                console.log('unsupported container type!');
-                return;
-            {% endif %}
-    
-            {% block js_code %}
-                {% if js_file %}
-                    {% include js_file %}
-                {% endif %}
-            {% endblock js_code %}
-        };
+    var main = function ({{ requirements|join(', ') }}) {
+        {% include 'base.js' %}
+
+        if (d3.select('#{{ figure_id }}').empty()) {
+            d3.select('#{{ vis_uuid }}')
+                .append('div')
+                .attr('id', '{{ figure_id }}');
+        }
+
+        var vis_instance = matta_{{ visualization_name }}();
 
         var data = {{ data }};
-        console.log('data', data);      
-        draw(data);
+
+        d3.selectAll('#{{ figure_id }}')
+            .data([data])
+            .call(vis_instance);
     };
     
     require(["{{ requirements|join('", "') }}"], main);

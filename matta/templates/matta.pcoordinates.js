@@ -6,7 +6,7 @@ function position(d) {
 
 // Returns the path for a given data point.
 var path = function(d, i) {
-    var points = dimensions.map(function(p) {
+    var points = _columns.map(function(p) {
         return [position(p), y[p](d[p])];
     });
     return line(points);
@@ -14,7 +14,7 @@ var path = function(d, i) {
 
 // Handles a brush event, toggling the display of foreground lines.
 function brush() {
-    var actives = dimensions.filter(function(p) {
+    var actives = _columns.filter(function(p) {
         return !y[p].brush.empty();
     });
 
@@ -33,9 +33,8 @@ function brush() {
 };
 
 
-var m = [30, 10, 10, 10],
-    w = width - m[1] - m[3],
-    h = height - m[0] - m[2];
+var w = _width - _padding.left - _padding.right;
+var h = _height - _padding.top - _padding.bottom;
 
 var x = d3.scale.ordinal().rangePoints([0, w], 1),
     y = {},
@@ -44,33 +43,19 @@ var x = d3.scale.ordinal().rangePoints([0, w], 1),
 var line = d3.svg.line(),
     axis = d3.svg.axis().orient("left"),
     foreground,
-    _idx;
-
-{% if categories %}
-    var categories = {{ categories }};
-    var color_scale = d3.scale.category10()
-        .domain(d3.set(d3.values(categories)).values());
-    var color = function(d, i) {
-        return color_scale(categories[i]);
-    };
-{% else %}
-    var color = d3.functor('steelblue');
-{% endif %}
-
-var pc_g = container.append("g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+    _idx = {};
 
 
-console.log('data', json);
-var dimensions = {{ columns }};
-console.log('dimensions', dimensions);
+var color = d3.functor('steelblue');
 
-_idx = {};
-dimensions.forEach(function(d, i) {
+var pc_g = container.append("g");
+
+_columns.forEach(function(d, i) {
     _idx[d] = i;
 });
 
-dimensions.forEach(function(d, i) {
-    y[d] = d3.scale.linear().domain(d3.extent(json, function(p) {
+_columns.forEach(function(d, i) {
+    y[d] = d3.scale.linear().domain(d3.extent(_data_dataframe, function(p) {
         return p[d];
     })).range([h, 0]);
 
@@ -81,7 +66,7 @@ console.log('y', y);
 
 
 // Extract the list of dimensions and create a scale for each.
-x.domain(dimensions);
+x.domain(_columns);
 
 console.log('x', x.domain(), x.range());
 
@@ -90,17 +75,17 @@ console.log('x', x.domain(), x.range());
 foreground = pc_g.append("svg:g")
     .attr("class", "foreground")
 .selectAll("path")
-    .data(json)
+    .data(_data_dataframe)
 .enter().append("svg:path")
     .attr("d", path)
-.attr('opacity', {{ opacity }})
+.attr('opacity', _line_opacity)
 .attr('stroke', color)
-.attr('stroke-width', {{ stroke_width }})
+.attr('stroke-width', _line_stroke_width)
 .attr('fill', 'none');
 
 // Add a group element for each dimension.
 var g = pc_g.selectAll(".dimension")
-    .data(dimensions)
+    .data(_columns)
 .enter().append("svg:g")
     .attr("class", "dimension")
     .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
@@ -112,8 +97,8 @@ var g = pc_g.selectAll(".dimension")
         .on("drag", function(d) {
             dragging[d] = Math.min(w, Math.max(0, this.__origin__ += d3.event.dx));
             foreground.attr("d", path);
-            dimensions.sort(function(a, b) { return position(a) - position(b); });
-            x.domain(dimensions);
+            _columns.sort(function(a, b) { return position(a) - position(b); });
+            x.domain(_columns);
             g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
         })
         .on("dragend", function(d) {
@@ -128,7 +113,11 @@ var g = pc_g.selectAll(".dimension")
 // Add an axis and title.
 g.append("svg:g")
     .attr("class", "axis")
-    .each(function(d, i) { d3.select(this).call(axis.scale(y[d])); })
+    .each(function(d, i) {
+        d3.select(this).call(axis.scale(y[d]));
+        d3.select(this).selectAll('line').style({'display': 'block', 'stroke': '#000', 'fill': 'none', 'shape-rendering': 'crispEdges'});
+        d3.select(this).selectAll('path').style({'display': 'block', 'stroke': '#000', 'fill': 'none', 'shape-rendering': 'crispEdges'});
+    })
 .append("svg:text")
     .attr("text-anchor", "middle")
     .attr("y", -9)
@@ -142,6 +131,11 @@ g.append("svg:g")
             .call(y[d].brush = d3.svg.brush().y(y[d])
                 .on("brush", brush)
             );
+        d3.select(this).select('.extent').style({
+          'fill-opacity': 0.3,
+          'stroke': '#fff',
+          'shape-rendering': 'crispEdges'
+        });
     })
 .selectAll("rect")
     .attr("x", -8)

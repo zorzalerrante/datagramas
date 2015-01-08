@@ -122,7 +122,6 @@ node.enter()
             .append('path')
             .attr('d', function(d) {
                 var parts = [d.source, d.target];
-                console.log('link', d);
                 return line(parts);
             });
     {% endif %}

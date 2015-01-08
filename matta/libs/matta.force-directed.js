@@ -1,7 +1,7 @@
 define("force_directed", ["d3"], function(d3) {
 
   var matta_force_directed = function() {
-    var charge, clamp_to_viewport, collide, collision_detection, color, force, force_directed, gravity, height, link_distance, node_radius, painter, svg, use_links, width, node_padding;
+    var charge, clamp_to_viewport, collide, collision_detection, color, force, force_directed, gravity, height, link_distance, link_strength, node_radius, painter, svg, use_links, width, node_padding;
     collide = function(node) {
       var nx1, nx2, ny1, ny2, r;
       r = node_radius + node_padding;
@@ -44,6 +44,11 @@ define("force_directed", ["d3"], function(d3) {
         return a.distance;
       }
       return link_distance;
+    }).linkStrength(function(a) {
+      if (a.hasOwnProperty('weight')) {
+        return a.weight;
+      }
+      return 1.0;
     }).size([width, height]).gravity(gravity);
     svg = null;
     force_directed = function(selection) {

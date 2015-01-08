@@ -39,7 +39,15 @@ console.log(force);
     force.collision_detection(false);
 {% endif %}
     
-graph_g.datum(json).call(force);
+graph_g.datum(json)
+    .call(force)
+
+graph_g.selectAll('.node')
+    .call(matta.styler('fill', 'color'));
+
+graph_g.selectAll('line.link')
+    .call(matta.styler('stroke', 'color'))
+    .call(matta.styler('stroke-opacity', 'weight'));
 
 graph_g.selectAll('g.node text.node-label').call(matta.labeler());
 graph_g.selectAll('g.node circle').call(matta.styler('fill', 'color'));
