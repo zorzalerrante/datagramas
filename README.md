@@ -1,10 +1,9 @@
 # Matta
 
-An artist for your IPython notebook that provides _ready-made_ visualizations with [d3.js](http://d3js.org) for you to modify. 
-The basic idea is to generate template-based visualizations and to modify them in the notebook. 
-A future idea is to export the generated visualization (plus modifications) into a stand-alone visualization.
+An artist for your IPython notebook that helps you to scaffold visualizations with [d3.js](http://d3js.org).
 
-Currently Matta supports some visualizations that I have needed to implement in my on-going doctoral thesis. But the main idea is to have a generalizable template to build visualizations on.
+Currently Matta supports some visualizations that I have needed to implement in my on-going doctoral thesis.
+But the main idea is to have a generalizable template to build visualizations on.
 
 Contributions are welcome.
 
@@ -12,61 +11,46 @@ Contributions are welcome.
 
 ## Initialization
 
-```python
-import matta
-matta.init(lib_path='http://localhost:8001', d3_url='http://localhost:8001/libs/d3.v3.min.js')
-```
-
-`lib_path` points to the url that has the lib folder available. For instance, I do the following:
+Make a symbolic link in your IPython profile to matta libs:
 
 ```
-cd ~/resources/matta
-python -m SimpleHTTPServer 8001
+~/.ipython/profile_default/static/custom$ ln -s ~/phd/apps/matta/matta/libs/ matta
 ```
 
-`d3_url` points to the `d3.v3.min.js` script.
+Then edit the custom.js file and add the following lines:
 
-## Usage
+```javascript
+require.config({
+    paths: {
+        "leaflet": "/static/custom/matta/leaflet-0.7.3/leaflet-src",
+        "wordcloud": "/static/custom/matta/d3.layout.cloud",
+        "sankey": "/static/custom/matta/d3.sankey",
+        "matta": "/static/custom/matta/matta",
+        "tile": "/static/custom/matta/d3.geo.tile",
+        "force_edge_bundling": "/static/custom/matta/d3.ForceEdgeBundling",
+        "topojson": "/static/custom/matta/topojson",
+        "force_directed": "/static/custom/matta/matta.force-directed",
+        "d3": "/static/custom/matta/d3.v3.min"
+    }
+});
+
+require(['matta'], function(matta) {
+    matta.add_css('/static/custom/matta/matta.css');
+});
+```
+
+## Visualizing Data
+
+We work with pandas DataFrames, networkx Graphs, and bags of words. As long as you can convert your data to those
+ formats, then you will we able to use matta.
 
 All visualizations make use of the same invocation paradigm (treemap in the example):
 
 ```
-matta.draw_treemap(data[,fig_id='treemap-figure', **kwargs])
+visualization(dataframe=DF, graph=GRAPH, items=BOW, **kwargs)
 ```
 
-A visualization is defined by its name, default settings plus and two templates: a css file (templates/matta.vis-name.css) and a javascript file (templates/matta.vis-name.js).
-
-For instance, the sankey visualization takes as input a networkx graph and is defined as follows:
-
-```python
-def draw_sankey(data, **kwargs):
-    defaults = {
-        'fig_id':'sankey-graph',
-        'width': 800,
-        'height': 400,
-        'layout_iterations': 32,
-        'link_color': '#000',
-        'link_opacity': 0.02,
-        'font_size': 12,
-        'label_margins': 50,
-        'node_opacity': 0.9,
-        'node_color': 'steelblue',
-        'node_width': 30,
-        'node_padding': 20,
-        'requirements': ['d3', 'matta', 'sankey'],
-    }
-
-    defaults.update(kwargs)
-    return _render_visualization('sankey', data, **defaults)
-```
-
-The method `_render_visualization` uses jinja2 to render the templates.
-
-There is a base template in `templates/base.html` which takes care of setting up _require.js_ (see the `requirements` argument) as well as the boilerplate code. Note that the _fig_id_ argument generates an _id_ attribute on the _div_ element holding the visualization.
-
-The _force-directed_, _graph-map_ and _sankey_ visualizations take as input a networkx graph.
-
-The _pcoordinates_ visualization takes a pandas DataFrame as input.
+Where **kwargs is the set of options available for each visualization.
 
 ## Current Visualizations
 
@@ -76,7 +60,13 @@ The _pcoordinates_ visualization takes a pandas DataFrame as input.
  * force directed graph
  * graph with tiled background map and force/hierarchical edge bundling.
 
-## Included Libraries
+# Scaffolding Visualizations
+
+Here I briefly describe how to scaffold visualizations.
+
+## Credits
+
+### Included Libraries
 
  * d3.js
  * d3.sankey
@@ -85,39 +75,14 @@ The _pcoordinates_ visualization takes a pandas DataFrame as input.
  * d3.ForceEdgeBundling
  * topojson 1.6.18
 
-## Dependencies
+### Credits
 
- * IPython
- * jinja2 (templates)
- * pandas (Dataframes. Currently being used in the Parallel Coordinates visualization).
- * networkx (Graphs. Currently being used in the Force Directed Graph).
+ * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- many code from them is being used, reused and abused
+   (not to mention `d3.js` itself). Thanks!
+ * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
+ * All the great devs behind IPython, numpy, scipy, pandas, networkx, seaborn, d3.js...
 
-## What's Next
-
- * In addition to more visualizations (added as needed), a nice idea is to render a visualization and then use `%%javascript` in the following cells to modify it. I would like to be able to retrieve the content of those cells and inject them on the templates. In this way, the IPython notebook could be used as a development environment to design and export visualizations. This includes extending the base template to consider a stand-alone visualization.
- * Register new visualizations by code. If you are creating a new visualization, then you could register it instead of including it in matta's source.
-
-## About the name
+### About the name
 
 See [here](https://en.wikipedia.org/wiki/Roberto_Matta).
-
-## Credits
-
- * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- many code from them is being used, reused and abused (not to mention `d3.js` itself). Thanks!
- * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
- * All the great devs behind IPython, numpy, scipy, pandas, networkx, d3.js...
- * [webcolors](https://bitbucket.org/ubernostrum/webcolors/overview/) -- the list of css3 color names was extracted from the library.
-
-## License
-
-```
-(Some parts Copyright (C) 2014 Eduardo Graells-Garrido)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
 
