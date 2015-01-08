@@ -7,7 +7,7 @@
 <div id="{{ vis_uuid }}"></div>
 
 <script type="text/javascript">
-!function() {
+$(function() {
     var main = function ({{ requirements|join(', ') }}) {
         {% include 'base.js' %}
 
@@ -27,5 +27,5 @@
     };
     
     require(["{{ requirements|join('", "') }}"], main);
-}(window);
+});
 </script>
