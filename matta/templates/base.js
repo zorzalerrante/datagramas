@@ -17,6 +17,10 @@ var mod_{{ visualization_name }} = function() {
 
     var func_{{ visualization_name }} = function (selection) {
         console.log('selection', selection);
+
+        var _vis_width = _width - _padding.left - _padding.right;
+        var _vis_height = _height - _padding.top - _padding.bottom;
+
         selection.each(function(__data__) {
             __fill_data__(__data__);
 
