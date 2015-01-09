@@ -11,6 +11,8 @@ Contributions are welcome.
 
 Although there is no official documentation yet, you can explore the following resources for examples and descriptions.
 
+
+
 ### IPython Notebooks
 
 The following notebooks serve as examples/documentation:
@@ -18,6 +20,8 @@ The following notebooks serve as examples/documentation:
   * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
   * [Let's Make a Map Too](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
   * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
+
+**If you do not see any visualizations when browsing the notebooks on NBViewer, please refresh the page. I don't know why it doesn't work on first load -- if you have any idea of why this happens, please let me know! :)**
 
 ### In the Wild
 
