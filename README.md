@@ -2,16 +2,16 @@
 
 An artist for your IPython notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org).
 
-Currently Matta supports some visualizations that I have needed to implement in my on-going doctoral thesis.
+Currently `matta` supports some visualizations that I have needed to implement in my on-going doctoral thesis.
 But the main idea is to have a generalizable template to build visualizations on.
+
+`matta` works with Python 2. Python 3 support is planned to be added at some point.
 
 Contributions are welcome.
 
 ## Examples / Documentation
 
 Although there is no official documentation yet, you can explore the following resources for examples and descriptions.
-
-
 
 ### IPython Notebooks
 
@@ -68,7 +68,15 @@ require(['matta'], function(matta) {
 
 ## Credits
 
-### Included Libraries
+Although `matta` is mostly coded by me ([@carnby](https://twitter.com/carnby), it contains many code and ideas from others.
+In particular:
+
+ * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- much code from them is being used, reused and abused
+   (not to mention `d3.js` itself). Thanks!
+ * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
+ * All the great devs behind IPython, numpy, scipy, pandas, networkx, seaborn, d3.js...
+
+In particular, it includes the following libraries:
 
  * [d3.js](http://d3js.org)
  * [d3.sankey](http://bost.ocks.org/mike/sankey/)
@@ -77,12 +85,7 @@ require(['matta'], function(matta) {
  * [topojson 1.6.18](https://github.com/mbostock/topojson)
  * [leaflet](http://leafletjs.com)
 
-### Credits
-
- * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- many code from them is being used, reused and abused
-   (not to mention `d3.js` itself). Thanks!
- * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
- * All the great devs behind IPython, numpy, scipy, pandas, networkx, seaborn, d3.js...
+Thanks to all of them!
 
 ### About the name
 
