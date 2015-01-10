@@ -2,7 +2,7 @@ from sketch import build_sketch, _dump_json
 from IPython.display import HTML
 from scipy.constants import golden_ratio
 
-__version__ = '1.0.0'
+__version__ = '0.9.2'
 
 def init_javascript(path='/static/custom/matta'):
     '''
@@ -193,7 +193,12 @@ __wordcloud_args = {
         'min_font_size': 8,
         'max_font_size': 64,
         'font_opacity': 1.0,
-        'rotation': 0.0
+        'rotation': 0.0,
+        'color_scale_width': 150,
+        'color_scale_height': 8,
+        'color_scale_extent': [0.0, 1.0],
+        'color_scale_domain': None,
+        'color_scale_range': None,
     },
 }
 

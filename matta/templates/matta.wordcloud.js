@@ -1,5 +1,4 @@
 
-var color = d3.scale.category20();
 
 var fn_name = function(d) {
     return d[0];
@@ -9,9 +8,30 @@ var fn_count = function(d) {
     return d[1];
 };
 
+var color_scale = null;
+if (_color_scale_domain != null) {
+    color_scale = d3.scale.threshold()
+        .domain(_color_scale_domain)
+        .range(_color_scale_range);
+} else {
+    color_scale = d3.scale.category20b();
+}
+
+console.log('color scale', color_scale.range(), _color_scale_domain, _color_scale_range);
+
 var fn_color = function(d) {
-    return color(_name(d));
+    if (_color_scale_domain != null) {
+        return color_scale(d.length > 2 ? d[2] : d[1]);
+    }
+    return color_scale(d[0]);
 };
+
+var color_map = d3.map();
+console.log('color map', color_map);
+
+_data_items.forEach(function(d) {
+    color_map.set(d[0], fn_color(d));
+});
 
 var fontSize = matta.scale(_font_scale)
     .range([_min_font_size, _max_font_size]);
@@ -24,10 +44,10 @@ var max = _data_items.length;
 var cloud_draw = function(words, bounds) {
     statusText.style("display", "none");
     var scale = bounds ? Math.min(
-        _width / Math.abs(bounds[1].x - _width / 2),
-        _width / Math.abs(bounds[0].x - _width / 2),
-        _height / Math.abs(bounds[1].y - _height / 2),
-        _height / Math.abs(bounds[0].y - _height / 2)) / 2 : 1;
+        _vis_width / Math.abs(bounds[1].x - _vis_width / 2),
+        _vis_width / Math.abs(bounds[0].x - _vis_width / 2),
+        _vis_height / Math.abs(bounds[1].y - _vis_height / 2),
+        _vis_height / Math.abs(bounds[0].y - _vis_height / 2)) / 2 : 1;
 
     var text = vis.selectAll("text")
         .data(words, function(d) { return d.text; });
@@ -47,15 +67,14 @@ var cloud_draw = function(words, bounds) {
         .style("opacity", _font_opacity);
 
     text.style("font-family", function(d){ return d.font; })
-        .style("fill", function(d){ return color(d.text); })
+        .style("fill", function(d){ return color_map.get(d.text); })
         .text(function(d){ return d.text; });
 };
         
-var vis = container.append("g").attr("transform", "translate(" + [_width >> 1, _height >> 1] + ")");
+var vis = container.append("g").attr("transform", "translate(" + [_vis_width >> 1, _vis_height >> 1] + ")");
 
 var layout = wordcloud()
-    //.timeInterval({{ time_interval }})
-    .size([_width - _padding.left - _padding.right, _height - _padding.top - _padding.bottom])
+    .size([_vis_width, _vis_height])
     .font(_typeface)
     .fontSize(function(d) { return fontSize(fn_count(d)); })
     .text(fn_name)
@@ -69,3 +88,4 @@ statusText.style("display", null);
 layout.stop().words(_data_items).start();
 
 
+console.log('DONE 2')

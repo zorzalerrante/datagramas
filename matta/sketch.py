@@ -19,7 +19,8 @@ def _load_template(filename):
 
     with open(filename, 'r') as f:
         code = f.read()
-        return code
+        # the lambda is to avoid template caching
+        return (code, filename, lambda *a, **k: False)
 
 SRC_DIR = os.path.dirname(os.path.realpath(__file__))
 env = jinja2.environment.Environment()
