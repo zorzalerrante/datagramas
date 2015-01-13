@@ -189,6 +189,7 @@ __wordcloud_args = {
         'padding': {'left': 0, 'top': 0, 'right': 0, 'bottom': 0},
         'typeface': 'Arial',
         'font_size': 12,
+        'font_weight': 'normal',
         'font_scale': 'sqrt',
         'min_font_size': 8,
         'max_font_size': 64,

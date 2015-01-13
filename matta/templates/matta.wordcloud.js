@@ -67,6 +67,7 @@ var cloud_draw = function(words, bounds) {
         .style("opacity", _font_opacity);
 
     text.style("font-family", function(d){ return d.font; })
+        .style("font-weight", _font_weight)
         .style("fill", function(d){ return color_map.get(d.text); })
         .text(function(d){ return d.text; });
 };
@@ -76,6 +77,7 @@ var vis = container.append("g").attr("transform", "translate(" + [_vis_width >> 
 var layout = wordcloud()
     .size([_vis_width, _vis_height])
     .font(_typeface)
+    .fontWeight(_font_weight)
     .fontSize(function(d) { return fontSize(fn_count(d)); })
     .text(fn_name)
     .rotate(_rotation)
