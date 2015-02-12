@@ -20,10 +20,15 @@ if (_color_scale_domain != null) {
 console.log('color scale', color_scale.range(), _color_scale_domain, _color_scale_range);
 
 var fn_color = function(d) {
+    /**
+     * If a color scale is specified, and the datum has at least three members, then we use the color scale.
+     * Otherwise we assume that the third member is a color.
+     * If there are only two members, we pick a random color based on the word itself.
+     */
     if (_color_scale_domain != null) {
         return color_scale(d.length > 2 ? d[2] : d[1]);
     }
-    return color_scale(d[0]);
+    return d.length > 2 ? d[2] : color_scale(d[0]);
 };
 
 var color_map = d3.map();
