@@ -36,8 +36,12 @@ class MattaJSONEncoder(json.JSONEncoder):
             return obj.item()
         elif isinstance(obj, nx.Graph) or isinstance(obj, nx.DiGraph):
             if nx.is_tree(obj):
-                # NOTE: the root must be the first node added. otherwise it won't work
-                return json_graph.tree_data(obj, obj.nodes_iter().next())
+                # NOTE: there must be a root graph attribute, or the root must be the first node added.
+                # otherwise it won't work
+                if 'root' in obj.graph:
+                    return json_graph.tree_data(obj, obj.graph['root'])
+                else:
+                    return json_graph.tree_data(obj, obj.nodes_iter().next())
             else:
                 return json_graph.node_link_data(obj)
         elif isinstance(obj, pd.DataFrame):
