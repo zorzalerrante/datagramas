@@ -112,10 +112,23 @@ class sketch(object):
             with open(style, mode) as f:
                 f.write(env.get_template(self.configuration['visualization_css']).render(**self.configuration))
 
+sketch_doc_string_template = jinja2.Template('''{{ summary }}
 
-def build_sketch(defaults, opt_process=None):
+Data Arguments:{% for key, value in data.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}
+
+{% if variables %}Keyword Arguments:
+{% for key, value in variables.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}{% endif %}
+
+{% if options %}Sketch Arguments:
+{% for key, value in options.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}{% endif %}
+''')
+
+def build_sketch(default_args, opt_process=None):
     def sketch_fn(**kwargs):
-        sketch_args = copy.deepcopy(defaults)
+        sketch_args = copy.deepcopy(default_args)
 
         for key, value in kwargs.iteritems():
             if key in sketch_args:
@@ -141,5 +154,10 @@ def build_sketch(defaults, opt_process=None):
             opt_process(sketch_args)
 
         return sketch(**sketch_args)
+
+    if not 'summary' in default_args:
+        default_args['summary'] = default_args['visualization_name']
+
+    sketch_fn.__doc__ = sketch_doc_string_template.render(default_args)
 
     return sketch_fn
