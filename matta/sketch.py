@@ -95,8 +95,18 @@ class sketch(object):
         return template.render(**repr_args)
 
     def _ipython_display_(self):
+        '''
+        Automatically displays the sketch when returned on a notebook cell.
+        '''
+        self.show()
+
+    def show(self):
+        '''
+        Forces display of the sketch on the notebook.
+        '''
         rendered = self._render_('base.html')
         display_html(HTML(rendered))
+        return None
 
     def scaffold(self, filename=None, define_js_module=True, style=None, append=False, author_comment=None):
         rendered = self._render_('scaffold.js', define_js_module=define_js_module, author_comment=author_comment)
@@ -114,7 +124,8 @@ class sketch(object):
 
 sketch_doc_string_template = jinja2.Template('''{{ summary }}
 
-Data Arguments:{% for key, value in data.iteritems() %}{{ key }} -- (default: {{ value }})
+Data Arguments:
+{% for key, value in data.iteritems() %}{{ key }} -- (default: {{ value }})
 {% endfor %}
 
 {% if variables %}Keyword Arguments:
