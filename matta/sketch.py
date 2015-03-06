@@ -35,13 +35,10 @@ class MattaJSONEncoder(json.JSONEncoder):
         elif isinstance(obj, np.generic):
             return obj.item()
         elif isinstance(obj, nx.Graph) or isinstance(obj, nx.DiGraph):
-            if nx.is_tree(obj):
+            if nx.is_tree(obj) and 'root' in obj.graph:
                 # NOTE: there must be a root graph attribute, or the root must be the first node added.
                 # otherwise it won't work
-                if 'root' in obj.graph:
-                    return json_graph.tree_data(obj, obj.graph['root'])
-                else:
-                    return json_graph.tree_data(obj, obj.nodes_iter().next())
+                return json_graph.tree_data(obj, obj.graph['root'])
             else:
                 return json_graph.node_link_data(obj)
         elif isinstance(obj, pd.DataFrame):
@@ -101,8 +98,8 @@ class sketch(object):
         rendered = self._render_('base.html')
         display_html(HTML(rendered))
 
-    def scaffold(self, filename=None, define_js_module=True, style=None, append=False):
-        rendered = self._render_('scaffold.js', define_js_module=define_js_module)
+    def scaffold(self, filename=None, define_js_module=True, style=None, append=False, author_comment=None):
+        rendered = self._render_('scaffold.js', define_js_module=define_js_module, author_comment=author_comment)
 
         if filename is None:
             return rendered
