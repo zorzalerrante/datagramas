@@ -10,12 +10,22 @@ var mark_g;
 var projection;
 var graph_g;
 
-if (_feature_name == null) {
-    _feature_name = d3.keys(_data_geometry.objects)[0];
-}
 
-var geometry = topojson.feature(_data_geometry, _data_geometry.objects[_feature_name]);
-console.log('geometry', geometry);
+var geometry = null;
+
+if (_data_geometry != null) {
+    if (_feature_name == null) {
+        _feature_name = d3.keys(_data_geometry.objects)[0];
+    }
+
+    geometry = topojson.feature(_data_geometry, _data_geometry.objects[_feature_name]);
+    console.log('geometry', geometry);
+} else if (_data_geojson != null) {
+    geometry = _data_geojson;
+} else {
+    // kaboom
+    return;
+}
 
 var available_ids = d3.set();
 geometry.features.forEach(function(d) {
@@ -221,7 +231,6 @@ var draw_topojson = function() {
     if (_data_graph != null) {
         if (!_data_graph.hasOwnProperty('__matta_prepared__') || _data_graph['__matta_prepared__'] == false) {
             matta.prepare_graph(_data_graph);
-            _data_graph['__matta_prepared__'] = true;
         }
 
         var node_positions = d3.map();
