@@ -269,13 +269,20 @@ var draw_topojson = function() {
 
         node.exit().remove();
 
+        // the link color scale if needed
+        var link_threshold;
+        if (_link_color_scale_domain != null) {
+            link_threshold = d3.scale.threshold()
+                .domain(_link_color_scale_domain)
+                .range(_link_color_scale_range);
+        } else {
+            link_threshold = d3.functor(_link_color);
+        }
+
         {% if options.graph_bundle_links %}
             if (!_data_graph.hasOwnProperty('bundled')) {
-                // the bundling library requires x and y members in each node
+                // NOTE: the bundling library requires x and y members in each node
                 _data_graph.nodes.forEach(function(d) {
-                    //var pos = node_positions.get(d.id);
-                    //d.x = pos[0];
-                    //d.y = pos[1];
                     d.x = d[_mark_position[0]];
                     d.y = d[_mark_position[1]];
                 });
@@ -292,7 +299,7 @@ var draw_topojson = function() {
                 _data_graph.bundled = fbundling();
             }
 
-            _data_graph.bundled.forEach(function(bundle) {
+            _data_graph.bundled.forEach(function(bundle, i) {
                 bundle.forEach(function(p) {
                     {% if not options.leaflet %}
                         var projected = projection([p.y, p.x]);
@@ -304,8 +311,6 @@ var draw_topojson = function() {
                     p.screen_y = projected[1];
                 });
             });
-
-            console.log('bundle', _data_graph.bundled);
 
             line.interpolate("linear");
             console.log(_data_graph.bundled);
@@ -322,11 +327,17 @@ var draw_topojson = function() {
 
             link.attr({
                 'd': bundled_line,
-                'stroke': _link_color,
+                'stroke': function(d, i) {
+                    var l = d.__graph_edge__;
+                    //if (i == 0) console.log(d, d.__graph_edge__, i, l);
+                    //console.log('stroke', d, link_threshold(d[_link_color_value]))
+                    return link_threshold(l.hasOwnProperty(_link_color_value) ? l[_link_color_value] : null);
+                },
                 'fill': 'none',
                 'opacity': _link_opacity,
                 'stroke-width': _link_width,
             });
+            console.log('number of links', _data_graph.links.length);
 
             link.exit()
                 .remove();
@@ -343,7 +354,9 @@ var draw_topojson = function() {
                         var parts = [d.source, d.target];
                         return line(parts);
                     },
-                    'stroke': _link_color,
+                    'stroke': function(d) {
+                        return link_threshold(d.hasOwnProperty(_link_color_value) ? d[_link_color_value] : null);
+                    },
                     'fill': 'none',
                     'opacity': _link_opacity,
                     'stroke-width': _link_width,

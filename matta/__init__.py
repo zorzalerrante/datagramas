@@ -97,15 +97,16 @@ __topojson_args = {
     'figure_id': None,
     'container_type': 'div',
     'data': {
+        'geojson': None,
         'geometry': None,
         'area_dataframe': None,
         'mark_dataframe': None,
-        'graph': None,
+        'graph': None
     },
     'options': {
         'leaflet': False,
         'background_color': False,
-        'graph_bundle_links': False,
+        'graph_bundle_links': False
     },
     'variables': {
         'width': 960,
@@ -155,6 +156,9 @@ __topojson_args = {
         'link_color': 'steelblue',
         'link_opacity': 0.25,
         'link_width': 1,
+        'link_color_value': 'weight',
+        'link_color_scale_domain': None,
+        'link_color_scale_range': None,
     },
     'read_only': {'L', 'map'}
 }
@@ -325,7 +329,7 @@ __force_directed_args = {
         'padding': {'left': 30, 'top': 30, 'right': 30, 'bottom': 30},
         'force_gravity': 0.1,
         'force_charge': -30,
-        'link_distance': 30,
+        'link_distance': 150,
         'link_strength': 1,
         'charge_distance': 1000,
         'friction': 0.9,
