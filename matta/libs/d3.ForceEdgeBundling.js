@@ -6,6 +6,7 @@ Author: Corneliu S. (github.com/upphiminn)
 
 Modifications:
 * now uses the graph format from Matta's prepare_graph.
+* when building subdivision points, we keep a reference to the original edge, to recover any possible edge attributes
 */
 define("force_edge_bundling",
   ["d3"],
@@ -81,13 +82,16 @@ define("force_edge_bundling",
 		/*** Initialization Methods ***/
 		function initialize_edge_subdivisions()
 		{
-			for(var i = 0; i < data_edges.length; i++)
-			 if(P_initial == 1)
-				subdivision_points_for_edge[i] = []; //0 subdivisions
-			 else{
-			 	subdivision_points_for_edge[i] = [];
-				subdivision_points_for_edge[i].push(data_edges[i].source);
-				subdivision_points_for_edge[i].push(data_edges[i].target);
+			 for(var i = 0; i < data_edges.length; i++) {
+                 if (P_initial == 1) {
+                     subdivision_points_for_edge[i] = []; //0 subdivisions
+                 } else {
+                     subdivision_points_for_edge[i] = [];
+                     subdivision_points_for_edge[i].push(data_edges[i].source);
+                     subdivision_points_for_edge[i].push(data_edges[i].target);
+                }
+                // we keep a reference to the original edge, to recover any possible edge attributes
+                subdivision_points_for_edge[i].__graph_edge__ = data_edges[i];
 			}
 		}
 
@@ -206,6 +210,8 @@ define("force_edge_bundling",
 					}
 					new_subdivision_points.push(data_edges[e_idx].target); //target
 					subdivision_points_for_edge[e_idx] = new_subdivision_points;
+					// we keep a reference to the original edge, to recover any possible edge attributes
+                    subdivision_points_for_edge[e_idx].__graph_edge__ = data_edges[e_idx];
 				}
 			}
 		}
