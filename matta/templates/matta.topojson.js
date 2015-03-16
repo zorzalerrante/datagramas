@@ -81,7 +81,8 @@ var draw_topojson = function() {
                 'x': function(d) { return path.centroid(d)[0]; },
                 'y': function(d) { return path.centroid(d)[1]; },
                 'font-size': _label_font_size,
-                'fill': _label
+                'fill': _label,
+                'text-anchor': 'middle'
             })
             .text(function(d) { return d.properties[_label]; });
     }
