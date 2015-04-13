@@ -1,6 +1,6 @@
 import networkx as nx
 
-def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None):
+def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None, properties_fn=None):
     '''
     Creates a GeoJSon structure with a point for each row of the DataFrame.
 
@@ -15,7 +15,7 @@ def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None):
     }
 
     for idx, row in df.iterrows():
-        geojson['features'].append({
+        feature = {
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
@@ -25,7 +25,12 @@ def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None):
                 'id': idx if idx_col is None else row[idx_col]
             },
             'id': idx if idx_col is None else row[idx_col]
-        })
+        }
+
+        if callable(properties_fn):
+            feature['properties'].update(properties_fn(idx, row))
+
+        geojson['features'].append(feature)
 
     return geojson
 
@@ -70,10 +75,12 @@ def dataframe_to_graph(df, src_col, dst_col, edge_col='weight', src_label_format
         else:
             e_attrs = {}
 
-        if callable(edge_attrs):
+        if edge_attrs and callable(edge_attrs):
             attrs = edge_attrs(row[src_col], row[dst_col], row)
             if attrs:
                 e_attrs.update(attrs)
+        elif edge_attrs:
+            e_attrs.update({k: row[k] for k in edge_attrs})
 
         graph.add_edge(src, dst, **e_attrs)
 

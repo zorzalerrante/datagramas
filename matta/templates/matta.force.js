@@ -86,15 +86,17 @@ node.enter()
             .attr('stroke-width', 2)
             .attr('fill', d['color']);
 
-        d3.select(this).append('text')
-            .attr('class', 'node-label')
-            .attr('x', ratio)
-            .attr('y', ratio)
-            .attr('dy', '0.35em')
-            .attr('text-anchor', 'middle')
-            .attr('font-size', _font_size)
-            .attr('fill', 'black')
-            .text(d[_node_id]);
+        if (_node_labels == true) {
+            d3.select(this).append('text')
+                .attr('class', 'node-label')
+                .attr('x', ratio)
+                .attr('y', ratio)
+                .attr('dy', '0.35em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', _font_size)
+                .attr('fill', 'black')
+                .text(d[_node_id]);
+        }
     });
 
 node.exit()

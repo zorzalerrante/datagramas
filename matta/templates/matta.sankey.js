@@ -26,8 +26,6 @@ if (_link_color_scale_range) {
     sankey_height -= 50;
 }
 
-console.log('sankey size', sankey_width, sankey_height);
-
 var sankey_svg;
 var links_g;
 var nodes_g;
@@ -66,8 +64,12 @@ var link = links_g.selectAll("path.link")
     .data(_data_graph.links)
     
 link.enter().append("path")
-    .attr("class", "link")
-    .style({
+    .attr("class", "link");
+
+link.exit()
+    .remove();
+
+link.style({
         'stroke-width': function(d){ return Math.max(1, d.dy); },
         'opacity': _link_opacity,
         'stroke': _link_color,
@@ -76,7 +78,7 @@ link.enter().append("path")
     .sort(function(a, b){ return b.dy - a.dy; });
 
 link.attr("d", sankey_path);
-link.call(matta.styler('stroke', 'color'))
+link.call(matta.styler('stroke', 'color'));
 
 if (_link_color_scale_range) {
     var scale_container;
@@ -93,24 +95,23 @@ if (_link_color_scale_range) {
         .height(_link_color_scale_height)
         .title(_link_color_scale_title);
 
-    threshold_legend.position({x: (_width - _link_color_scale_width) * 0.5, y: _height - 50})
+    threshold_legend.position({x: (_width - _link_color_scale_width) * 0.5, y: _height - 50});
 
     var threshold = d3.scale.threshold()
         .domain(_link_color_scale_domain)
         .range(_link_color_scale_range);
 
-    console.log('threshold', threshold, threshold.domain(), threshold.range());
-
     scale_container.data([threshold]).call(threshold_legend);
-
     link.style('stroke', function(d) { return threshold(d[_link_color_variable]); });
 }
 
 var node = nodes_g.selectAll("g.node")
-    .data(_data_graph.nodes)
+    .data(_data_graph.nodes);
     
 node.enter().append("g")
-    .attr("class", "node")
+    .attr("class", "node");
+
+node.exit().remove();
 
 node.attr("transform", function(d){  return "translate(" + d.x + "," + d.y + ")"; });
 
@@ -136,11 +137,4 @@ node.append("text")
     .attr("x", 6 + layout.nodeWidth())
     .attr("text-anchor", "start");
 
-
-if (_node_label != null) {
-    node.selectAll("text").text(function (d) {
-        return d[_node_label];
-    });
-}
-
-
+node.selectAll('text').call(matta.labeler(_node_label));

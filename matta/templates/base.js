@@ -1,11 +1,13 @@
 
 /**
+ * {% if author_comment %}{{ author_comment }}{% endif %}
  * mod_{{ visualization_name }} was scaffolded using matta - https://github.com/carnby/matta
  * Variables that start with an underscore (_) are passed as arguments in Python.
  * Variables that start with _data are data parameters of the visualization, and expected to be given as datum.
  *
  * For instance, d3.select('#figure').datum({'graph': a_json_graph, 'dataframe': a_json_dataframe}).call(visualization)
  * will fill the variables _data_graph and _data_dataframe.
+ *
  */
 
 var matta_{{ visualization_name }} = function() {
@@ -118,8 +120,11 @@ var matta_{{ visualization_name }} = function() {
     {% endif %}
 
     {% if options.events %}
-        return d3.rebind(func_{{ visualization_name }}, _dispatcher, 'on');
-    {% else %}
-        return func_{{ visualization_name }};
+        {% for event in options.events %}
+            d3.rebind(func_{{ visualization_name }}, _dispatcher, '{{ event }}');
+        {% endfor %}
+        d3.rebind(func_{{ visualization_name }}, _dispatcher, 'on');
     {% endif %}
+
+    return func_{{ visualization_name }};
 };
