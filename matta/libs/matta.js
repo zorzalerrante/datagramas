@@ -112,7 +112,6 @@ define("matta", ["d3"], function(d3) {
          * Displays a symbol legend for bubble charts.
          */
         var position = {x: 0, y: 0};
-        var width = 300;
 
         var symbol_legend = function(sel) {
             console.log('selection', sel);
@@ -125,9 +124,6 @@ define("matta", ["d3"], function(d3) {
                         .classed('axis symbol-legend', true);
                 }
 
-                var range = d.range();
-                var domain = d.domain()
-                var scale_size = range[1] * 2.05;
                 var ticks = d.ticks(4).filter(function(tick) { return tick > 0; });
                 var max_r = d(d3.max(ticks));
 
@@ -170,7 +166,7 @@ define("matta", ["d3"], function(d3) {
                 label.attr({
                     x: 0.0 + max_r + 10,
                     y: function(tick) { return max_r - 2.0 * d(tick); },
-                    dy: '0.35em',
+                    dy: '0.35em'
                     })
                     .text(function(d) { return d; });
 
@@ -188,11 +184,11 @@ define("matta", ["d3"], function(d3) {
                         x1: 0.0,
                         x2: 0.0 + max_r + 8,
                         y1: function(tick) { return max_r - 2.0 * d(tick); },
-                        y2: function(tick) { return max_r - 2.0 * d(tick); },
+                        y2: function(tick) { return max_r - 2.0 * d(tick); }
                     }).style({
                         'stroke': '#444',
                         'stroke-width': 1,
-                        'opacity': 0.75,
+                        'opacity': 0.75
                     });
 
                 line.exit()
@@ -262,9 +258,11 @@ define("matta", ["d3"], function(d3) {
                     .attr("width", function(d) { return x(d[1]) - x(d[0]); })
                     .style("fill", function(d) { return color_scale(d[0]); });
 
-                g.call(xAxis).append("text")
-                    .attr({
-                        'class': 'caption',
+                g.call(xAxis);
+
+                var caption = g.selectAll('text.caption').data([title]);
+                caption.enter().append('text').classed('caption', true);
+                caption.attr({
                         'y': -6,
                         'font-size': font_size
                     })
