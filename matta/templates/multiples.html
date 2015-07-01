@@ -1,0 +1,51 @@
+<style>
+{% if visualization_css %}
+    {{ visualization_css }}
+{% endif %}
+</style>
+
+<div id="{{ vis_uuid }}"></div>
+
+<script type="text/javascript">
+$(function() {
+    var main = function (matta_{{ visualization_name }}, {{ requirements|join(', ') }}) {
+        if (d3.select('#{{ figure_id }}').empty()) {
+            d3.select('#{{ vis_uuid }}')
+                .append('div')
+                .attr('id', '{{ figure_id }}');
+        }
+
+        var facets = {{ facets }};
+        console.log('facets', facets);
+
+        var charts = d3.select('#{{ figure_id }}')
+            .selectAll('div.small-multiples')
+            .data(facets);
+
+        charts.enter()
+            .append('div')
+            .classed('small-multiples', true);
+
+        charts.exit()
+            .remove();
+
+        charts.each(function(d, i) {
+            console.log('facet', i, d);
+            var chart = matta_{{ visualization_name }}();
+
+            d3.select(this)
+                .style({'width': chart.width(), 'height': chart.height()})
+                .call(chart);
+
+            d3.select(this).append('p').text(d['__matta_facet_name__'] + ': ' + d['__matta_facet_row_value__']);
+
+            console.log('cuac?');
+        });
+    };
+
+    require(["{{ requirements|join('", "') }}"], function ({{ requirements|join(', ') }}) {
+        {% include 'base.js' %}
+        main(matta_{{ visualization_name }}, {{ requirements|join(', ') }});
+    });
+});
+</script>

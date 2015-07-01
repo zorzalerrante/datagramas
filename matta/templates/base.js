@@ -1,11 +1,13 @@
 
 /**
- * mod_{{ visualization_name }} was scaffolded using matta
+ * {% if author_comment %}{{ author_comment }}{% endif %}
+ * mod_{{ visualization_name }} was scaffolded using matta - https://github.com/carnby/matta
  * Variables that start with an underscore (_) are passed as arguments in Python.
  * Variables that start with _data are data parameters of the visualization, and expected to be given as datum.
  *
  * For instance, d3.select('#figure').datum({'graph': a_json_graph, 'dataframe': a_json_dataframe}).call(visualization)
  * will fill the variables _data_graph and _data_dataframe.
+ *
  */
 
 var matta_{{ visualization_name }} = function() {
@@ -14,6 +16,10 @@ var matta_{{ visualization_name }} = function() {
             func_{{ visualization_name }}.{{ var_name }}(__data__.{{ var_name }});
         {% endfor %}
     };
+
+    {% if options.events %}
+        var _dispatcher = d3.dispatch('{{ options.events|join('\', \'') }}');
+    {% endif %}
 
     var func_{{ visualization_name }} = function (selection) {
         console.log('selection', selection);
@@ -25,12 +31,13 @@ var matta_{{ visualization_name }} = function() {
             __fill_data__(__data__);
 
             var container = null;
+            var figure_dom_element = this;
 
-            if (d3.select(this).select("{{ container_type }}.{{ visualization_name }}-container").empty()) {
+            if (d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container').empty()) {
                 {% if container_type == 'svg' %}
-                    var svg = d3.select(this).append("svg")
-                        .attr("width", _width)
-                        .attr("height", _height)
+                    var svg = d3.select(this).append('svg')
+                        .attr('width', _width)
+                        .attr('height', _height)
                         .attr('class', '{{ visualization_name }}-container');
 
                     {% if options.background_color %}
@@ -40,22 +47,24 @@ var matta_{{ visualization_name }} = function() {
                             .attr('fill', '{{ options.background_color }}');
                     {% endif %}
 
-                    container = svg.append("g")
+                    container = svg.append('g')
                         .classed('{{ visualization_name }}-container', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
 
                 {% elif container_type == 'div' %}
-                    var div = d3.select(this).append("div")
+                    var div = d3.select(this).append('div')
                         .style({
+                            {% if not options.skip_figure_size %}
                             'width': _width + 'px',
                             'height': _height + 'px',
+                            {% endif %}
                             'position': 'relative',
                             'display': 'block'
                         })
                         .classed('{{ visualization_name }}-container', true);
 
                     {% if options.background_color %}
-                        div.style("background", '{{ options.background_color }}');
+                        div.style('background', '{{ options.background_color }}');
                     {% endif %}
 
                     container = div;
@@ -65,7 +74,7 @@ var matta_{{ visualization_name }} = function() {
                     return;
                 {% endif %}
             } else {
-                container = d3.select(this).select("{{ container_type }}.{{ visualization_name }}-container");
+                container = d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container');
             }
 
             console.log('container', container.node());
@@ -95,7 +104,7 @@ var matta_{{ visualization_name }} = function() {
         func_{{ visualization_name }}.{{ var_name }} = function(__) {
             if (arguments.length) {
                 _{{ var_name }} = __;
-                console.log('setted {{ var_name }}', _{{ var_name }});
+                console.log('set {{ var_name }}', _{{ var_name }});
                 return func_{{ visualization_name }};
             }
             return _{{ var_name }};
@@ -111,5 +120,13 @@ var matta_{{ visualization_name }} = function() {
         };
     {% endfor %}
     {% endif %}
+
+    {% if options.events %}
+        {% for event in options.events %}
+            d3.rebind(func_{{ visualization_name }}, _dispatcher, '{{ event }}');
+        {% endfor %}
+        d3.rebind(func_{{ visualization_name }}, _dispatcher, 'on');
+    {% endif %}
+
     return func_{{ visualization_name }};
 };

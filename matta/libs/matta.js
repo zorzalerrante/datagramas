@@ -7,8 +7,21 @@ define("matta", ["d3"], function(d3) {
         d3.select('head').append('link').attr({rel: 'stylesheet', href: url});
     };
 
-    // sets style attr only if the property exists in every object in the selection.
+    matta.move_to_front = function(selection) {
+        /**
+         * Makes all elements in the selection to be on front (over) other elements in the same group.
+         *
+         * Source: https://gist.github.com/trtg/3922684
+         */
+        selection.each(function(){
+            this.parentNode.appendChild(this);
+        });
+    };
+
     matta.styler = function(attr, property) {
+        /**
+         * Sets style attr only if the property exists in every object in the selection.
+         */
         return function(sel) {
             sel.each(function(d) {
                 if (d.hasOwnProperty(property)) {
@@ -18,10 +31,15 @@ define("matta", ["d3"], function(d3) {
         };
     };
     
-    matta.labeler = function() {
+    matta.labeler = function(property_name) {
+        /**
+         * Fills a text element using several predefined properties, or the specified property_name if needed.
+         */
         return function(sel) {
             sel.each(function(d) {
-                if (d.hasOwnProperty('label')) {
+                if (property_name !== null && d.hasOwnProperty(property_name)) {
+                    d3.select(this).text(d[property_name]);
+                } else if (d.hasOwnProperty('label')) {
                     d3.select(this).text(d.label);
                 } else if (d.hasOwnProperty('name')) {
                     d3.select(this).text(d.name);
@@ -32,8 +50,14 @@ define("matta", ["d3"], function(d3) {
         };
     };
 
-    // set's the expected structure for d3 to a networkx graph
     matta.prepare_graph = function(graph) {
+        /**
+         * Sets the expected structure on a NetworkX graph.
+         */
+        if (graph.hasOwnProperty('__matta_prepared__') && graph['__matta_prepared__'] == true) {
+            return;
+        }
+
         var node_map = d3.map();
 
         graph.nodes.forEach(function(d) {
@@ -56,30 +80,38 @@ define("matta", ["d3"], function(d3) {
             graph[d[0]] = d[1];
         });
 
+        graph['__matta_prepared__'] = true;
         console.log('prepared graph', graph);
     };
 
-    // helper function to build scales. in this way, in python we can define scales by name ('linear', 'sqrt', 'log') or exponent (e.g., 0.5).
     matta.scale = function(name) {
+        /**
+         * Helper function to build scales.
+         * In this way, in python we can define scales by name ('linear', 'sqrt', 'log') or exponent (e.g., 0.5).
+         */
         if (d3.scale.hasOwnProperty(name)) {
             return d3.scale[name]();
         }
 
         return d3.scale.pow().exponent(name);
     };
-    
-    // from Mike Bostock
+
     matta.fit_projection = function(width, height, bounding_box) {
+        /**
+         * Given width and height, and a bounding box, returns the projection parameters to fit the box into the screen.
+         * Based on http://bl.ocks.org/mbostock/4573883
+         */
         var b = bounding_box;
         var s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height);
         var t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
         return [s, t];
     };
 
-    // legends and labels
     matta.symbol_legend = function() {
+        /**
+         * Displays a symbol legend for bubble charts.
+         */
         var position = {x: 0, y: 0};
-        var width = 300;
 
         var symbol_legend = function(sel) {
             console.log('selection', sel);
@@ -92,9 +124,6 @@ define("matta", ["d3"], function(d3) {
                         .classed('axis symbol-legend', true);
                 }
 
-                var range = d.range();
-                var domain = d.domain()
-                var scale_size = range[1] * 2.05;
                 var ticks = d.ticks(4).filter(function(tick) { return tick > 0; });
                 var max_r = d(d3.max(ticks));
 
@@ -137,7 +166,7 @@ define("matta", ["d3"], function(d3) {
                 label.attr({
                     x: 0.0 + max_r + 10,
                     y: function(tick) { return max_r - 2.0 * d(tick); },
-                    dy: '0.35em',
+                    dy: '0.35em'
                     })
                     .text(function(d) { return d; });
 
@@ -155,11 +184,11 @@ define("matta", ["d3"], function(d3) {
                         x1: 0.0,
                         x2: 0.0 + max_r + 8,
                         y1: function(tick) { return max_r - 2.0 * d(tick); },
-                        y2: function(tick) { return max_r - 2.0 * d(tick); },
+                        y2: function(tick) { return max_r - 2.0 * d(tick); }
                     }).style({
                         'stroke': '#444',
                         'stroke-width': 1,
-                        'opacity': 0.75,
+                        'opacity': 0.75
                     });
 
                 line.exit()
@@ -178,9 +207,11 @@ define("matta", ["d3"], function(d3) {
         return symbol_legend;
     };
 
-    // threshold legend
-    // based on http://bl.ocks.org/mbostock/4573883
     matta.color_thresholds = function(){
+        /**
+         * Displays a threshold legend.
+         * Based on http://bl.ocks.org/mbostock/4573883
+         */
         var threshold_width = 200;
         var threshold_height = 8;
         var threshold_position = {x: 0, y: 0};
@@ -227,9 +258,11 @@ define("matta", ["d3"], function(d3) {
                     .attr("width", function(d) { return x(d[1]) - x(d[0]); })
                     .style("fill", function(d) { return color_scale(d[0]); });
 
-                g.call(xAxis).append("text")
-                    .attr({
-                        'class': 'caption',
+                g.call(xAxis);
+
+                var caption = g.selectAll('text.caption').data([title]);
+                caption.enter().append('text').classed('caption', true);
+                caption.attr({
                         'y': -6,
                         'font-size': font_size
                     })

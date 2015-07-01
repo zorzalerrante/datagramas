@@ -20,10 +20,15 @@ if (_color_scale_domain != null) {
 console.log('color scale', color_scale.range(), _color_scale_domain, _color_scale_range);
 
 var fn_color = function(d) {
+    /**
+     * If a color scale is specified, and the datum has at least three members, then we use the color scale.
+     * Otherwise we assume that the third member is a color.
+     * If there are only two members, we pick a random color based on the word itself.
+     */
     if (_color_scale_domain != null) {
         return color_scale(d.length > 2 ? d[2] : d[1]);
     }
-    return color_scale(d[0]);
+    return d.length > 2 ? d[2] : color_scale(d[0]);
 };
 
 var color_map = d3.map();
@@ -67,6 +72,7 @@ var cloud_draw = function(words, bounds) {
         .style("opacity", _font_opacity);
 
     text.style("font-family", function(d){ return d.font; })
+        .style("font-weight", _font_weight)
         .style("fill", function(d){ return color_map.get(d.text); })
         .text(function(d){ return d.text; });
 };
@@ -76,6 +82,7 @@ var vis = container.append("g").attr("transform", "translate(" + [_vis_width >> 
 var layout = wordcloud()
     .size([_vis_width, _vis_height])
     .font(_typeface)
+    .fontWeight(_font_weight)
     .fontSize(function(d) { return fontSize(fn_count(d)); })
     .text(fn_name)
     .rotate(_rotation)

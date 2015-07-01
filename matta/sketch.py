@@ -14,7 +14,7 @@ import json
 import copy
 
 def _load_template(filename):
-    if filename in ('base.js', 'base.html', 'scaffold.js'):
+    if filename in ('base.js', 'base.html', 'multiples.html', 'select-categories.html', 'scaffold.js'):
         filename = '{0}/templates/{1}'.format(SRC_DIR, filename)
 
     with open(filename, 'r') as f:
@@ -35,9 +35,10 @@ class MattaJSONEncoder(json.JSONEncoder):
         elif isinstance(obj, np.generic):
             return obj.item()
         elif isinstance(obj, nx.Graph) or isinstance(obj, nx.DiGraph):
-            if nx.is_tree(obj):
-                # NOTE: the root must be the first node added. otherwise it won't work
-                return json_graph.tree_data(obj, obj.nodes_iter().next())
+            if nx.is_tree(obj) and 'root' in obj.graph:
+                # NOTE: there must be a root graph attribute, or the root must be the first node added.
+                # otherwise it won't work
+                return json_graph.tree_data(obj, obj.graph['root'])
             else:
                 return json_graph.node_link_data(obj)
         elif isinstance(obj, pd.DataFrame):
@@ -65,6 +66,8 @@ class sketch(object):
         self.configuration['variables'] = valmap(_dump_json, self.configuration['variables'])
         self.configuration['__data_variables__'] = self.configuration['data'].keys()
         self.configuration['data'] = _dump_json(self.configuration['data'])
+        if 'facets' in self.configuration:
+            self.configuration['facets'] = _dump_json(self.configuration['facets'])
 
     def _render_(self, template_name, **extra_args):
         repr_args = merge(self.configuration.copy(), extra_args)
@@ -94,11 +97,29 @@ class sketch(object):
         return template.render(**repr_args)
 
     def _ipython_display_(self):
-        rendered = self._render_('base.html')
-        display_html(HTML(rendered))
+        '''
+        Automatically displays the sketch when returned on a notebook cell.
+        '''
+        self.show()
 
-    def scaffold(self, filename=None, define_js_module=True, style=None, append=False):
-        rendered = self._render_('scaffold.js', define_js_module=define_js_module)
+    def show(self, multiples=['small-multiples']):
+        '''
+        Forces display of the sketch on the notebook.
+        '''
+
+        if multiples == 'small-multiples':
+            template_name = 'multiples.html'
+        elif multiples == 'select-categories':
+            template_name = 'select-categories.html'
+        else:
+            template_name = 'base.html'
+            
+        rendered = self._render_(template_name)
+        display_html(HTML(rendered))
+        return None
+
+    def scaffold(self, filename=None, define_js_module=True, style=None, append=False, author_comment=None):
+        rendered = self._render_('scaffold.js', define_js_module=define_js_module, author_comment=author_comment)
 
         if filename is None:
             return rendered
@@ -111,15 +132,29 @@ class sketch(object):
             with open(style, mode) as f:
                 f.write(env.get_template(self.configuration['visualization_css']).render(**self.configuration))
 
+sketch_doc_string_template = jinja2.Template('''{{ summary }}
 
-def build_sketch(defaults, opt_process=None):
+Data Arguments:
+{% for key, value in data.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}
+
+{% if variables %}Keyword Arguments:
+{% for key, value in variables.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}{% endif %}
+
+{% if options %}Sketch Arguments:
+{% for key, value in options.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}{% endif %}
+''')
+
+def build_sketch(default_args, opt_process=None):
     def sketch_fn(**kwargs):
-        sketch_args = copy.deepcopy(defaults)
+        sketch_args = copy.deepcopy(default_args)
 
         for key, value in kwargs.iteritems():
             if key in sketch_args:
                 sketch_args[key] = value
-            if key in sketch_args['data']:
+            elif key in sketch_args['data']:
                 sketch_args['data'][key] = value
             elif key in sketch_args['options']:
                 if type(sketch_args['options'][key]) == dict:
@@ -131,7 +166,7 @@ def build_sketch(defaults, opt_process=None):
                     sketch_args['variables'][key].update(value)
                 else:
                     sketch_args['variables'][key] = value
-            elif key == 'figure_id':
+            elif key in ('figure_id', 'facets'):
                 sketch_args[key] = value
             else:
                 raise Exception('invalid argument: {0}'.format(key))
@@ -140,5 +175,11 @@ def build_sketch(defaults, opt_process=None):
             opt_process(sketch_args)
 
         return sketch(**sketch_args)
+
+    if not 'summary' in default_args:
+        default_args['summary'] = default_args['visualization_name']
+
+    sketch_fn.__doc__ = sketch_doc_string_template.render(default_args)
+    sketch_fn.variable_names = default_args['data'].keys()
 
     return sketch_fn
