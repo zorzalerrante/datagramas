@@ -22,6 +22,7 @@ $(function() {
         var data = {{ data }};
 
         d3.selectAll('#{{ figure_id }}')
+            .classed('matta_figure', true)
             .data([data])
             .call(vis_instance);
     };

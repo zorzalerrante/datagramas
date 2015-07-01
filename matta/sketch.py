@@ -14,7 +14,7 @@ import json
 import copy
 
 def _load_template(filename):
-    if filename in ('base.js', 'base.html', 'scaffold.js'):
+    if filename in ('base.js', 'base.html', 'multiples.html', 'select-categories.html', 'scaffold.js'):
         filename = '{0}/templates/{1}'.format(SRC_DIR, filename)
 
     with open(filename, 'r') as f:
@@ -66,6 +66,8 @@ class sketch(object):
         self.configuration['variables'] = valmap(_dump_json, self.configuration['variables'])
         self.configuration['__data_variables__'] = self.configuration['data'].keys()
         self.configuration['data'] = _dump_json(self.configuration['data'])
+        if 'facets' in self.configuration:
+            self.configuration['facets'] = _dump_json(self.configuration['facets'])
 
     def _render_(self, template_name, **extra_args):
         repr_args = merge(self.configuration.copy(), extra_args)
@@ -100,11 +102,19 @@ class sketch(object):
         '''
         self.show()
 
-    def show(self):
+    def show(self, multiples=['small-multiples']):
         '''
         Forces display of the sketch on the notebook.
         '''
-        rendered = self._render_('base.html')
+
+        if multiples == 'small-multiples':
+            template_name = 'multiples.html'
+        elif multiples == 'select-categories':
+            template_name = 'select-categories.html'
+        else:
+            template_name = 'base.html'
+            
+        rendered = self._render_(template_name)
         display_html(HTML(rendered))
         return None
 
@@ -144,7 +154,7 @@ def build_sketch(default_args, opt_process=None):
         for key, value in kwargs.iteritems():
             if key in sketch_args:
                 sketch_args[key] = value
-            if key in sketch_args['data']:
+            elif key in sketch_args['data']:
                 sketch_args['data'][key] = value
             elif key in sketch_args['options']:
                 if type(sketch_args['options'][key]) == dict:
@@ -156,7 +166,7 @@ def build_sketch(default_args, opt_process=None):
                     sketch_args['variables'][key].update(value)
                 else:
                     sketch_args['variables'][key] = value
-            elif key == 'figure_id':
+            elif key in ('figure_id', 'facets'):
                 sketch_args[key] = value
             else:
                 raise Exception('invalid argument: {0}'.format(key))
@@ -170,5 +180,6 @@ def build_sketch(default_args, opt_process=None):
         default_args['summary'] = default_args['visualization_name']
 
     sketch_fn.__doc__ = sketch_doc_string_template.render(default_args)
+    sketch_fn.variable_names = default_args['data'].keys()
 
     return sketch_fn

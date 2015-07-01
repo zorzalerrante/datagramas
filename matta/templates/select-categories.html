@@ -1,0 +1,58 @@
+<style>
+{% if visualization_css %}
+    {{ visualization_css }}
+{% endif %}
+</style>
+
+<div id="{{ vis_uuid }}">
+<select class="matta-select-facets form-control input-sm">
+</select>
+</div>
+
+<script type="text/javascript">
+$(function() {
+    var main = function (matta_{{ visualization_name }}, {{ requirements|join(', ') }}) {
+        if (d3.select('#{{ figure_id }}').empty()) {
+            d3.select('#{{ vis_uuid }}')
+                .append('div')
+                .attr('id', '{{ figure_id }}');
+        }
+
+        var facets = {{ facets }};
+        var current_facet = 0;
+        console.log('facets', facets);
+
+        var option = d3.select('#{{ vis_uuid }} select.matta-select-facets')
+            .selectAll('option')
+            .data(facets);
+            //.sort(function(a, b) { return d3.ascending(a, b); }));
+
+        option.enter()
+            .append('option')
+            .attr('value', function(d, i) { return i; })
+            .text(function(d) {
+                console.log('select option', d);
+                return d['__matta_facet_row_value__']; });
+
+        var chart = matta_{{ visualization_name }}();
+
+        d3.select('#{{ vis_uuid }} select.matta-select-facets').on('change', function(e) {
+            console.log(e, this, this.value);
+            current_facet = +this.value;
+
+            d3.select('#{{ figure_id }}')
+                .datum(facets[current_facet])
+                .call(chart);
+        });
+
+        d3.select('#{{ figure_id }}')
+            .datum(facets[current_facet])
+            .call(chart);
+    };
+
+    require(["{{ requirements|join('", "') }}"], function ({{ requirements|join(', ') }}) {
+        {% include 'base.js' %}
+        main(matta_{{ visualization_name }}, {{ requirements|join(', ') }});
+    });
+});
+</script>

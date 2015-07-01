@@ -54,8 +54,10 @@ var matta_{{ visualization_name }} = function() {
                 {% elif container_type == 'div' %}
                     var div = d3.select(this).append('div')
                         .style({
+                            {% if not options.skip_figure_size %}
                             'width': _width + 'px',
                             'height': _height + 'px',
+                            {% endif %}
                             'position': 'relative',
                             'display': 'block'
                         })

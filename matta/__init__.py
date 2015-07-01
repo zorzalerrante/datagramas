@@ -2,7 +2,7 @@ from sketch import build_sketch, _dump_json
 from IPython.display import HTML
 from scipy.constants import golden_ratio
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
 
 def init_javascript(path='/static/custom/matta'):
     '''
@@ -21,7 +21,8 @@ def init_javascript(path='/static/custom/matta'):
         'force_edge_bundling': '{0}/d3.ForceEdgeBundling'.format(path),
         'topojson': '{0}/topojson'.format(path),
         'leaflet': '{0}/leaflet-0.7.3/leaflet-src'.format(path),
-        'colajs': '{0}/cola.v3.min'.format(path)
+        'colajs': '{0}/cola.v3.min'.format(path),
+        'cartogram': '{0}/cartogram '.format(path),
     }
 
     template = '''
@@ -121,14 +122,12 @@ __topojson_args = {
         'fill_color': 'none',
         'area_feature_name': None,
         'area_value': None,
-        'area_color_legend': True,
+        'area_color_scale': None,
         'area_opacity': 0.75,
-        'area_color_scale_width': 150,
-        'area_color_scale_height': 8,
-        'area_color_scale_extent': [0.0, 1.0],
-        'area_color_scale_domain': None,
-        'area_color_scale_title': None,
-        'area_color_scale_range': None,
+        'area_legend': True,
+        'area_legend_width': 150,
+        'area_legend_height': 8,
+        'area_legend_title': None,
         'mark_value': None,
         'mark_scale': 0.5,
         'mark_feature_name': None,
@@ -146,8 +145,10 @@ __topojson_args = {
         'leaflet_default_zoom': 11,
         'leaflet_center': None,
         'bounding_box': None,
-        'leaflet_map_link': "&copy; OpenStreetMap Contributors",
-        'leaflet_tile_layer': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'leaflet_map_link': '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+        'leaflet_tile_layer': 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        'graph_feature_name': None,
+        'graph_position': ['lat', 'lon'],
         'force_edge_step_size': 0.0015,
         'force_edge_compatibility_threshold': 0.75,
         'force_edge_bundling_stiffness': 0.1,
@@ -293,6 +294,7 @@ __parallel_coordinates_args = {
     },
     'options': {
         'background_color': None,
+        'events': ['click']
     },
     'variables': {
         'width': 960,
@@ -300,7 +302,8 @@ __parallel_coordinates_args = {
         'padding': {'left': 30, 'top': 30, 'right': 30, 'bottom': 30},
         'line_opacity': 0.75,
         'exclude': [],
-        'line_stroke_width': 1.0
+        'line_stroke_width': 1.0,
+        'labels': None
     },
 }
 
@@ -351,3 +354,50 @@ __force_directed_args = {
 
 force_directed = build_sketch(__force_directed_args)
 
+# Cartogram
+__cartogram_args = {
+    'requirements': ['d3', 'matta', 'topojson', 'cartogram'],
+    'visualization_name': 'matta.cartogram',
+    'figure_id': None,
+    'container_type': 'svg',
+    'data': {
+        'geojson': None,
+        'geometry': None,
+        'area_dataframe': None,
+    },
+    'options': {
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 0, 'top': 0, 'right': 0, 'bottom': 0},
+        'feature_id': 'id',
+        'label': True,
+        'legend': False,
+        'path_opacity': 1.0,
+        'path_stroke': 'gray',
+        'path_stroke_width': 1.0,
+        'fill_color': 'none',
+        'cartogram_value': 'value',
+        'area_feature_name': 'id',
+        'area_value': None,
+        'area_color_legend': True,
+        'area_color_scale': None,
+        'area_legend_width': 150,
+        'area_legend_height': 8,
+        'area_legend_title': None,
+        'area_opacity': 0.75,
+        'area_transition_delay': 0,
+        'feature_name': None,
+        'label_font_size': 10,
+        'label_color': 'black',
+        'leaflet_default_zoom': 11,
+        'leaflet_center': None,
+        'bounding_box': None,
+        'na_value': 0.000001
+    },
+    'read_only': {
+    }
+}
+
+cartogram = build_sketch(__cartogram_args)
