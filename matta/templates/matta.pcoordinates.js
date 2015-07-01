@@ -81,7 +81,11 @@ foreground = pc_g.append("svg:g")
 .attr('opacity', _line_opacity)
 .attr('stroke', color)
 .attr('stroke-width', _line_stroke_width)
-.attr('fill', 'none');
+.attr('fill', 'none')
+.on('click', function(d) {
+    _dispatcher.click.apply(this, arguments);
+    console.log(this, arguments);
+});
 
 // Add a group element for each dimension.
 var g = pc_g.selectAll(".dimension")
@@ -114,9 +118,10 @@ var g = pc_g.selectAll(".dimension")
 g.append("svg:g")
     .attr("class", "axis")
     .each(function(d, i) {
-        d3.select(this).call(axis.scale(y[d]));
-        d3.select(this).selectAll('line').style({'display': 'block', 'stroke': '#000', 'fill': 'none', 'shape-rendering': 'crispEdges'});
-        d3.select(this).selectAll('path').style({'display': 'block', 'stroke': '#000', 'fill': 'none', 'shape-rendering': 'crispEdges'});
+        var self = d3.select(this);
+        self.call(axis.scale(y[d]));
+        self.selectAll('line').style({'display': 'block', 'stroke': '#000', 'fill': 'none', 'shape-rendering': 'crispEdges'});
+        self.selectAll('path').style({'display': 'block', 'stroke': '#000', 'fill': 'none', 'shape-rendering': 'crispEdges'});
     })
 .append("svg:text")
     .attr("text-anchor", "middle")
@@ -127,11 +132,12 @@ g.append("svg:g")
 g.append("svg:g")
     .attr("class", "brush")
     .each(function(d, i) {
-        d3.select(this)
-            .call(y[d].brush = d3.svg.brush().y(y[d])
+        var self = d3.select(this);
+
+        self.call(y[d].brush = d3.svg.brush().y(y[d])
                 .on("brush", brush)
             );
-        d3.select(this).select('.extent').style({
+        self.select('.extent').style({
           'fill-opacity': 0.3,
           'stroke': '#fff',
           'shape-rendering': 'crispEdges'
