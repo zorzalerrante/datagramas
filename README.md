@@ -22,7 +22,7 @@ The following notebooks serve as examples/documentation:
 ### In the Wild
 
   * [2|S: Los Dos Santiagos](http://dcc.uchile.cl/~egraells/abrecl/): this is a project where we scaffolded many
-    visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile. 
+    visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile.
     All visualizations in the page were scaffolded with matta! _Note: the site is in spanish_.
 
 
@@ -53,7 +53,8 @@ require.config({
         "tile": "/static/custom/matta/d3.geo.tile",
         "force_edge_bundling": "/static/custom/matta/d3.ForceEdgeBundling",
         "topojson": "/static/custom/matta/topojson",
-        "d3": "/static/custom/matta/d3.v3.min"
+        "d3": "/static/custom/matta/d3.v3.min",
+        "cola": "/static/cola.v3.min'"
     }
 });
 
@@ -72,16 +73,25 @@ require(['matta'], function(matta) {
  * [d3.ForceEdgeBundling](https://github.com/upphiminn/d3.ForceBundle)
  * [topojson 1.6.18](https://github.com/mbostock/topojson)
  * [leaflet](http://leafletjs.com)
+ * [cola.js](http://marvl.infotech.monash.edu/webcola/)
+ * [cartogram.js](http://prag.ma/code/d3-cartogram/)
+
+Note that some libraries were modified to be able to load them through `require.js`.
+
+### Next Steps
+
+ * Clear and update requirements.txt.
+ * Make visualizations modular.
+ * Clarify licenses of bundled libraries.
+ * Allow to export template versions of visualizations+data (e.g., export to gist).
+ * Build a plug-in structure to help developers to define behavior at visualization events.
 
 ### Credits
 
- * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- many code from them is being used, reused and abused
-   (not to mention `d3.js` itself). Thanks!
- * [Force Bundle Layout](https://github.com/upphiminn/d3.ForceBundle)
- * All the great devs behind IPython, numpy, scipy, pandas, networkx, seaborn, d3.js...
+ * [Jason Davies](http://www.jasondavies.com/) and [Mike Bostock](http://bost.ocks.org/mike/) -- code from them is being used, reused and abused (not to mention `d3.js` itself). Thanks!
+ * All the great devs behind IPython, numpy, scipy, pandas, networkx, seaborn, d3.js... and, of course, behind the bundled libraries referenced above.
 
 ### About the name
 
 See [Roberto Matta @ Wikipedia](https://en.wikipedia.org/wiki/Roberto_Matta).
 He has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/photos/83257355@N00/1352671334/?rb=1) (_desarrolladores_ is spanish for developers).
-
