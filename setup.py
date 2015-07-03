@@ -1,5 +1,8 @@
 from distutils.core import setup
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setup(name = "matta",
     version = "0.9.0",
     description = 'Ready-made visualization usage and scaffolding for your IPython notebook',
@@ -10,6 +13,7 @@ setup(name = "matta",
     packages = ['matta'],
     package_dir = {'matta': 'matta'},
     include_package_data = True,
+    install_requires = requirements,
     package_data = {
         'matta' : [
             'LICENSE',
