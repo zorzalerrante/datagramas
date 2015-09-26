@@ -17,8 +17,10 @@ setup(name = "matta",
     package_data = {
         'matta' : [
             'LICENSE',
-            'libs/*',
-            'libs/leaflet-0.7.3/*',
+            'libs/*.js',
+            'libs/*.css',
+            'libs/leaflet-0.7.3/*.js',
+            'libs/leaflet-0.7.3/*.css',
             'libs/leaflet-0.7.3/images/*',
             'templates/base.html',
             'templates/base.js',
