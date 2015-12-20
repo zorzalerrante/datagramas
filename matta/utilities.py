@@ -1,14 +1,14 @@
 import networkx as nx
 
 def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None, properties_fn=None):
-    '''
+    """
     Creates a GeoJSon structure with a point for each row of the DataFrame.
 
     :param df:
     :param lat_col: latitude column (y)
     :param lon_col: longitude column (x)
     :return: GeoJSON list of points.
-    '''
+    """
     geojson = {
         'type': 'FeatureCollection',
         'features': []
@@ -36,7 +36,7 @@ def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None, 
 
 def dataframe_to_graph(df, src_col, dst_col, edge_col='weight', src_label_format=None, dst_label_format=None,
                        node_attrs=None, edge_attrs=None):
-    '''
+    """
     Generates a NetworkX graph from a Pandas DataFrame.
 
     :param df: the source dataframe.
@@ -47,7 +47,7 @@ def dataframe_to_graph(df, src_col, dst_col, edge_col='weight', src_label_format
     :param dst_label_format: a function that runs over the edge target (e.g., to add a suffix or prefix to the name)
     :param edge_attrs: a function that runs over the edge source (e.g., to add a suffix or prefix to the name)
     :return:
-    '''
+    """
     graph = nx.DiGraph()
 
     if src_label_format is None:
@@ -64,10 +64,10 @@ def dataframe_to_graph(df, src_col, dst_col, edge_col='weight', src_label_format
         dst = dst_label_format(row[dst_col])
 
         if not graph.has_node(src):
-            attrs = node_attrs(row[src_col], row) if callable(node_attrs) else None
+            attrs = node_attrs(row[src_col], row, 'source') if callable(node_attrs) else None
             graph.add_node(src, attr_dict=attrs)
         if not graph.has_node(dst):
-            attrs = node_attrs(row[dst_col], row) if callable(node_attrs) else None
+            attrs = node_attrs(row[dst_col], row, 'target') if callable(node_attrs) else None
             graph.add_node(dst, attr_dict=attrs)
             
         if edge_col:

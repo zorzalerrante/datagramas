@@ -1,0 +1,40 @@
+VISUALIZATION_CONFIG = {
+    'requirements': ['d3', 'matta', 'sankey'],
+    'visualization_name': 'matta.flow',
+    'figure_id': None,
+    'container_type': 'svg',
+    'data': {
+        'graph': None,
+    },
+    'options': {
+        'horizontal': False,
+        'background_color': None,
+        'link_color_legend_enabled': False,
+    },
+    'variables': {
+        'width': 960,
+        'height': 500,
+        'padding': {'left': 150, 'top': 10, 'right': 150, 'bottom': 10},
+        'font_size': 10,
+        'layout_iterations': 64,
+        'link_opacity': 0.95,
+        'node_opacity': 0.85,
+        #'node_color': 'steelblue',
+        'node_width': 15,
+        'node_padding': 10,
+        'node_label': 'name',
+        'link_weight': 'weight',
+        #'source_color': None,
+        #'source_color_value': 'steelblue',
+        #'target_color': None,
+        #'target_color_value': 'steelblue', 'link_color': None,
+        #'link_color_value': '#efefef',
+        #'link_color_legend_height': 8,
+        #'link_color_legend_width': 200,
+        #'link_color_legend_title': None,
+    },
+    'colorables': {
+        'node_color': {'value': 'steelblue', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None},
+        'link_color': {'value': '#efefef', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None},
+    }
+}

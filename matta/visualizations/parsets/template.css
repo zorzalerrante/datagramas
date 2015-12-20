@@ -1,0 +1,33 @@
+#{{ vis_uuid }} .dimension { cursor: ns-resize; }
+#{{ vis_uuid }} .category { cursor: ew-resize; }
+#{{ vis_uuid }} .dimension tspan.name { font-size: 1.5em; fill: #333; font-weight: bold; }
+#{{ vis_uuid }} .dimension tspan.sort { fill: #000; cursor: pointer; opacity: 0; }
+#{{ vis_uuid }} .dimension tspan.sort:hover { fill: #333; }
+#{{ vis_uuid }} .dimension:hover tspan.name { fill: #000; }
+#{{ vis_uuid }} .dimension:hover tspan.sort { opacity: 1; }
+#{{ vis_uuid }} .dimension line { stroke: #000; }
+#{{ vis_uuid }} .dimension rect { stroke: none; fill-opacity: 0; }
+#{{ vis_uuid }} .dimension > rect, .category-background { fill: #fff; }
+#{{ vis_uuid }} .dimension > rect { display: none; }
+#{{ vis_uuid }} .category:hover rect { fill-opacity: .3; }
+#{{ vis_uuid }} .dimension:hover > rect { fill-opacity: .3; }
+#{{ vis_uuid }} .ribbon path { stroke-opacity: 0; fill-opacity: .5; }
+#{{ vis_uuid }} .ribbon path.active { fill-opacity: .9; }
+#{{ vis_uuid }} .ribbon-mouse path { fill-opacity: 0; }
+
+#{{ vis_uuid }} .category-0 { fill: #1f77b4; stroke: #1f77b4; }
+#{{ vis_uuid }} .category-1 { fill: #ff7f0e; stroke: #ff7f0e; }
+#{{ vis_uuid }} .category-2 { fill: #2ca02c; stroke: #2ca02c; }
+#{{ vis_uuid }} .category-3 { fill: #d62728; stroke: #d62728; }
+#{{ vis_uuid }} .category-4 { fill: #9467bd; stroke: #9467bd; }
+#{{ vis_uuid }} .category-5 { fill: #8c564b; stroke: #8c564b; }
+#{{ vis_uuid }} .category-6 { fill: #e377c2; stroke: #e377c2; }
+#{{ vis_uuid }} .category-7 { fill: #7f7f7f; stroke: #7f7f7f; }
+#{{ vis_uuid }} .category-8 { fill: #bcbd22; stroke: #bcbd22; }
+#{{ vis_uuid }} .category-9 { fill: #17becf; stroke: #17becf; }
+
+#{{ vis_uuid }} .tooltip {
+  background-color: rgba(242, 242, 242, .6);
+  position: absolute;
+  padding: 5px;
+}

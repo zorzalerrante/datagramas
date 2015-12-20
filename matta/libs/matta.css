@@ -28,6 +28,10 @@
   shape-rendering: crispEdges;
 }
 
+g.legendCells circle.swatch {
+    fill: '#efefef';
+}
+
 /*
  * We need the following because the IPython/Jupyter notebook makes SVGs invisible in our case.
  */
@@ -36,3 +40,4 @@
 div.output_area div.matta_figure div.leaflet_container svg {
   max-width: unset !important;
 }
+
