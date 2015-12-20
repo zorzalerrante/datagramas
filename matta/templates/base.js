@@ -1,7 +1,7 @@
 
 /**
  * {% if author_comment %}{{ author_comment }}{% endif %}
- * mod_{{ visualization_name }} was scaffolded using matta - https://github.com/carnby/matta
+ * {{ visualization_name }} was scaffolded using matta - https://github.com/carnby/matta
  * Variables that start with an underscore (_) are passed as arguments in Python.
  * Variables that start with _data are data parameters of the visualization, and expected to be given as datum.
  *
@@ -11,14 +11,20 @@
  */
 
 var matta_{{ visualization_name }} = function() {
+    "use strict";
+
     var __fill_data__ = function(__data__) {
         {% for var_name in __data_variables__ %}
-            func_{{ visualization_name }}.{{ var_name }}(__data__.{{ var_name }});
+            if (__data__.hasOwnProperty('{{ var_name }}')) {
+                func_{{ visualization_name }}.{{ var_name }}(__data__.{{ var_name }});
+            } else {
+                func_{{ visualization_name }}.{{ var_name }}(null);
+            }
         {% endfor %}
     };
 
     {% if options.events %}
-        var _dispatcher = d3.dispatch('{{ options.events|join('\', \'') }}');
+        var dispatch = d3.dispatch('{{ options.events|join('\', \'') }}');
     {% endif %}
 
     var func_{{ visualization_name }} = function (selection) {
@@ -32,6 +38,7 @@ var matta_{{ visualization_name }} = function() {
 
             var container = null;
             var figure_dom_element = this;
+            var container_legends = null;
 
             if (d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container').empty()) {
                 {% if container_type == 'svg' %}
@@ -51,7 +58,12 @@ var matta_{{ visualization_name }} = function() {
                         .classed('{{ visualization_name }}-container', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
 
+                    container_legends = svg.append('g')
+                        .classed('{{ visualization_name }}-legends', true)
+                        .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
+
                 {% elif container_type == 'div' %}
+                    // NOTE: a vis. of this kind should manage the legends container (which should be an svg) by itself.
                     var div = d3.select(this).append('div')
                         .style({
                             {% if not options.skip_figure_size %}
@@ -79,10 +91,11 @@ var matta_{{ visualization_name }} = function() {
 
             console.log('container', container.node());
 
+            {% if functions_js %}{{ functions_js }}{% endif %}
+
             {% if visualization_js %}
                 {{ visualization_js }}
             {% endif %}
-
         });
     };
 
@@ -112,6 +125,49 @@ var matta_{{ visualization_name }} = function() {
     {% endfor %}
     {% endif %}
 
+    var active_legends = [];
+
+    {% include 'base.colorables.js' %}
+    {% include 'base.attributes.js' %}
+
+
+    // TODO: make a more flexible system.
+    // TODO: Allow "outer", "middle" and "center"
+    var allowed_locations = [['upper', 'right'], ['lower', 'right'], ['lower', 'left'], ['upper', 'left']];
+
+    var draw_legends = function(container_legends, width, height) {
+        /**
+         * This function draws the current legends into the specified container.
+         */
+
+        var legend = container_legends.selectAll('g.matta-legend')
+            .data(active_legends, function(d) { return d['variable']; });
+
+        legend.enter()
+            .append('g')
+            .attr('class', function(d) { return 'matta-legend'; });
+
+        legend.exit()
+            .remove();
+
+        legend.each(function(d, i) {
+            console.log('each legend', d, this);
+            var self = d3.select(this);
+            self.call(d);
+            var bbox = self.node().getBBox();
+            console.log('bbox', bbox);
+
+            // hack to avoid problems with too many legends.
+            var location = allowed_locations[i % allowed_locations.length];
+            console.log('location', location);
+
+            var pos_y = location[0] === 'upper' ? 15 : height - 15 - bbox.height;
+            var pos_x = location[1] === 'left' ? 15 : width - 15 - bbox.width;
+            console.log(pos_x, pos_y);
+            self.attr('transform', 'translate(' + [pos_x, pos_y] + ')');
+        });
+    };
+
     {% if read_only %}
     {% for var_name in read_only %}
         var _{{ var_name }} = null;
@@ -121,11 +177,18 @@ var matta_{{ visualization_name }} = function() {
     {% endfor %}
     {% endif %}
 
+    {% if auxiliary %}
+        var auxiliary = {};
+    {% for var_name in auxiliary %}
+        auxiliary.{{ var_name }} = null;
+    {% endfor %}
+    {% endif %}
+
     {% if options.events %}
         {% for event in options.events %}
-            d3.rebind(func_{{ visualization_name }}, _dispatcher, '{{ event }}');
+            d3.rebind(func_{{ visualization_name }}, dispatch, '{{ event }}');
         {% endfor %}
-        d3.rebind(func_{{ visualization_name }}, _dispatcher, 'on');
+        d3.rebind(func_{{ visualization_name }}, dispatch, 'on');
     {% endif %}
 
     return func_{{ visualization_name }};

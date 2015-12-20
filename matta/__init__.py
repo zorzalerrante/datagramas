@@ -4,7 +4,7 @@ from IPython.display import HTML
 from .sketch import build_sketch, _dump_json
 from .libraries import init_javascript_code
 
-__version__ = '1.0.0'
+__version__ = '1.0.0-pre'
 
 def init_javascript(path='/static/custom/matta'):
     """
