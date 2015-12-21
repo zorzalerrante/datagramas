@@ -2,6 +2,8 @@
 
 A library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org).
 
+**NOTE** We are currently updating this library to the 1.0.0 version. Please help us test if installation works ok :)
+
 ## Overview
 
 matta is a visualization development support tool and a visualization library at the same time. Initially I implemented
@@ -207,11 +209,14 @@ with at least some of the following elements:
   
   Following the `force` example, in Python you can specify a `node_ratio` when calling the visualization in three ways
   (note that `g` is a `NetworkX` graph):
-      * `matta.force(graph=g, node_ratio=15)`: all nodes will have ratio 15.
-      * `matta.force(graph=g, node_ratio='size')`: node ratio will be proportional to the `size` node attribute,
-      using the default minimum and maximum values, and the default scale. 
-      * `matta.force(graph=g, node_ratio={'value': 'size', 'scale': 'sqrt', 'max': 32})`: node ratio will be proportional to the 
-      `size` node attribute, with `sqrt` scale, with a maximum value of 32. 
+  
+  `matta.force(graph=g, node_ratio=15)`: all nodes will have ratio 15. 
+  
+  `matta.force(graph=g, node_ratio='size')`: node ratio will be proportional to the `size` node attribute,
+  using the default minimum and maximum values, and the default scale. 
+  
+  `matta.force(graph=g, node_ratio={'value': 'size', 'scale': 'sqrt', 'max': 32})`: node ratio will be proportional to the 
+  `size` node attribute, with `sqrt` scale, with a maximum value of 32. 
    
   * Colorables: these are mappings between data attributes and colors. For instance, the `force` visualization defines
   the following colorables:
@@ -223,11 +228,12 @@ with at least some of the following elements:
   ```
   In a similar way to mapped attributes, you can specify a color directly, or by overriding the dictionary for each
   colorable: 
-      
-      * `matta.force(graph=g, link_color='purple)`: all links will be colored purple.
-      * `matta.force(graph=g, link_color={'value': 'source.bipartite', 'palette': 'Set2', 'scale': 'ordinal'})`: all links
-      will be colored according to the `source.bipartite` attribute of each link (this translates to the `bipartite`
-      attribute of the source node of each link - yes, you can use dot notation).
+  
+  `matta.force(graph=g, link_color='purple)`: all links will be colored purple.
+  
+  `matta.force(graph=g, link_color={'value': 'source.bipartite', 'palette': 'Set2', 'scale': 'ordinal'})`: all links
+  will be colored according to the `source.bipartite` attribute of each link (this translates to the `bipartite`
+  attribute of the source node of each link - yes, you can use dot notation).
   
   Note that, given that we cannot discriminate between a color string and a column/attribute name, we
   need to specify the arguments dictionary. 
