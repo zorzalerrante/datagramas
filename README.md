@@ -102,9 +102,28 @@ note that you will need to include the "/static" prefix to those URLs. This code
 
 ## Visualization Modules
 
-All visualizations in matta are specified as Python modules. A module is composed of a configuration and several template and style files. 
+All visualizations in matta are specified as Python modules (see the `matta/visualizations` folder). A module is composed of a configuration and several template and style files. 
 
-The **"Let's <del>Make</del> Scaffold a Barchart"** example notebook contains a basic visualization that showcases some of these concepts.
+The **[Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)** 
+example notebook contains a basic visualization that showcases some of these concepts.
+
+Currently, matta includes the following visualizations (in alphabetical order):
+
+  * `cartogram` of a TopoJSON topology and a pandas DataFrame.
+  * `cartography` of a Topo/GeoJSON geometry, pandas DataFrames for marks and area colors, and NetworkX graphs over the map. 
+  * `circlepack` of a NetworkX tree.
+  * `flow` (Sankey diagram) of a NetworkX graph.
+  * `force` directed layout of a NetworkX graph.
+  * `parcoords` - parallel coordinates with a pandas DataFrame.
+  * `parsets` - parallel sets with a pandas DataFrame.
+  * `treemap` of a NetworkX tree.
+  * `wordcloud` of a pandas DataFrame.
+
+The **[Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)** notebook 
+showcases the usage of most of those visualizations.
+
+The **[Let's Make a Map Too (and a Cartogram!)](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)**
+notebook showcases the usage of `cartogram` and `cartography`.
 
 ### Template Files
 
