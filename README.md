@@ -4,6 +4,8 @@ A library for your Jupyter Notebook that helps you to use and scaffold visualiza
 
 **NOTE** We are currently updating this library to the 1.0.0 version. Please help us test if installation works ok :)
 
+![matta screenshot](examples/matta_screenshot.png?raw=true "A Screenshot of matta in action")
+
 ## Overview
 
 matta is a visualization development support tool and a visualization library at the same time. Initially I implemented
