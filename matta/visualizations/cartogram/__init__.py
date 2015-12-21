@@ -34,9 +34,11 @@ VISUALIZATION_CONFIG = {
     'colorables': {
         'area_color': {'value': None, 'palette': None, 'scale': None, 'n_colors': None, 'legend': False},
     },
-    'read_only': {
-    },
     'auxiliary': {
-        'path', 'projection', 'original_geometry', 'area_colors', 'area_carto_values'
+        'path',
+        'projection',
+        'original_geometry',
+        'area_colors',
+        'area_carto_values'
     }
 }

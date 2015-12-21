@@ -1,8 +1,13 @@
 
 // we do this because the d3-sankey layout has hardcoded the value variable.
+matta.prepare_graph(_data_graph);
+
 _data_graph.links.forEach(function(d) {
-    d.value = d[_link_weight];
+    d.value = matta.get(d, _link_weight);
 });
+
+_node_color_update_scale_func(_data_graph.nodes);
+_link_color_update_scale_func(_data_graph.links);
 
 {% if options.horizontal %}
     var sankey_width = _height - _padding.left - _padding.right;
@@ -52,17 +57,6 @@ if (!container.select('g.color-legend').empty()) {
     scale_container = container.append('g').classed('color-legend legend', true);
 }
 
-/*
-if (link_color_fn !== null && link_color_legend !== null) {
-    sankey_height -= 50;
-    link_color_legend.position({'x': sankey_width * 0.5, 'y': sankey_height + 10})
-}
-*/
-
-/*
-{{ 'scale_container'|draw_color_scale('link_color') }}
-*/
-
 var layout = sankey()
     .nodeWidth(_node_width)
     .nodePadding(_node_padding)
@@ -74,9 +68,6 @@ layout
     .nodes(_data_graph.nodes)
     .links(_data_graph.links)
     .layout(_layout_iterations);
-
-_node_color_update_scale_func(_data_graph.nodes);
-_link_color_update_scale_func(_data_graph.links);
 
 var link = links_g.selectAll("path.link")
     .data(_data_graph.links);
@@ -96,7 +87,6 @@ link.style({
     .sort(function(a, b){ return b.dy - a.dy; });
 
 link.attr("d", sankey_path);
-link.call(matta.styler('stroke', 'color'));
 link.style('stroke', _link_color);
 
 var node = nodes_g.selectAll("g.node")
@@ -117,8 +107,6 @@ node.append("rect")
         'fill': _node_color,
         'fill-opacity': _node_opacity
     });
-    
-node.call(matta.styler('fill', 'color'));
 
 node.append("text")
     .attr("x", -6)
@@ -127,8 +115,8 @@ node.append("text")
     .attr("text-anchor", "end")
     .attr("transform", null)
     .attr('font-size', _font_size)
+    .text(function(d) { return matta.get(d, _node_label); })
     .filter(function(d){ return d.x > sankey_width / 2; })
     .attr("x", 6 + layout.nodeWidth())
     .attr("text-anchor", "start");
 
-node.selectAll('text').call(matta.labeler(_node_label));

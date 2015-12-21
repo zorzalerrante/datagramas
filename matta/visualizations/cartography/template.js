@@ -7,15 +7,15 @@ var path_g;
 var mark_g;
 var graph_g;
 
-
+console.log(__data__, _data_geometry);
 if (_data_geometry !== null && typeof _data_geometry === 'object') {
     if (_feature_name === null) {
         _feature_name = d3.keys(_data_geometry.objects)[0];
     }
 
-    _geometry = topojson.feature(_data_geometry, _data_geometry.objects[_feature_name]);
+    auxiliary.geometry = topojson.feature(_data_geometry, _data_geometry.objects[_feature_name]);
 } else if (_data_geojson !== null && typeof _data_geojson === 'object') {
-    _geometry = _data_geojson;
+    auxiliary.geometry = _data_geojson;
 } else {
     // kaboom
     throw 'No valid geography found.';
@@ -23,17 +23,13 @@ if (_data_geometry !== null && typeof _data_geometry === 'object') {
 
 auxiliary.available_feature_ids = d3.set();
 
-_geometry.features.forEach(function(d) {
+auxiliary.geometry.features.forEach(function(d) {
     auxiliary.available_feature_ids.add(d[_feature_id]);
 });
 
 console.log('available ids', auxiliary.available_feature_ids);
 
 var path = d3.geo.path().pointRadius(5);
-
-// TODO: Fix legends.
-//var legend = matta.symbol_legend();
-//.position({x: 20 + _mark_max_ratio, y: _height - 20});
 
 {% if options.leaflet %}
     // code adapted from https://github.com/mbostock/bost.ocks.org/blob/gh-pages/mike/leaflet/index.html#L131-171
@@ -92,7 +88,7 @@ var path = d3.geo.path().pointRadius(5);
 
     // Reposition the SVG to cover the features.
     var reset = function() {
-        var bounds = path.bounds(_geometry),
+        var bounds = path.bounds(auxiliary.geometry),
             topLeft = bounds[0],
             bottomRight = bounds[1];
 
@@ -108,7 +104,7 @@ var path = d3.geo.path().pointRadius(5);
     };
 
     path.projection(d3.geo.transform());
-    var map_bounds = path.bounds(_geometry);
+    var map_bounds = path.bounds(auxiliary.geometry);
     path.projection(_projection);
     console.log('bounds', map_bounds);
 
@@ -155,7 +151,7 @@ var path = d3.geo.path().pointRadius(5);
 
     path.projection(_projection);
 
-    var st = matta.fit_projection(map_width, map_height, path.bounds(_geometry));
+    var st = matta.fit_projection(map_width, map_height, path.bounds(auxiliary.geometry));
     _projection.scale(st[0]).translate(st[1]);
 
     filter_non_valid_marks();

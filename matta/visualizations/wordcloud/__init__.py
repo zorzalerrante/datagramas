@@ -5,7 +5,7 @@ VISUALIZATION_CONFIG = {
     'figure_id': None,
     'container_type': 'svg',
     'data': {
-        'items': None,
+        'dataframe': None,
     },
     'options': {
         'background_color': None,
@@ -17,16 +17,14 @@ VISUALIZATION_CONFIG = {
         'typeface': 'Arial',
         'font_weight': 'normal',
         'rotation': 0.0,
-        #'color_scale_width': 150,
-        #'color_scale_height': 8,
         'color': None,
-        'text': 0,
+        'text': None,
         'font_opacity': 1.0,
     },
     'attributes': {
-        'font_size': {'value': 1, 'min': 8, 'max': 64, 'scale': 'sqrt'},
+        'font_size': {'value': 18, 'min': 8, 'max': 64, 'scale': 'sqrt'},
     },
     'colorables': {
-        'font_color': {'value': 1, 'palette': None, 'scale': None, 'legend': False}
+        'font_color': {'value': 'grey', 'palette': None, 'scale': None, 'legend': False}
     }
 }

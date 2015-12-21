@@ -1,21 +1,36 @@
 # matta
 
-An artist for your IPython notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org).
+A library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org).
 
-Currently `matta` supports some visualizations that I needed to implement in my doctoral thesis.
-But the main idea is to have a generalizable template to build visualizations on.
+## Overview
 
-`matta` works with Python 2. Python 3 support is planned to be added at some point.
+matta is a visualization development support tool and a visualization library at the same time. Initially I implemented
+it to help me develop visualizations in the context of my doctoral thesis. I was researching the mixture of algorithms
+and visualizations, and therefore I was always iterating over algorithm and visualization design. 
 
-Contributions are welcome.
+Currently matta supports some visualizations that I needed to implement in my doctoral thesis.
+The main idea is to have a generalizable template to build visualizations on, and to be able to reuse the visualizations
+to explore data in the Jupyter Notebook.
+
+An important aspect of matta is that it works with standard scientific Python data-structures: pandas DataFrames and NetworkX graphs.
+By using matta to develop your visualization, you do not need to worry about data structures and formats. For instance,
+have you ever found an example visualization that seemed to be what you wanted, but the data structure used was arbitrarily
+chosen by the developer? And that structure was completely different from what you were using/expecting? 
+By using matta there are no arbitrary choices - you use DataFrames and specify which columns will
+be mapped to the visualization, and that's it.
+
+## Python Support
+
+matta works with Python 2.7. Python 3 support is planned to be added at some point (I have already started to migrate 
+some stuff by using `__future__` imports).
 
 ## Examples / Documentation
 
-Although there is no official documentation yet, the following notebooks serve as examples/documentation:
+In addition to this readme, the following notebooks serve as examples/documentation:
 
-  * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
-  * [Let's Make a Map Too](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
   * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
+  * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
+  * [Let's Make a Map Too (and a Cartogram!)](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
 
 ## Initialization / Installation
 
@@ -36,42 +51,41 @@ And finally, edit the `custom.js` file and add the following lines:
 
 ```javascript
 require.config({
-    shim: {
-        'cartogram': {
-            'deps': ['d3'],
-            'exports': 'd3.cartogram'
-        },
-        'parsets': {
-            'deps': ['d3'],
-            'exports': 'd3.parsets'
-        },
-        'cola': {
-            'deps': ['d3'],
-            'exports': 'cola'
-        },
-        'sankey': {
-            'deps': ['d3'],
-            'exports': 'd3.sankey'
-        },
-        'legend': {
-            'deps': ['d3'],
-            'exports': 'd3.legend'
-        }
-    },
     paths: {
-        "leaflet": "/custom/matta/leaflet-0.7.3/leaflet-src",
-        "cloud": "/custom/matta/d3-cloud/d3.layout.cloud",
-        "sankey": "/custom/matta/d3-sankey/sankey",
-        "matta": "/custom/matta/matta",
-        "tile": "/custom/matta/d3.geo.tile",
-        "force_edge_bundling": "/custom/matta/d3.ForceEdgeBundling",
-        "topojson": "/custom/matta/topojson/topojson.min",
-        "d3": "/custom/matta/d3/d3.min",
-        "cola": "/custom/matta/cola/cola.min",
-        "cartogram": "/custom/matta/d3-cartogram/cartogram-module",
-        'parsets': '/custom/matta/d3-parsets-1.2.4/d3.parsets',
-        'legend': '/custom/matta/d3-legend/d3-legend.min'
-    }
+          "sankey": "/custom/matta/d3-sankey/sankey", 
+          "cartogram": "/custom/matta/d3-cartogram/cartogram", 
+          "d3": "/custom/matta/d3/d3.min", 
+          "leaflet": "/custom/matta/leaflet/leaflet", 
+          "topojson": "/custom/matta/topojson/topojson.min", 
+          "parsets": "/custom/matta/d3-parsets-1.2.4/d3.parsets", 
+          "matta": "/custom/matta/matta", 
+          "force_edge_bundling": "/custom/matta/d3-force-bundling/d3.ForceEdgeBundling", 
+          "legend": "/custom/matta/d3-legend/d3-legend.min", 
+          "cloud": "/custom/matta/d3-cloud/d3.layout.cloud", 
+          "cola": "/custom/matta/cola/cola.min"
+        },
+    shim: {
+      "sankey": {
+        "exports": "d3.sankey", 
+        "deps": ["d3"]
+      }, 
+      "cartogram": {
+        "exports": "d3.cartogram", 
+        "deps": ["d3"]
+      }, 
+      "cola": {
+        "exports": "cola", 
+        "deps": ["d3"]
+      }, 
+      "parsets": {
+        "exports": "d3.parsets", 
+        "deps": ["d3"]
+      }, 
+      "legend": {
+        "exports": "d3.legend", 
+        "deps": ["d3"]
+      }
+    },
 });
 
 require(['matta'], function(matta) {
@@ -79,35 +93,192 @@ require(['matta'], function(matta) {
 });
 ```
 
-This will make IPython to load matta every time you load a notebook file. If you use an older version of IPython notebook,
-note that you will need to include the "/static" prefix to those URLs.
+This will make Jupyter to load matta every time you load a notebook file. If you use an older version of Jupyter Notebook,
+note that you will need to include the "/static" prefix to those URLs. This code can be generated by the function `matta.init_javascript_code(path='/custom/matta')`.
 
 ## Visualization Modules
 
-All visualization in matta are modules. A module is composed of a configuration and several template and style files. 
+All visualizations in matta are specified as Python modules. A module is composed of a configuration and several template and style files. 
 
-The **"Let's <del>Make</del> Scaffold a Barchart"** example notebook is a basic example of all these concepts.
-
-### Configuration
-
-  * Options
-  * Data
-  * Variables
-  * Auxiliary Variables
-  * Read-only Properties
-  * Mapped Attributes
-  * Colorables
-  * Extra Functions: PROCESS_CONFIG
+The **"Let's <del>Make</del> Scaffold a Barchart"** example notebook contains a basic visualization that showcases some of these concepts.
 
 ### Template Files
 
-  * template.js
-  * template.css
-  * functions.js
+The following are the template files rendered by matta:
+
+  * `template.js`: the main template of each visualization module. Think of this file as the body of a `draw()` function in 
+  a typical visualization module. 
+  * `template.css` (optional)
+  * `functions.js` (optional)
+
+When matta renders your visualization, it embeds those files into a bigger visualization that follows the [reusable 
+chart pattern](http://bost.ocks.org/mike/chart/) by Mike Bostock.
+
+### Configuration
+
+A visualization module must contain a dictionary named `VISUALIZATION_CONFIG` in its `__init__.py` file, 
+with at least some of the following elements:
+
+  * Options: these are values that influence how the visualization is rendered. For instance, the `cartography` visualization
+  has the following options:
+  ```python    
+  'options': {
+      'leaflet': False,
+      'background_color': False,
+      'graph_bundle_links': False
+  }
+  ```
+  When rendering, if you call `cartography(geometry=topojson)`, the geometry you specified will be rendered as any other
+  visualization: just a plain SVG with white background. But if you call `cartography(geometry=topojson, leaflet=True)`,
+  the visualization will be rendered as a slippy map using [leaflet](http://leafletjs.com).
+  
+  * Data: this element indicates which data variables will be available to the visualization. For instance, the `cartogram`
+  visualization has the following setup:
+  ```python
+  'data': {
+      'geometry': None,
+      'area_dataframe': None,
+  }
+  ```
+  This means that a cartogram can be called with a `TopoJSON` geometry (which you should load from a `.js` file) 
+  and a pandas DataFrame. In your visualization code, these variables will be available as `_data_geometry` and 
+  `_data_area_dataframe`.
+   
+  * Variables: the elements of this dictionary are directly translated into variables available in the template file.
+  For instance, in the `barchart` example available above, these are the variables:
+  ```python
+  'variables': {
+      'width': 960,
+      'height': 500,
+      'padding': {'left': 30, 'top': 20, 'right': 30, 'bottom': 30},
+      'x': 'x',
+      'y': 'y',
+      'y_axis_ticks': 10,
+      'y_label': None,
+      'rotate_label': True,
+  }
+  ```
+  All these variables are available in the template file, with an underscore appended (e.g., `_width`). Moreover,
+  you can modify them when rendering by using keyword arguments: `barchart(dataframe=df, x='letter', y='frequency')`. 
+  
+  * Auxiliary Variables: these are Javascript variables that are available to the template code, but are not 
+  reachable from Python nor the public JS interface. You can use them to mantain state in the visualization or to 
+  cache results. This is an example from the `cartography` visualization:
+  ```python
+    'auxiliary': {
+        # a set to save mark positions. since there are two possible sources of positions, we need to do this.
+        'mark_positions',
+        # the list of available features from the geometry source.
+        'available_feature_ids',
+        # the list of colors per area
+        'area_colors'
+    }  
+  ``` 
+  Those variables are available as `auxiliary.var_name` (e.g., `auxiliary.mark_positions`).
+  
+  * Read-only Properties: these are JS variables that are available in Javascript through getters. For instance, in the `cartography`
+  visualization you can have a Leaflet instance, among other variables:
+  ```python
+        'read_only': {
+        # leaflet
+        'L',
+        'map',
+        # the map projection. this could be used to add other things on top of the visualization.
+        'projection',
+        # here we save the geometry specified - it can be either GeoJSON or TopoJSON.
+        'geometry'
+    }
+  ```
+  
+   If your reusable chart is called `chart`, then, from Javascript, you can access those variables (e.g., `chart.L()`).
+ 
+  * Mapped Attributes: these are mappings between data attributes (e.g., a column in your dataframe) and visualization
+  attributes (e.g., the ratio of a circle). For instance, in the `force` visualization these are the mapped attributes:
+  ```python
+    'attributes': {
+        'node_ratio': {'min': 8, 'max': 16, 'value': None, 'scale': 'linear'},
+        'link_opacity': {'min': 0.5, 'max': 1.0, 'value': None, 'scale': 'linear'},
+        'link_width': {'min': 0.5, 'max': 1.0, 'value': None, 'scale': 'linear'},
+    }
+  ```
+  This means that, in JS, you will have a variable available named `_var_name` (e.g., `_node_ratio`). This variable 
+  will be a function that, when called with a datum, will return the corresponding value according to the range and
+  scale (which could be `linear`, `sqrt`, or a number - used with `d3.scale.pow()`) defined in the parameters.
+  
+  Following the `force` example, in Python you can specify a `node_ratio` when calling the visualization in three ways
+  (note that `g` is a `NetworkX` graph):
+    * `matta.force(graph=g, node_ratio=15)`: all nodes will have ratio 15.
+    * `matta.force(graph=g, node_ratio='size')`: node ratio will be proportional to the `size` node attribute,
+    using the default minimum and maximum values, and the default scale. 
+    * `matta.force(graph=g, node_ratio={'value': 'size', 'scale': 'sqrt', 'max': 32})`: node ratio will be proportional to the 
+    `size` node attribute, with `sqrt` scale, with a maximum value of 32. 
+   
+  * Colorables: these are mappings between data attributes and colors. For instance, the `force` visualization defines
+  the following colorables:
+  ```python
+    'colorables': {
+        'node_color': {'value': 'steelblue', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None},
+        'link_color': {'value': 'grey', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None}
+    }
+  ```
+  In a similar way to mapped attributes, you can specify a color directly, or by overriding the dictionary for each
+  colorable: 
+    * `matta.force(graph=g, link_color='purple)`: all links will be colored purple.
+    * `matta.force(graph=g, link_color={'value': 'source.bipartite', 'palette': 'Set2', 'scale': 'ordinal'})`: all links
+    will be colored according to the `source.bipartite` attribute of each link (this translates to the `bipartite`
+    attribute of the source node of each link - yes, you can use dot notation).
+  
+  Note that, given that we cannot discriminate between a color string and a column/attribute name, we
+  need to specify the arguments dictionary. 
+  
+  The palette name must be recognized by the function [`seaborn.color_palette`](http://stanford.edu/~mwaskom/software/seaborn/tutorial/color_palettes.html#building-color-palettes-with-color-palette).
+ 
+Here is an example of how nodes and links are rendered in their `template.js` file:
+ 
+```javascript
+var ratio = _node_ratio(d);
+d3.select(this).append('circle')
+    .attr('r', ratio)
+    .attr('cx', ratio)
+    .attr('cy', ratio)
+    .attr('stroke', 'grey')
+    .attr('stroke-width', 2)
+    .attr('fill', _node_color);
+```  
+    
+```javascript
+link.enter()
+    .append("line")
+    .classed('link', true)
+    .attr({
+        'stroke': _link_color,
+        'stroke-width': _link_width
+    });
+```  
+  
+### Extra Functions
+
+Your visualization's `__init__.py` file can define other functions. Meanwhile, matta supports the following one:
+
+  * `PROCESS_CONFIG(config)`: where `config` is the current instance of the `VISUALIZATION_CONFIG` dictionary. This is
+  used to handle dependencies. For instance, if you specify `leaflet=True` in `cartography`, leaflet is added as a 
+  dependency.
   
 ### Scaffolding
 
+Until now, we have explained how matta allows you to code and render visualizations. They are already usable on the Jupyter
+Notebook, but you want to export the visualization into a reusable chart that you can use in your projects. If so, 
+it's your lucky day! matta includes that functionality through a method called `scaffold`.
 
+For example, if you look at the `barchart` example you will find this notebook cell:
+
+```python
+barchart(x='letter', y='frequency').scaffold(filename='./scaffolded_barchart.js')
+```
+
+What this line does is to create a file named `scaffolded_barchart.js` which you can import into your projects. This 
+chart uses the reusable pattern mentioned in the introduction of this file. In the "In the wild" section at the end
+you can find a couple of links with scaffolded visualizations.
 
 ## Credits
 
@@ -128,25 +299,34 @@ It also contains snippets of code from:
 
  * [D3 Plus](http://d3plus.org/): we use the color text function.
 
-### Next Steps?
+## Next Steps?
 
  * Build a plug-in structure to define behavior at visualization events (e.g., tooltips, callbacks).
  * Facet data with small-multiples or visualization widgets.
  * Bundle a tooltip library (for instance, [d3-tip](https://github.com/Caged/d3-tip)).
  * Allow to export template versions of visualizations+data (e.g., export to gist).
 
-### About the name
+## About the name
 
 See [Roberto Matta @ Wikipedia](https://en.wikipedia.org/wiki/Roberto_Matta).
 He has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/photos/83257355@N00/1352671334/?rb=1) (_desarrolladores_ is spanish for developers).
 
-### In the Wild
+## In the Wild
 
   * [2|S: Los Dos Santiagos](http://dcc.uchile.cl/~egraells/abrecl/): this is a project where we scaffolded many
     visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile.
     All visualizations in the page were scaffolded with matta! _Note: the site is in spanish_.
-  * [Data Portraits](http://auroratwittera.cl/perfil/carnby/): this visualization was implemented in matta for my
+  * [Twitter Data Portraits](http://auroratwittera.cl/perfil/carnby/): this visualization was implemented in matta for my
   doctoral thesis. I needed a way to visualize Twitter profiles and the output of a recommender algorithm. Since the
   data used in the visualization was constantly changing (because algorithms were being developed), I needed a more 
   dynamic way to implement the visualization than always editing JS/HTML files and then reloading everything, 
   including re-execution of algorithms. 
+  
+## Versioning
+
+matta will use semantic versioning. We start with 1.0.0.
+
+## Testing
+
+There is no automated testing. However, the example notebooks pretty much cover everything. Feel free to contribute in
+this aspect!

@@ -15,7 +15,7 @@ var update_mark_positions = function() {
 
     // since we will use feature names, we compute positions
     if (_mark_feature_name !== null) {
-        _geometry.features.forEach(function(d) {
+        auxiliary.geometry.features.forEach(function(d) {
             var feat_id = matta.get(d, _feature_id);
             {% if not options.leaflet %}
             if (!auxiliary.mark_positions.has(feat_id)) {
@@ -133,7 +133,7 @@ var draw_graph = function() {
     var node_positions = d3.map();
 
     if (_graph_feature_name) {
-        _geometry.features.forEach(function(d) {
+        auxiliary.geometry.features.forEach(function(d) {
             var centroid = path.centroid(d);
             node_positions.set(matta.get(d, _graph_feature_name), centroid);
         });
@@ -331,7 +331,7 @@ var draw_areas = function(p) {
 
 var draw_topojson = function() {
     var p = path_g.selectAll('path')
-        .data(_geometry.features, function(d) {
+        .data(auxiliary.geometry.features, function(d) {
             //console.log(d, matta.get(d, _feature_id));
             return matta.get(d, _feature_id);
         });
@@ -356,7 +356,7 @@ var draw_topojson = function() {
 
     if (_label !== null) {
         var label = map_container.selectAll('text')
-            .data(_geometry.features, function(d, i) { return matta.get(d, _feature_id); });
+            .data(auxiliary.geometry.features, function(d, i) { return matta.get(d, _feature_id); });
 
         label.enter()
             .append('text');

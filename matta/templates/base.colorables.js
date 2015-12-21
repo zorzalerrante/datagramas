@@ -91,7 +91,7 @@
                     .useClass(false)
                     .scale(_{{ var_name }}_scale)
                     // TODO: this should be automatic or a colorable option
-                    //.labelFormat(d3.format('.3f'))
+                    .labelFormat(d3.format('.2f'))
                     .title(_{{ var_name }}_value);
 
             _{{ var_name }}_legend['variable'] = '{{ var_name }}';

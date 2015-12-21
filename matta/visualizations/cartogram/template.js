@@ -3,13 +3,12 @@ var map_width = _width;
 var map_height = _height;
 
 var map_container = null;
-var threshold_container;
 var path_g;
 var projection;
 var carto_obj;
 
 var geometry = null;
-
+console.log('cartogram', cartogram);
 if (_data_geometry != null) {
     console.log('data geom', _data_geometry.objects);
     console.log('feat name', _feature_name);
@@ -27,7 +26,7 @@ if (_data_geometry != null) {
 
 var available_ids = d3.set();
 geometry.features.forEach(function(d) {
-    available_ids.add(d[_feature_id]);
+    available_ids.add(matta.get(d, _feature_id));
 });
 
 console.log('available ids', available_ids);
@@ -37,7 +36,7 @@ auxiliary.path = d3.geo.path();
 var draw_topojson = function() {
     console.log('map container', map_container);
     var p = path_g.selectAll('path')
-        .data(geometry.features, function(d, i) { return d[_feature_id]; });
+        .data(geometry.features, function(d) { return matta.get(d, _feature_id); });
 
     p.enter()
         .append('path')
@@ -84,62 +83,33 @@ var draw_topojson = function() {
             .text(function(d) { return d[_feature_id]; });
     }
 
+    auxiliary.area_colors = d3.map();
+    _data_area_dataframe.forEach(function(d) {
+        auxiliary.area_colors.set(matta.get(d, _area_feature_name), _area_color(d));
+    });
 
-    console.log('dataframe', _data_area_dataframe);
+    console.log('area colors', auxiliary.area_colors);
 
-    if (_data_area_dataframe !== null){
+    p.each(function(d) {
+        if (auxiliary.area_colors.has(matta.get(d, _feature_id))) {
+            d3.select(this).attr({
+                'fill': auxiliary.area_colors.get(matta.get(d, _feature_id)),
+                'opacity': _area_opacity
+            });
+        }
+    });
 
-        auxiliary.area_colors = d3.map();
-        _data_area_dataframe.forEach(function(d) {
-            console.log('searching color for', d);
-
-                auxiliary.area_colors.set(matta.get(d, _area_feature_name), _area_color(d));
-                console.log('found', _area_color(d));
-
-        });
-
-        console.log('area colors', auxiliary.area_colors);
-
-        p.each(function(d) {
-            if (auxiliary.area_colors.has(matta.get(d, _feature_id))) {
-                d3.select(this).attr({
-                    'fill': auxiliary.area_colors.get(matta.get(d, _feature_id)),
-                    'opacity': _area_opacity
-                });
-            }
-        });
-
-        /*
-        //threshold_container.data([area_color]).call(area_color_legend);
-        {{ 'threshold_container'|draw_color_scale('area_color') }}
-        */
-
-    }
 };
 
 !function() {
     map_container = container;
-    /*
-    if (area_color_legend !== null) {
-        map_height -= _area_color_legend_height + 50;
-        threshold_legend.position({x: (map_width - _area_color_legend_width) * 0.5, y: map_height });
-    }
-    */
+
 
     path_g = map_container.select('g.geo-paths');
 
     if (path_g.empty()) {
         path_g = map_container.append('g').attr('class', 'geo-paths');
     }
-
-    /*
-    if (!container.select('g.threshold-legend').empty()) {
-        threshold_container = container.select('g.threshold-legend');
-    } else {
-        threshold_container = container.append('g').classed('threshold-legend', true);
-    }
-    console.log('threshold_container', threshold_container);
-    */
 
     auxiliary.projection = d3.geo.mercator()
         .center([0,0])
@@ -155,7 +125,7 @@ var draw_topojson = function() {
     auxiliary.area_carto_values = d3.map();
     _data_area_dataframe.forEach(function(d) {
         if (matta.get(d, _area_value) !== null) {
-            auxiliary.area_carto_values.set(matta.get(d, _area_feature_name), _area_value(d));
+            auxiliary.area_carto_values.set(matta.get(d, _area_feature_name), matta.get(d, _area_value));
         }
     });
     console.log('area dataframe values', auxiliary.area_carto_values);
@@ -164,8 +134,8 @@ var draw_topojson = function() {
         .projection(auxiliary.projection)
         .value(function(d) {
             var id = matta.get(d, _feature_id);
-            //console.log('feature id', d[_feature_id], area_carto_values.has(d[_feature_id]), 'value', area_carto_values.get(d[_feature_id]));
-            return auxiliary.area_carto_values.has(id) ? id : _na_value;
+            console.log('feature id', d[_feature_id], auxiliary.area_carto_values.has(d[_feature_id]), 'value', auxiliary.area_carto_values.get(d[_feature_id]));
+            return auxiliary.area_carto_values.has(id) ? auxiliary.area_carto_values.get(id) : _na_value;
         });
 
     //topojson.feature(_data_geometry, _data_geometry.objects[_feature_name])

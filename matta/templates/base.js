@@ -14,6 +14,7 @@ var matta_{{ visualization_name }} = function() {
     "use strict";
 
     var __fill_data__ = function(__data__) {
+        // {{ __data_variables__ }}
         {% for var_name in __data_variables__ %}
             if (__data__.hasOwnProperty('{{ var_name }}')) {
                 func_{{ visualization_name }}.{{ var_name }}(__data__.{{ var_name }});
@@ -28,8 +29,6 @@ var matta_{{ visualization_name }} = function() {
     {% endif %}
 
     var func_{{ visualization_name }} = function (selection) {
-        console.log('selection', selection);
-
         var _vis_width = _width - _padding.left - _padding.right;
         var _vis_height = _height - _padding.top - _padding.bottom;
 
@@ -89,47 +88,28 @@ var matta_{{ visualization_name }} = function() {
                 container = d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container');
             }
 
-            console.log('container', container.node());
-
             {% if functions_js %}{{ functions_js }}{% endif %}
-
-            {% if visualization_js %}
-                {{ visualization_js }}
-            {% endif %}
+            {% if visualization_js %}{{ visualization_js }}{% endif %}
         });
     };
 
     {% for var_name in __data_variables__ %}
         var _data_{{ var_name }} = null;
         func_{{ visualization_name }}.{{ var_name }} = function(__) {
+            console.log('DATA {{ var_name }}', arguments);
             if (arguments.length) {
                 _data_{{ var_name }} = __;
-                console.log('DATA {{ var_name }}', _data_{{ var_name }});
+                console.log('SET DATA {{ var_name }}', _data_{{ var_name }});
                 return func_{{ visualization_name }};
             }
             return _data_{{ var_name }};
         };
     {% endfor %}
 
-    {% if variables %}
-    {% for var_name, var_value in variables.items() %}
-        var _{{ var_name }} = {{ var_value }};
-        func_{{ visualization_name }}.{{ var_name }} = function(__) {
-            if (arguments.length) {
-                _{{ var_name }} = __;
-                console.log('set {{ var_name }}', _{{ var_name }});
-                return func_{{ visualization_name }};
-            }
-            return _{{ var_name }};
-        };
-    {% endfor %}
-    {% endif %}
-
     var active_legends = [];
 
-    {% include 'base.colorables.js' %}
     {% include 'base.attributes.js' %}
-
+    {% include 'base.colorables.js' %}
 
     // TODO: make a more flexible system.
     // TODO: Allow "outer", "middle" and "center"
@@ -172,6 +152,20 @@ var matta_{{ visualization_name }} = function() {
     {% for var_name in read_only %}
         var _{{ var_name }} = null;
         func_{{ visualization_name }}.{{ var_name }} = function() {
+            return _{{ var_name }};
+        };
+    {% endfor %}
+    {% endif %}
+
+    {% if variables %}
+    {% for var_name, var_value in variables.items() %}
+        var _{{ var_name }} = {{ var_value }};
+        func_{{ visualization_name }}.{{ var_name }} = function(__) {
+            if (arguments.length) {
+                _{{ var_name }} = __;
+                console.log('set {{ var_name }}', _{{ var_name }});
+                return func_{{ visualization_name }};
+            }
             return _{{ var_name }};
         };
     {% endfor %}

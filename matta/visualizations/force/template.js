@@ -3,6 +3,7 @@
 matta.prepare_graph(_data_graph);
 _node_ratio_update_scale_func(_data_graph.nodes);
 _node_color_update_scale_func(_data_graph.nodes);
+_link_color_update_scale_func(_data_graph.links);
 
 {% if options.use_webcola %}
 
@@ -30,9 +31,6 @@ var force = d3.layout.force()
     .gravity(_force_gravity);
 {% endif %}
 
-force.nodes(_data_graph.nodes)
-    .links(_data_graph.links);
-
 var node_g, link_g;
 
 if (!container.select('g.links').empty()) {
@@ -48,13 +46,12 @@ if (!container.select('g.nodes').empty()) {
 }
 
 var node = node_g.selectAll("g.node")
-    .data(_data_graph.nodes, function(d, i) { return d[_node_id]; });
+    .data(_data_graph.nodes, function(d, i) { return matta.get(d, _node_id); });
 
 node.enter()
     .append('g')
     .attr('class', 'node')
     .each(function(d) {
-        //console.log('node enter', d, _node_ratio(d));
         var ratio = _node_ratio(d);
         d3.select(this).append('circle')
             .attr('r', ratio)
@@ -73,71 +70,67 @@ node.enter()
                 .attr('text-anchor', 'middle')
                 .attr('font-size', _font_size)
                 .attr('fill', 'black')
-                .text(d[_node_id]);
+                .text(matta.get(d, _node_id));
         }
     });
 
 node.exit()
     .remove();
 
-var link = link_g.selectAll("line.link")
-    .data(_data_graph.links, function(d, i) { return d.source[_node_id] + '-' + d.target[_node_id]; });
+var link = link_g.selectAll('line.link')
+    .data(_data_graph.links, function(d) {
+        return matta.get(d.source, _node_id) + '-' + matta.get(d.target, _node_id);
+    });
 
 link.enter()
-    .append("line")
+    .append('line')
     .classed('link', true)
-    .style({
-        "stroke-width": 1,
-        'stroke': '#999'
+    .attr({
+        'stroke': _link_color,
+        'stroke-width': _link_width
     });
 
 link.exit()
     .remove();
 
-link_g.selectAll('line.link')
-    .call(matta.styler('stroke', 'color'))
-    .call(matta.styler('stroke-opacity', 'weight'));
+force.nodes(_data_graph.nodes)
+    .links(_data_graph.links)
+    .on('tick', function(e) {
+        {% if not options.use_webcola %}
+        if (_avoid_collisions) {
+            var q = d3.geom.quadtree(_data_graph.nodes);
+            _data_graph.nodes.forEach(function(n, i) {
+                return q.visit(fn_collide(n));
+            });
+        }
+        if (_clamp_to_viewport) {
+            _data_graph.nodes.forEach(function(n, i) {
+                var ratio = _node_ratio(n);
+                n.x = Math.max(ratio, Math.min(_width - _padding.left - _padding.right - ratio, n.x));
+                n.y = Math.max(ratio, Math.min(_height - _padding.top - _padding.bottom - ratio, n.y));
+            });
+        }
+        {% endif %}
 
-
-console.log('force', force);
-
-
-
-force.on("tick", function(e) {
-    {% if not options.use_webcola %}
-    if (_avoid_collisions) {
-        var q = d3.geom.quadtree(_data_graph.nodes);
-        _data_graph.nodes.forEach(function(n, i) {
-            return q.visit(fn_collide(n));
-        });
-    }
-    if (_clamp_to_viewport) {
-        _data_graph.nodes.forEach(function(n, i) {
-            var ratio = _node_ratio(n);
-            n.x = Math.max(ratio, Math.min(_width - _padding.left - _padding.right - ratio, n.x));
-            n.y = Math.max(ratio, Math.min(_height - _padding.top - _padding.bottom - ratio, n.y));
-        });
-    }
-    {% endif %}
-
-    link
-        .attr("x1", function(d) {
-            return d.source.x;
-        })
-        .attr("y1", function(d) {
-            return d.source.y;
-        })
-        .attr("x2", function(d) {
-            return d.target.x;
-        })
-        .attr("y2", function(d) {
-            return d.target.y;
+        link.attr({
+            'x1': function(d) {
+                return d.source.x;
+            },
+            'y1': function(d) {
+                return d.source.y;
+            },
+            'x2': function(d) {
+                return d.target.x;
+            },
+            'y2': function(d) {
+                return d.target.y;
+            }
         });
 
-    node.attr("transform", function(d) {
-        return "translate(" + (d.x - _node_ratio(d)) + ", " + (d.y - _node_ratio(d)) + ")";
+        node.attr('transform', function(d) {
+            return 'translate(' + (d.x - _node_ratio(d)) + ', ' + (d.y - _node_ratio(d)) + ')';
+        });
     });
-});
 
 
 force.start();

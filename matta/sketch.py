@@ -12,7 +12,6 @@ from networkx.readwrite import json_graph
 from IPython.display import HTML
 from cytoolz.dicttoolz import valmap, merge
 from IPython.display import display_html
-from .templatefilters import setup_filters_in_jinja_env
 from seaborn import color_palette
 from matplotlib.colors import rgb2hex
 
@@ -32,7 +31,6 @@ def _load_template(filename):
 SRC_DIR = os.path.dirname(os.path.realpath(__file__))
 env = jinja2.environment.Environment()
 env.loader = jinja2.FunctionLoader(_load_template)
-setup_filters_in_jinja_env(env)
 
 class MattaJSONEncoder(json.JSONEncoder):
     """

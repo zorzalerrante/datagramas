@@ -69,13 +69,11 @@ VISUALIZATION_CONFIG = {
         'mark_color': {'value': 'purple', 'palette': None, 'scale': None, 'n_colors': None, 'legend': False}
     },
     'read_only': {
-        # leaflet variables
+        # leaflet
         'L',
         'map',
         # the map projection. this could be used to add other things on top of the visualization.
-        'projection',
-        # here we save the geometry specified - it can be either GeoJSON or TopoJSON.
-        'geometry'
+        'projection'
     },
     'auxiliary': {
         # a set to save mark positions. since there are two possible sources of positions, we need to do this.
@@ -83,7 +81,9 @@ VISUALIZATION_CONFIG = {
         # the list of available features from the geometry source.
         'available_feature_ids',
         # the list of colors per area
-        'area_colors'
+        'area_colors',
+        # here we save the geometry specified - it can be either GeoJSON or TopoJSON.
+        'geometry'
     }
 }
 

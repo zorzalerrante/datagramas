@@ -50,7 +50,7 @@ LIBRARIES = {
         'dependencies': {}
     },
     'cartogram': {
-        'source': 'd3-cartogram/cartogram-module',
+        'source': 'd3-cartogram/cartogram',
         'author': 'Shawn Allen',
         'vendor_url': 'https://github.com/shawnbot/d3-cartogram/',
         'version': 'N/A',

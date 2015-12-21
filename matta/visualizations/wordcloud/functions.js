@@ -8,7 +8,7 @@ var cloud_draw = function(vis_container, words, bounds) {
         _vis_height / Math.abs(bounds[0].y - _vis_height / 2)) / 2 : 1;
 
     var text = vis_container.selectAll("text")
-        .data(words, function(d) { return d.text; });
+        .data(words, function(d) { return matta.get(d, _text); });
 
     text.transition()
         .duration(1000)
@@ -26,6 +26,6 @@ var cloud_draw = function(vis_container, words, bounds) {
 
     text.style("font-family", function(d){ return d.font; })
         .style("font-weight", _font_weight)
-        .style("fill", function(d){ return color_map.get(d.text); })
-        .text(function(d){ return d.text; });
+        .style("fill", _font_color)
+        .text(function(d){ return matta.get(d, _text); });
 };

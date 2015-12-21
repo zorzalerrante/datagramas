@@ -35,7 +35,8 @@ VISUALIZATION_CONFIG = {
         'link_width': {'min': 0.5, 'max': 1.0, 'value': None, 'scale': 'linear'},
     },
     'colorables': {
-        'node_color': {'value': None, 'palette': None, 'scale': None, 'legend': False, 'n_colors': None}
+        'node_color': {'value': 'steelblue', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None},
+        'link_color': {'value': 'grey', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None}
     },
 }
 

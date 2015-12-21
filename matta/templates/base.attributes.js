@@ -36,7 +36,7 @@
     var _{{ var_name }}_max = {{ var_values.max }};
     var _{{ var_name }}_value = {{ var_values.value }};
 
-    if (typeof(_{{ var_name }}_value) !== 'string' && _{{ var_name }}_scale_type === null) {
+    if (typeof(_{{ var_name }}_value) !== 'string') {
         console.log('{{ var_name }} using a functor', _{{ var_name }}_value);
         _{{ var_name }} = d3.functor(_{{ var_name }}_value !== null ? _{{ var_name }}_value : _{{ var_name }}_max);
     } else {

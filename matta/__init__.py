@@ -6,15 +6,17 @@ from .libraries import init_javascript_code
 
 __version__ = '1.0.0-pre'
 
-def init_javascript(path='/static/custom/matta'):
+def init_javascript(path='/custom/matta'):
     """
-    Inits the Javascript code needed to load matta libraries in the IPython notebook.
+    Inits the Javascript code needed to load matta libraries in the Jupyter Notebook when viewed on NBViewer.
     """
 
     code = '''
 <script>
 $(document).ready(function() {{
-{0}
+    if (document.location.hostname !== 'localhost') {{
+        {0}
+    }}
 }});
 </script>'''
 
