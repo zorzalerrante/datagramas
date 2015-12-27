@@ -54,7 +54,7 @@ def import_visualization(module_name, package=None):
     if not 'visualization_css' in config:
         template_css = u'{0}/template.css'.format(module_dir)
         if os.path.exists(template_css):
-            print template_css
+            print(template_css)
             config['visualization_css'] = template_css
         else:
             config['visualization_css'] = None
