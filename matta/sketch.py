@@ -211,6 +211,10 @@ Data Arguments:
 {% for key, value in attributes.iteritems() %}{{ key }} -- (default: {{ value }})
 {% endfor %}{% endif %}
 
+{% if colorables %}Colorable Attributes:
+{% for key, value in colorables.iteritems() %}{{ key }} -- (default: {{ value }})
+{% endfor %}{% endif %}
+
 ''')
 
 def build_sketch(default_args, opt_process=None):
