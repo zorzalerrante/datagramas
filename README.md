@@ -1,6 +1,6 @@
 # matta
 
-A library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org).
+A Python library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org). It works with Python 2.7 and 3.4.
 
 **NOTE** We are currently updating this library to the 1.0.0 version. Please help us test if installation works ok :)
 
@@ -23,11 +23,6 @@ chosen by the developer? And that structure was completely different from what y
 By using matta there are no arbitrary choices - you use DataFrames and specify which columns will
 be mapped to the visualization, and that's it.
 
-## Python Support
-
-matta works with Python 2.7. Python 3 support is planned to be added at some point (I have already started to migrate 
-some stuff by using `__future__` imports).
-
 ## Examples / Documentation
 
 In addition to this readme, the following notebooks serve as examples/documentation:
@@ -41,14 +36,15 @@ In addition to this readme, the following notebooks serve as examples/documentat
 First, install the python package:
 
 ```
-pip install -r requirements.txt
-python setup.py install
+$ pip install -r requirements.txt
+$ python setup.py install
 ```
 
 Then make a symbolic link in your IPython profile to matta libs:
 
 ```
-~/.jupyter/custom$ ln -s ~/path_to_matta/matta/libs/ matta
+$ cd ~/.jupyter/custom
+$ ~/.jupyter/custom$ ln -s ~/path_to_matta/matta/libs/ matta
 ```
 
 And finally, edit the `custom.js` file and add the following lines:
@@ -329,10 +325,17 @@ It also contains snippets of code from:
 
 ## Next Steps?
 
- * Build a plug-in structure to define behavior at visualization events (e.g., tooltips, callbacks).
- * Facet data with small-multiples or visualization widgets.
- * Bundle a tooltip library (for instance, [d3-tip](https://github.com/Caged/d3-tip)).
- * Allow to export template versions of visualizations+data (e.g., export to gist).
+In no particular order:
+
+  * Facet data with small-multiples or visualization widgets (in a similar way to seaborn's FacetGrid).
+  * Build a plug-in structure to define behavior at visualization events (e.g., tooltips, callbacks).
+  * Bundle a tooltip library (for instance, [d3-tip](https://github.com/Caged/d3-tip)).
+  * Allow to export template versions of visualizations+data (e.g., export to gist).
+  * Events. Actually this is supported currently (see the Data Portraits links below), but it is not exposed (nor used) in
+    any of the included visualizations.
+  * Improve the legend support. Currently legend positioning is not smart, and legend activation is not automatic for charts.
+  * Support other bundled layouts/plugins with d3.js.
+  * Support layers in the cartography module.
 
 ## About the name
 
