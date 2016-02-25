@@ -24,10 +24,8 @@ if (_data_geometry !== null && typeof _data_geometry === 'object') {
 auxiliary.available_feature_ids = d3.set();
 
 auxiliary.geometry.features.forEach(function(d) {
-    auxiliary.available_feature_ids.add(d[_feature_id]);
+    auxiliary.available_feature_ids.add(matta.get(d, _feature_id));
 });
-
-console.log('available ids', auxiliary.available_feature_ids);
 
 var path = d3.geo.path().pointRadius(5);
 
@@ -63,21 +61,7 @@ var path = d3.geo.path().pointRadius(5);
             .style({'z-index': 1000, 'position': 'absolute', 'top': 0, 'left': 0});
     }
 
-    path_g = map_container.select('g.geo-paths');
-
-    if (path_g.empty()) {
-        path_g = map_container.append('g').attr('class', 'geo-paths');
-    }
-
-    graph_g = map_container.select('g.graph');
-    if (graph_g.empty()) {
-        graph_g = map_container.append('g').attr('class', 'graph');
-    }
-
-    mark_g = map_container.select('g.marks');
-    if (mark_g.empty()) {
-        mark_g = map_container.append('g').attr('class', 'marks');
-    }
+    setup_containers();
 
     _projection = d3.geo.transform({
         point: function(x, y) {
@@ -104,6 +88,7 @@ var path = d3.geo.path().pointRadius(5);
     };
 
     path.projection(d3.geo.transform());
+
     var map_bounds = path.bounds(auxiliary.geometry);
     path.projection(_projection);
     console.log('bounds', map_bounds);
@@ -124,25 +109,12 @@ var path = d3.geo.path().pointRadius(5);
 
     _map.on("viewreset", reset);
     filter_non_valid_marks();
+    update_mark_positions();
     reset();
 {% else %}
     map_container = container;
 
-    path_g = map_container.select('g.geo-paths');
-
-    if (path_g.empty()) {
-        path_g = map_container.append('g').attr('class', 'geo-paths');
-    }
-
-    graph_g = map_container.select('g.graph');
-    if (graph_g.empty()) {
-        graph_g = map_container.append('g').attr('class', 'graph');
-    }
-
-    mark_g = map_container.select('g.marks');
-    if (mark_g.empty()) {
-        mark_g = map_container.append('g').attr('class', 'marks');
-    }
+    setup_containers();
 
     _projection = d3.geo.mercator()
         .center([0,0])
@@ -151,8 +123,11 @@ var path = d3.geo.path().pointRadius(5);
 
     path.projection(_projection);
 
+    console.log(path.bounds(auxiliary.geometry));
     var st = matta.fit_projection(map_width, map_height, path.bounds(auxiliary.geometry));
+    console.log(path.bounds(auxiliary.geometry));
     _projection.scale(st[0]).translate(st[1]);
+    console.log(path.bounds(auxiliary.geometry));
 
     filter_non_valid_marks();
     update_mark_positions();

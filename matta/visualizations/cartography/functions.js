@@ -6,6 +6,7 @@ var set_mark_position = function(mark) {
     var projected = [point.x, point.y];
     {% endif %}
     auxiliary.mark_positions.set(matta.get(mark, _mark_index), projected);
+    console.log('mark positions', auxiliary.mark_positions);
 };
 
 var update_mark_positions = function() {
@@ -54,20 +55,6 @@ var filter_non_valid_marks = function() {
 var draw_marks = function() {
     _mark_ratio_update_scale_func(_data_mark_dataframe);
     _mark_color_update_scale_func(_data_mark_dataframe);
-
-    /*
-    var legend_g = null;
-
-    if (legend_container.select('g.axis').empty()) {
-        legend_g = legend_container.append('g').classed('axis', true);
-    } else {
-        legend_g = legend_container.select('g.axis');
-    }
-
-    if (_legend === true) {
-        // legend_g.data([mark_scale]).call(legend);
-    }
-    */
 
     var mark = mark_g.selectAll('circle.mark')
         .data(_data_mark_dataframe, function(d) {
@@ -384,4 +371,21 @@ var draw_topojson = function() {
     }
 
     draw_legends(container_legends, _vis_width, _vis_height);
+};
+
+var setup_containers = function() {
+    path_g = map_container.select('g.geo-paths');
+    if (path_g.empty()) {
+        path_g = map_container.append('g').attr('class', 'geo-paths');
+    }
+
+    graph_g = map_container.select('g.graph');
+    if (graph_g.empty()) {
+        graph_g = map_container.append('g').attr('class', 'graph');
+    }
+
+    mark_g = map_container.select('g.marks');
+    if (mark_g.empty()) {
+        mark_g = map_container.append('g').attr('class', 'marks');
+    }
 };
