@@ -1,5 +1,6 @@
 from jinja2 import Template, evalcontextfilter, Markup
 
+
 @evalcontextfilter
 def to_color_scale(eval_ctx, param_name, js_variable_name='color_scale', legend=False, fallback_title=None):
     """
@@ -55,6 +56,7 @@ def to_color_scale(eval_ctx, param_name, js_variable_name='color_scale', legend=
 
     return result
 
+
 @evalcontextfilter
 def draw_color_scale(eval_ctx, container, js_variable_name):
     template = Template('''
@@ -69,6 +71,7 @@ if ({{ js_variable_name }} !== null && {{ js_variable_name }}_legend !== null) {
         result = Markup(result)
 
     return result
+
 
 def setup_filters_in_jinja_env(env):
     env.filters['to_color_scale'] = to_color_scale

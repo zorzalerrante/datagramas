@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import json
 
 """
@@ -99,8 +98,8 @@ def init_javascript_code(path='/static/custom/matta'):
     of this function to custom.js script.
     """
 
-    shims = {key: {'deps': list(lib_data['dependencies']), 'exports': lib_data['exports']} for key, lib_data in LIBRARIES.iteritems() if 'exports' in lib_data}
-    paths = {key: u'{0}/{1}'.format(path, lib_data['source']) for key, lib_data in LIBRARIES.iteritems()}
+    shims = {key: {'deps': list(lib_data['dependencies']), 'exports': lib_data['exports']} for key, lib_data in LIBRARIES.items() if 'exports' in lib_data}
+    paths = {key: '{0}/{1}'.format(path, lib_data['source']) for key, lib_data in LIBRARIES.items()}
 
     template = '''
 

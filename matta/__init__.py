@@ -46,22 +46,22 @@ def import_visualization(module_name, package=None):
     config = vis_module.VISUALIZATION_CONFIG
 
     if not 'visualization_js' in config:
-        template_js = u'{0}/template.js'.format(module_dir)
+        template_js = '{0}/template.js'.format(module_dir)
         if os.path.exists(template_js):
             config['visualization_js'] = template_js
         else:
             raise Exception('No valid visualization code.')
 
     if not 'visualization_css' in config:
-        template_css = u'{0}/template.css'.format(module_dir)
+        template_css = '{0}/template.css'.format(module_dir)
         if os.path.exists(template_css):
             print(template_css)
             config['visualization_css'] = template_css
         else:
             config['visualization_css'] = None
 
-    if os.path.exists(u'{0}/functions.js'.format(module_dir)):
-        config['functions_js'] = u'{0}/functions.js'.format(module_dir)
+    if os.path.exists('{0}/functions.js'.format(module_dir)):
+        config['functions_js'] = '{0}/functions.js'.format(module_dir)
 
     opt_process = getattr(vis_module, 'PROCESS_CONFIG', None)
 

@@ -1,5 +1,6 @@
 import networkx as nx
 
+
 def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None, properties_fn=None):
     """
     Creates a GeoJSon structure with a point for each row of the DataFrame.
@@ -33,6 +34,7 @@ def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None, 
         geojson['features'].append(feature)
 
     return geojson
+
 
 def dataframe_to_graph(df, src_col, dst_col, edge_col='weight', src_label_format=None, dst_label_format=None,
                        node_attrs=None, edge_attrs=None):

@@ -31,7 +31,7 @@ def threshold_scale(values, palette, is_domain=False, extend_by=0.05, center=Non
 
     color_scale = {
         'kind': 'threshold',
-        'range': map(rgb2hex, palette),
+        'range': list(map(rgb2hex, palette)),
         'domain': list(color_domain),
         'extent': [color_domain[0] - extension, color_domain[-1] + extension]
     }
@@ -50,7 +50,7 @@ def categorical_scale(values, palette):
     if type(values) == pd.Series:
         values = values.value_counts().index.values
 
-    color_range = map(rgb2hex, palette)
+    color_range = list(map(rgb2hex, palette))
 
     if len(values) < len(color_range):
         color_range = color_range[:len(values)]

@@ -32,6 +32,7 @@ SRC_DIR = os.path.dirname(os.path.realpath(__file__))
 env = jinja2.environment.Environment()
 env.loader = jinja2.FunctionLoader(_load_template)
 
+
 class MattaJSONEncoder(json.JSONEncoder):
     """
     A Pandas/numpy/networkx aware JSON Encoder.
@@ -56,7 +57,10 @@ class MattaJSONEncoder(json.JSONEncoder):
             return obj.total_seconds()
         return json.JSONEncoder.default(self, obj)
 
-_dump_json = lambda x: json.dumps(x, cls=MattaJSONEncoder)
+
+def _dump_json(x):
+    return json.dumps(x, cls=MattaJSONEncoder)
+
 
 class sketch(object):
     """
@@ -91,7 +95,7 @@ class sketch(object):
         else:
             self.configuration['colorables'] = {}
 
-        self.configuration['__data_variables__'] = self.configuration['data'].keys()
+        self.configuration['__data_variables__'] = list(self.configuration['data'].keys())
         self.configuration['data'] = _dump_json(self.configuration['data'])
         if 'facets' in self.configuration:
             self.configuration['facets'] = _dump_json(self.configuration['facets'])
@@ -108,13 +112,13 @@ class sketch(object):
             colorable['n_colors'] = 6
 
         if 'palette' in colorable and colorable['palette'] is not None:
-            if type(colorable['palette']) in (str, unicode):
+            if type(colorable['palette']) == str:
                 # a palette name
                 palette = color_palette(colorable['palette'], n_colors=colorable['n_colors'])
-                colorable['palette'] = map(rgb2hex, palette)
+                colorable['palette'] = list(map(rgb2hex, palette))
             else:
                 # a list of colors. we override n_colors
-                colorable['palette'] = map(rgb2hex, colorable['palette'])
+                colorable['palette'] = list(map(rgb2hex, colorable['palette']))
                 colorable['n_colors'] = len(colorable['palette'])
         else:
             colorable['palette'] = None
@@ -196,26 +200,27 @@ class sketch(object):
 sketch_doc_string_template = jinja2.Template('''{{ summary }}
 
 Data Arguments:
-{% for key, value in data.iteritems() %}{{ key }} -- (default: {{ value }})
+{% for key, value in data.items() %}{{ key }} -- (default: {{ value }})
 {% endfor %}
 
 {% if variables %}Keyword Arguments:
-{% for key, value in variables.iteritems() %}{{ key }} -- (default: {{ value }})
+{% for key, value in variables.items() %}{{ key }} -- (default: {{ value }})
 {% endfor %}{% endif %}
 
 {% if options %}Sketch Arguments:
-{% for key, value in options.iteritems() %}{{ key }} -- (default: {{ value }})
+{% for key, value in options.items() %}{{ key }} -- (default: {{ value }})
 {% endfor %}{% endif %}
 
 {% if attributes %}Mappeable Attributes:
-{% for key, value in attributes.iteritems() %}{{ key }} -- (default: {{ value }})
+{% for key, value in attributes.items() %}{{ key }} -- (default: {{ value }})
 {% endfor %}{% endif %}
 
 {% if colorables %}Colorable Attributes:
-{% for key, value in colorables.iteritems() %}{{ key }} -- (default: {{ value }})
+{% for key, value in colorables.items() %}{{ key }} -- (default: {{ value }})
 {% endfor %}{% endif %}
 
 ''')
+
 
 def build_sketch(default_args, opt_process=None):
     """
@@ -240,7 +245,7 @@ def build_sketch(default_args, opt_process=None):
         """
         sketch_args = copy.deepcopy(default_args)
 
-        for key, value in kwargs.iteritems():
+        for key, value in list(kwargs.items()):
             if key in sketch_args:
                 sketch_args[key] = value
 
@@ -264,7 +269,7 @@ def build_sketch(default_args, opt_process=None):
                     sketch_args['attributes'][key].update(value)
                 elif type(value) in (int, float):
                     sketch_args['attributes'][key]['value'] = value
-                elif value is None or type(value) in (str, unicode):
+                elif value is None or type(value) == str:
                     sketch_args['attributes'][key]['value'] = value
                 else:
                     raise Exception('Not supported value for attribute {0}: {1}'.format(key, value))
@@ -274,7 +279,7 @@ def build_sketch(default_args, opt_process=None):
                     sketch_args['colorables'][key].update(value)
                 elif type(value) in (int, float):
                     sketch_args['colorables'][key]['value'] = value
-                elif value is None or type(value) in (str, unicode):
+                elif value is None or type(value) == str:
                     sketch_args['colorables'][key]['value'] = value
                 else:
                     raise Exception('Not supported value for colorable {0}: {1}'.format(key, value))
@@ -294,6 +299,6 @@ def build_sketch(default_args, opt_process=None):
         default_args['summary'] = default_args['visualization_name']
 
     sketch_fn.__doc__ = sketch_doc_string_template.render(default_args)
-    sketch_fn.variable_names = default_args['data'].keys()
+    sketch_fn.variable_names = list(default_args['data'].keys())
 
     return sketch_fn
