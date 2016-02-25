@@ -4,7 +4,6 @@ var map_height = _height;
 
 var map_container = null;
 var path_g;
-var projection;
 var carto_obj;
 
 var geometry = null;
@@ -104,7 +103,6 @@ var draw_topojson = function() {
 !function() {
     map_container = container;
 
-
     path_g = map_container.select('g.geo-paths');
 
     if (path_g.empty()) {
@@ -114,7 +112,8 @@ var draw_topojson = function() {
     auxiliary.projection = d3.geo.mercator()
         .center([0,0])
         .scale(1)
-        .translate([0, 0]);
+        .translate([0, 0])
+        .precision(0);
 
     auxiliary.path.projection(auxiliary.projection);
 
