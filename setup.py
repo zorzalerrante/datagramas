@@ -1,7 +1,7 @@
 from distutils.core import setup
 import glob
 
-with open('requirements.txt') as f:
+with open('requirements.txt', 'rt') as f:
     requirements = f.read().splitlines()
 
 setup(name = 'matta',
@@ -32,5 +32,8 @@ setup(name = 'matta',
     scripts = [],
     long_description = '''A set of ready-made visualizations written
         in d3.js for usage inside the IPython notebook, as well as tools to
-        scaffold visualizations.'''
+        scaffold visualizations.''',
+    classifiers=[
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4'],
 )
