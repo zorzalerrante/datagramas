@@ -66,7 +66,7 @@ var draw_marks = function() {
         .classed('mark', true)
         .each(function(d) {
             if (_mark_feature_name === null) {
-                update_mark_position(d);
+                update_mark_positions(d);
             }
         })
         .attr({'r': 0});
