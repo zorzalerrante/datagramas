@@ -32,6 +32,15 @@ var matta_{{ visualization_name }} = function() {
         var _vis_width = _width - _padding.left - _padding.right;
         var _vis_height = _height - _padding.top - _padding.bottom;
 
+        {% if objects %}
+        // if any object is null, we initialize it here
+        {% for var_name, var_value in objects.items() %}
+        if (_{{ var_name }} === null) {
+            _{{ var_name }} = {{ var_value }};
+        }
+        {% endfor %}
+        {% endif %}
+
         selection.each(function(__data__) {
             __fill_data__(__data__);
 
@@ -164,6 +173,20 @@ var matta_{{ visualization_name }} = function() {
             if (arguments.length) {
                 _{{ var_name }} = __;
                 console.log('set {{ var_name }}', _{{ var_name }});
+                return func_{{ visualization_name }};
+            }
+            return _{{ var_name }};
+        };
+    {% endfor %}
+    {% endif %}
+
+    {% if objects %}
+    {% for var_name in objects.keys() %}
+        var _{{ var_name }} = null;
+        func_{{ visualization_name }}.{{ var_name }} = function(__) {
+            if (arguments.length) {
+                _{{ var_name }} = __;
+                console.log('set object {{ var_name }}', _{{ var_name }});
                 return func_{{ visualization_name }};
             }
             return _{{ var_name }};

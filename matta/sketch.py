@@ -9,7 +9,7 @@ from cytoolz.dicttoolz import valmap, merge
 from IPython.display import display_html
 from seaborn import color_palette
 from matplotlib.colors import rgb2hex
-from .js_utils import _dump_json
+from .js_utils import _dump_json, d3jsObject
 
 MATTA_TEMPLATE_FILES = {'base.js', 'base.attributes.js', 'base.colorables.js',
     'base.html', 'multiples.html', 'select-categories.html',
@@ -50,7 +50,11 @@ class sketch(object):
             self.configuration['visualization_js'] = '{0}/templates/{1}.js'.format(SRC_DIR, self.configuration['visualization_name'])
 
         self.configuration['visualization_name'] = self.configuration['visualization_name'].replace('-', '_').replace('.', '_')
+
         self.configuration['variables'] = valmap(_dump_json, self.configuration['variables'])
+
+        if 'objects' in self.configuration:
+            self.configuration['objects'] = valmap(self.process_objects, self.configuration['objects'])
 
         if 'attributes' in self.configuration:
             self.configuration['attributes'] = valmap(self.process_attribute, self.configuration['attributes'])
@@ -66,6 +70,14 @@ class sketch(object):
         self.configuration['data'] = _dump_json(self.configuration['data'])
         if 'facets' in self.configuration:
             self.configuration['facets'] = _dump_json(self.configuration['facets'])
+
+    def process_objects(self, variable):
+        if type(variable) != d3jsObject:
+            raise Exception('Non-object passed as object argument.')
+
+        rendered = variable.render(context=self.configuration)
+
+        return rendered
 
     def process_attribute(self, attribute):
         if 'legend' not in attribute:
@@ -98,7 +110,7 @@ class sketch(object):
 
         return valmap(_dump_json, colorable)
 
-    def _render_(self, template_name, **extra_args):
+    def _render_(self, template_name='base.html', **extra_args):
         repr_args = merge(self.configuration.copy(), extra_args)
 
         if self.configuration['visualization_js']:
