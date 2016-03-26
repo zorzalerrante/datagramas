@@ -87,6 +87,14 @@ LIBRARIES = {
         'version': '1.6.0',
         'dependencies': {'d3'},
         'exports': 'd3.legend'
+    },
+    'd3-geo-projection': {
+        'source': 'd3-geo-projection/d3.geo.projection',
+        'author': 'Mike Bostock',
+        'vendor_url': 'https://github.com/d3/d3-geo-projection',
+        'version': '0.2.16',
+        'dependencies': {'d3'},
+        'exports': 'd3.projections'
     }
 }
 
