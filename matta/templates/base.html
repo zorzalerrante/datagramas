@@ -10,7 +10,7 @@
 $(function() {
     "use strict";
 
-    var main = function ({{ requirements|join(', ') }}) {
+    var main = function ({{ requirements_as_args|join(', ') }}) {
         {% include 'base.js' %}
 
         if (d3.select('#{{ figure_id }}').empty()) {

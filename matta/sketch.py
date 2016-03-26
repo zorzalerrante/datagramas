@@ -138,6 +138,9 @@ class sketch(object):
             except IOError:
                 repr_args['visualization_css'] = None
 
+        # some dependencies have names with invalid characters for variable names in Javascript
+        repr_args['requirements_as_args'] = list(map(lambda x: x.replace('-', '_'), repr_args['requirements']))
+
         return template.render(**repr_args)
 
     def _ipython_display_(self):
