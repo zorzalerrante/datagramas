@@ -11,8 +11,8 @@ _font_color_update_scale_func(_data_dataframe);
 var color_map = d3.map();
 
 _data_dataframe.forEach(function(d) {
-    console.log('d', d, matta.get(d, _text), _font_color(d));
-    color_map.set(matta.get(d, _text), _font_color(d));
+    console.log('d', d, datagramas.get(d, _text), _font_color(d));
+    color_map.set(datagramas.get(d, _text), _font_color(d));
 });
 
 console.log('color map', color_map);
@@ -22,7 +22,7 @@ var layout = cloud()
     .font(_typeface)
     .fontWeight(_font_weight)
     .fontSize(_font_size)
-    .text(function(d) { return matta.get(d, _text); })
+    .text(function(d) { return datagramas.get(d, _text); })
     .rotate(_rotation)
     .on("word", function(d) { return statusText.text(++complete + "/" + max); })
     .on("end", function(words, bounds) {

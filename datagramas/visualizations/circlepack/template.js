@@ -30,4 +30,4 @@ node.selectAll('circle')
     });
 
 
-node.selectAll('text').call(matta.labeler(_node_label));
+node.selectAll('text').call(datagramas.labeler(_node_label));

@@ -1,8 +1,8 @@
 
 
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta', 'topojson', 'cartogram'],
-    'visualization_name': 'matta.cartogram',
+    'requirements': ['d3', 'datagramas', 'topojson', 'cartogram'],
+    'visualization_name': 'datagramas.cartogram',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

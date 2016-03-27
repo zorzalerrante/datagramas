@@ -1,7 +1,7 @@
 
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta', 'cloud'],
-    'visualization_name': 'matta.wordcloud',
+    'requirements': ['d3', 'datagramas', 'cloud'],
+    'visualization_name': 'datagramas.wordcloud',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

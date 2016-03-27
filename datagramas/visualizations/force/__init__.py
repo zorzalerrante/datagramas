@@ -1,6 +1,6 @@
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta'],
-    'visualization_name': 'matta.force',
+    'requirements': ['d3', 'datagramas'],
+    'visualization_name': 'datagramas.force',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

@@ -6,7 +6,7 @@ import jinja2
 from networkx.readwrite import json_graph
 
 
-class MattaJSONEncoder(json.JSONEncoder):
+class DatagramasJSONEncoder(json.JSONEncoder):
     """
     A Pandas/numpy/networkx aware JSON Encoder.
 
@@ -32,7 +32,7 @@ class MattaJSONEncoder(json.JSONEncoder):
 
 
 def _dump_json(x):
-    return json.dumps(x, cls=MattaJSONEncoder)
+    return json.dumps(x, cls=DatagramasJSONEncoder)
 
 
 class JSCode(object):

@@ -1,6 +1,6 @@
 
 
-matta.prepare_graph(_data_graph);
+datagramas.prepare_graph(_data_graph);
 _node_ratio_update_scale_func(_data_graph.nodes);
 _node_color_update_scale_func(_data_graph.nodes);
 _link_color_update_scale_func(_data_graph.links);
@@ -46,7 +46,7 @@ if (!container.select('g.nodes').empty()) {
 }
 
 var node = node_g.selectAll("g.node")
-    .data(_data_graph.nodes, function(d, i) { return matta.get(d, _node_id); });
+    .data(_data_graph.nodes, function(d, i) { return datagramas.get(d, _node_id); });
 
 node.enter()
     .append('g')
@@ -70,7 +70,7 @@ node.enter()
                 .attr('text-anchor', 'middle')
                 .attr('font-size', _font_size)
                 .attr('fill', 'black')
-                .text(matta.get(d, _node_id));
+                .text(datagramas.get(d, _node_id));
         }
     });
 
@@ -79,7 +79,7 @@ node.exit()
 
 var link = link_g.selectAll('line.link')
     .data(_data_graph.links, function(d) {
-        return matta.get(d.source, _node_id) + '-' + matta.get(d.target, _node_id);
+        return datagramas.get(d.source, _node_id) + '-' + datagramas.get(d.target, _node_id);
     });
 
 link.enter()

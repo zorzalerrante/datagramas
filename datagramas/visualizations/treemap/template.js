@@ -28,8 +28,8 @@
 
 var treemap = d3.layout.treemap()
     .size([_width, _height])
-    .value(function(d) { return matta.get(d, _node_value); })
-    .children(function(d) { return matta.get(d, _node_children); })
+    .value(function(d) { return datagramas.get(d, _node_value); })
+    .children(function(d) { return datagramas.get(d, _node_children); })
     .padding(_node_padding)
     .ratio(_target_ratio)
     .mode(_mode)
@@ -45,7 +45,7 @@ console.log('nodes', root);
 var cell = container
     .selectAll("div.node")
     .data(root, function(d) {
-        return matta.get(d, _node_id);
+        return datagramas.get(d, _node_id);
     });
 
 var node_background = function(d) {
@@ -53,25 +53,25 @@ var node_background = function(d) {
         return 'none';
     }
 
-    if (matta.get(d, _node_children) !== null) {
+    if (datagramas.get(d, _node_children) !== null) {
         return 'none';
     }
 
-    console.log('colorable', matta.get(d, _node_label), matta.get(d, _node_value), _node_color(d), d);
+    console.log('colorable', datagramas.get(d, _node_label), datagramas.get(d, _node_value), _node_color(d), d);
     return _node_color(d);
 };
 
 var node_text = function(d) {
-    if (_label_leaves_only && matta.get(d, _node_children) != null) {
+    if (_label_leaves_only && datagramas.get(d, _node_children) != null) {
         return null;
     }
-    return _node_label != null ? matta.get(d, _node_label) : null;
+    return _node_label != null ? datagramas.get(d, _node_label) : null;
 };
 
 var node_color = function(d) {
     var color = node_background(d);
     if (node_text(d) !== null && color !== 'none') {
-        return matta.text_color(color);
+        return datagramas.text_color(color);
     }
 
     return null;

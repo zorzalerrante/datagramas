@@ -1,11 +1,11 @@
 var set_mark_position = function(mark) {
     {% if not options.leaflet %}
-    var projected = _projection([matta.get(mark, _mark_position[1]), matta.get(mark, _mark_position[0])]);
+    var projected = _projection([datagramas.get(mark, _mark_position[1]), datagramas.get(mark, _mark_position[0])]);
     {% else %}
-    var point = _map.latLngToLayerPoint(new _L.LatLng(matta.get(mark, _mark_position[0]), matta.get(mark, _mark_position[1])));
+    var point = _map.latLngToLayerPoint(new _L.LatLng(datagramas.get(mark, _mark_position[0]), datagramas.get(mark, _mark_position[1])));
     var projected = [point.x, point.y];
     {% endif %}
-    auxiliary.mark_positions.set(matta.get(mark, _mark_index), projected);
+    auxiliary.mark_positions.set(datagramas.get(mark, _mark_index), projected);
     console.log('mark positions', auxiliary.mark_positions);
 };
 
@@ -17,7 +17,7 @@ var update_mark_positions = function() {
     // since we will use feature names, we compute positions
     if (_mark_feature_name !== null) {
         auxiliary.geometry.features.forEach(function(d) {
-            var feat_id = matta.get(d, _feature_id);
+            var feat_id = datagramas.get(d, _feature_id);
             {% if not options.leaflet %}
             if (!auxiliary.mark_positions.has(feat_id)) {
                 auxiliary.mark_positions.set(feat_id, path.centroid(d));
@@ -39,7 +39,7 @@ var update_mark_positions = function() {
 var filter_non_valid_marks = function() {
     var marks = _data_mark_dataframe == null ? [] : _data_mark_dataframe.filter(function(d) {
         if (_mark_feature_name !== null) {
-            return auxiliary.available_feature_ids.has(matta.get(d, _mark_feature_name));
+            return auxiliary.available_feature_ids.has(datagramas.get(d, _mark_feature_name));
         }
 
         if (_mark_position !== null) {
@@ -58,7 +58,7 @@ var draw_marks = function() {
 
     var mark = mark_g.selectAll('circle.mark')
         .data(_data_mark_dataframe, function(d) {
-            return matta.get(d, _mark_index);
+            return datagramas.get(d, _mark_index);
         });
 
     mark.enter()
@@ -74,7 +74,7 @@ var draw_marks = function() {
     mark.exit()
         .each(function(d) {
             if (_mark_feature_name === null) {
-                auxiliary.mark_positions.remove(matta.get(d, _mark_index));
+                auxiliary.mark_positions.remove(datagramas.get(d, _mark_index));
             }
         })
         .transition()
@@ -83,7 +83,7 @@ var draw_marks = function() {
         .remove();
 
     mark.each(function(d) {
-        var position_id = _mark_feature_name === null ? matta.get(d, _mark_index) : matta.get(d, _mark_feature_name);
+        var position_id = _mark_feature_name === null ? datagramas.get(d, _mark_index) : datagramas.get(d, _mark_feature_name);
         var position = auxiliary.mark_positions.get(position_id);
         d3.select(this).attr({
             'cx': position[0],
@@ -109,8 +109,8 @@ var draw_marks = function() {
 };
 
 var draw_graph = function() {
-    if (!_data_graph.hasOwnProperty('__matta_prepared__') || _data_graph['__matta_prepared__'] == false) {
-        matta.prepare_graph(_data_graph);
+    if (!_data_graph.hasOwnProperty('__datagramas_prepared__') || _data_graph['__datagramas_prepared__'] == false) {
+        datagramas.prepare_graph(_data_graph);
     }
 
     _link_width_update_scale_func(_data_graph.links);
@@ -122,7 +122,7 @@ var draw_graph = function() {
     if (_graph_feature_name) {
         auxiliary.geometry.features.forEach(function(d) {
             var centroid = path.centroid(d);
-            node_positions.set(matta.get(d, _graph_feature_name), centroid);
+            node_positions.set(datagramas.get(d, _graph_feature_name), centroid);
         });
     } else {
         _data_graph.nodes.forEach(function (d) {
@@ -139,7 +139,7 @@ var draw_graph = function() {
 
     var node = graph_g.selectAll('circle.graph_node')
         .data(_data_graph.nodes.filter(function(d) {
-            return _graph_feature_name !== null ? node_positions.has(matta.get(d, _graph_feature_name)) : node_positions.has(d.id);
+            return _graph_feature_name !== null ? node_positions.has(datagramas.get(d, _graph_feature_name)) : node_positions.has(d.id);
             }), function(d) { return d.id; });
 
     node.enter()
@@ -271,7 +271,7 @@ var update_area_colors = function() {
         _data_area_dataframe.forEach(function (d) {
             var color = _area_color(d);
             if (color !== null) {
-                auxiliary.area_colors.set(matta.get(d, _area_feature_name), color);
+                auxiliary.area_colors.set(datagramas.get(d, _area_feature_name), color);
             }
         });
     } else {
@@ -289,13 +289,13 @@ var draw_areas = function(p) {
     update_area_colors();
 
     p.each(function(d) {
-        if (auxiliary.area_colors.has(matta.get(d, _feature_id))) {
+        if (auxiliary.area_colors.has(datagramas.get(d, _feature_id))) {
             d3.select(this)
                 .classed('has-area-color', true)
                 .transition()
                 .delay(_area_transition_delay)
                 .attr({
-                    'fill': auxiliary.area_colors.get(matta.get(d, _feature_id)),
+                    'fill': auxiliary.area_colors.get(datagramas.get(d, _feature_id)),
                     'opacity': _area_opacity
                 });
         } else {
@@ -314,7 +314,7 @@ var draw_areas = function(p) {
 var draw_topojson = function() {
     if (_graticule) {
         if (visualization_defs.selectAll('path.border-sphere').empty()) {
-            auxiliary.graticule_border_id = matta.generate_uuid();
+            auxiliary.graticule_border_id = datagramas.generate_uuid();
 
             visualization_defs.append('path')
                 .datum({type: 'Sphere'})
@@ -351,8 +351,8 @@ var draw_topojson = function() {
 
     var p = path_g.selectAll('path.feature')
         .data(auxiliary.geometry.features, function(d) {
-            //console.log(d, matta.get(d, _feature_id));
-            return matta.get(d, _feature_id);
+            //console.log(d, datagramas.get(d, _feature_id));
+            return datagramas.get(d, _feature_id);
         });
 
     p.enter()
@@ -376,7 +376,7 @@ var draw_topojson = function() {
 
     if (_label !== null) {
         var label = map_container.selectAll('text')
-            .data(auxiliary.geometry.features, function(d, i) { return matta.get(d, _feature_id); });
+            .data(auxiliary.geometry.features, function(d, i) { return datagramas.get(d, _feature_id); });
 
         label.enter()
             .append('text');

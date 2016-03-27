@@ -1,6 +1,6 @@
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta', 'sankey'],
-    'visualization_name': 'matta.flow',
+    'requirements': ['d3', 'datagramas', 'sankey'],
+    'visualization_name': 'datagramas.flow',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

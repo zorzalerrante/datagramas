@@ -2,7 +2,7 @@
 
 VISUALIZATION_CONFIG = {
     'requirements': ['d3', 'parsets'],
-    'visualization_name': 'matta.parsets',
+    'visualization_name': 'datagramas.parsets',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

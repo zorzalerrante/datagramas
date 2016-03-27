@@ -1,8 +1,8 @@
 import json
 
 """
-This is a dict containing all the embedded libraries within matta.
-The source attribute of each library points to the file relative to the matta/libs sub-folder.
+This is a dict containing all the embedded libraries within datagramas.
+The source attribute of each library points to the file relative to the datagramas/libs sub-folder.
 """
 LIBRARIES = {
     'd3': {
@@ -12,10 +12,10 @@ LIBRARIES = {
         'version': '3.5.10',
         'dependencies': {}
     },
-    'matta': {
-        'source': 'matta',
+    'datagramas': {
+        'source': 'datagramas',
         'author': 'Eduardo Graells',
-        'vendor_url': 'http://github.com/carnby/matta',
+        'vendor_url': 'http://github.com/carnby/datagramas',
         'version': '1.0.0',
         'dependencies': {'d3'}
     },
@@ -98,9 +98,9 @@ LIBRARIES = {
     }
 }
 
-def init_javascript_code(path='/static/custom/matta'):
+def init_javascript_code(path='/custom/datagramas'):
     """
-    Returns the Javascript code needed to load matta libraries.
+    Returns the Javascript code needed to load datagramas libraries.
 
     In the IPython notebook this can be loaded automatically by adding the output
     of this function to custom.js script.
@@ -111,18 +111,18 @@ def init_javascript_code(path='/static/custom/matta'):
 
     template = '''
 
-    if (!require.defined('matta')) {{
+    if (!require.defined('datagramas')) {{
         require.config({{
             paths: {0},
             shim: {1},
         }});
 
-        require(['matta'], function(matta) {{
-            matta.add_css('{2}');
+        require(['datagramas'], function(datagramas) {{
+            datagramas.add_css('{2}');
         }});
     }}
     '''
 
-    template = template.format(json.dumps(paths, indent=2), json.dumps(shims, indent=2), path  + '/matta.css')
+    template = template.format(json.dumps(paths, indent=2), json.dumps(shims, indent=2), path  + '/datagramas.css')
 
     return template

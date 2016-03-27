@@ -1,16 +1,16 @@
-define('matta', ['d3', 'legend'], function(d3, legend) {
+define('datagramas', ['d3', 'legend'], function(d3, legend) {
     "use strict";
 
-    var matta = {};
+    var datagramas = {};
 
     // we wrap d3.legend.
-    matta.legend = legend;
+    datagramas.legend = legend;
 
-    matta.add_css = function(url) {
+    datagramas.add_css = function(url) {
         d3.select('head').append('link').attr({rel: 'stylesheet', href: url});
     };
 
-    matta.move_to_front = function(selection) {
+    datagramas.move_to_front = function(selection) {
         /**
          * Makes all elements in the selection to be on front (over) other elements in the same group.
          *
@@ -21,11 +21,11 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         });
     };
 
-    matta.prepare_graph = function(graph) {
+    datagramas.prepare_graph = function(graph) {
         /**
          * Sets the expected structure by d3.js on a NetworkX graph.
          */
-        if (graph.hasOwnProperty('__matta_prepared__') && graph['__matta_prepared__'] == true) {
+        if (graph.hasOwnProperty('__datagramas_prepared__') && graph['__datagramas_prepared__'] == true) {
             return;
         }
 
@@ -53,11 +53,11 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
             });
         }
 
-        graph['__matta_prepared__'] = true;
+        graph['__datagramas_prepared__'] = true;
         console.log('prepared graph', graph);
     };
 
-    matta.scale = function(name) {
+    datagramas.scale = function(name) {
         /**
          * Helper function to build scales.
          * In this way, in python we can define scales by name ('linear', 'sqrt', 'log') or exponent (e.g., 0.5).
@@ -69,7 +69,7 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         return d3.scale.pow().exponent(name);
     };
 
-    matta.fit_projection = function(width, height, bounding_box) {
+    datagramas.fit_projection = function(width, height, bounding_box) {
         /**
          * Given width and height, and a bounding box, returns the projection parameters to fit the box into the screen.
          * Based on http://bl.ocks.org/mbostock/4573883
@@ -80,7 +80,7 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         return [s, t];
     };
 
-    matta.get = function(obj, path) {
+    datagramas.get = function(obj, path) {
         /**
          * Given a path to an object member (e.g., 'parent.name'), return the object if it exists, null otherwise.
          */
@@ -107,7 +107,7 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         return current;
     };
 
-    matta.text_color = function(color) {
+    datagramas.text_color = function(color) {
         /**
          * Given a color, return a suitable text color.
          * Function extracted from the D3 Plus library at http://d3plus.org/
@@ -125,7 +125,7 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         }
     };
 
-    matta.to_time_string = function(timedelta) {
+    datagramas.to_time_string = function(timedelta) {
         /**
          * Given a timedelta serialized as the number of seconds, returns a string with 'HH:MM:SS' format.
          */
@@ -146,7 +146,7 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         return hours + ':' + minutes + ':' + seconds;
     };
 
-    matta.generate_uuid = function() {
+    datagramas.generate_uuid = function() {
         /**
          * Generates a random unique string.
          *
@@ -164,5 +164,5 @@ define('matta', ['d3', 'legend'], function(d3, legend) {
         return uuid;
     };
 
-    return matta;
+    return datagramas;
 });

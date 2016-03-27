@@ -72,22 +72,22 @@
 
             _{{ var_name }}_scale.domain(
                 _{{ var_name }}_scale_type === 'threshold' || _{{ var_name }}_scale_type === 'quantize' ?
-                    d3.extent(data, function(d) { return matta.get(d, _{{ var_name }}_value); }) :
-                    d3.set(data.map(function (d) { return matta.get(d, _{{ var_name }}_value); })).values().sort()
+                    d3.extent(data, function(d) { return datagramas.get(d, _{{ var_name }}_value); }) :
+                    d3.set(data.map(function (d) { return datagramas.get(d, _{{ var_name }}_value); })).values().sort()
             );
             console.log('{{ var_name }} scale range', _{{ var_name }}_scale.range());
             console.log('{{ var_name }} scale domain', _{{ var_name }}_scale.domain());
         };
 
         _{{ var_name }} = function(d) {
-            //console.log('_{{ var_name }}', d, _{{ var_name }}_value, matta.get(d, _{{ var_name }}_value), _{{ var_name }}_scale(matta.get(d, _{{ var_name }}_value)));
-            return _{{ var_name }}_scale(matta.get(d, _{{ var_name }}_value));
+            //console.log('_{{ var_name }}', d, _{{ var_name }}_value, datagramas.get(d, _{{ var_name }}_value), _{{ var_name }}_scale(datagramas.get(d, _{{ var_name }}_value)));
+            return _{{ var_name }}_scale(datagramas.get(d, _{{ var_name }}_value));
         };
 
         console.log('{{ var_name }} show legend', _{{ var_name }}_show_legend);
         // we can create the legend if desired
         if (_{{ var_name }}_show_legend) {
-            _{{ var_name }}_legend = matta.legend.color()
+            _{{ var_name }}_legend = datagramas.legend.color()
                     .useClass(false)
                     .scale(_{{ var_name }}_scale)
                     // TODO: this should be automatic or a colorable option

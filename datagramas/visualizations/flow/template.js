@@ -1,9 +1,9 @@
 
 // we do this because the d3-sankey layout has hardcoded the value variable.
-matta.prepare_graph(_data_graph);
+datagramas.prepare_graph(_data_graph);
 
 _data_graph.links.forEach(function(d) {
-    d.value = matta.get(d, _link_weight);
+    d.value = datagramas.get(d, _link_weight);
 });
 
 _node_color_update_scale_func(_data_graph.nodes);
@@ -115,7 +115,7 @@ node.append("text")
     .attr("text-anchor", "end")
     .attr("transform", null)
     .attr('font-size', _font_size)
-    .text(function(d) { return matta.get(d, _node_label); })
+    .text(function(d) { return datagramas.get(d, _node_label); })
     .filter(function(d){ return d.x > sankey_width / 2; })
     .attr("x", 6 + layout.nodeWidth())
     .attr("text-anchor", "start");

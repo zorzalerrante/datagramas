@@ -1,8 +1,8 @@
 from scipy.constants import golden_ratio
 
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta'],
-    'visualization_name': 'matta.treemap',
+    'requirements': ['d3', 'datagramas'],
+    'visualization_name': 'datagramas.treemap',
     'figure_id': None,
     'container_type': 'div',
     'data': {

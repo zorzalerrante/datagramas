@@ -1,9 +1,9 @@
-from matta.js_utils import d3jsObject, JSCode
+from datagramas.js_utils import d3jsObject, JSCode
 
 
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta', 'topojson'],
-    'visualization_name': 'matta.cartography',
+    'requirements': ['d3', 'datagramas', 'topojson'],
+    'visualization_name': 'datagramas.cartography',
     'figure_id': None,
     'container_type': 'div',
     'data': {

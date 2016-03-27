@@ -40,12 +40,12 @@
         console.log('{{ var_name }} using a functor', _{{ var_name }}_value);
         _{{ var_name }} = d3.functor(_{{ var_name }}_value !== null ? _{{ var_name }}_value : _{{ var_name }}_max);
     } else {
-        _{{ var_name }}_scale = matta.scale(_{{ var_name }}_scale_type);
+        _{{ var_name }}_scale = datagramas.scale(_{{ var_name }}_scale_type);
         _{{ var_name }}_scale.range([_{{ var_name }}_min, _{{ var_name }}_max]);
 
         _{{ var_name }} = function(d) {
-            //console.log('_{{ var_name }}', d, _{{ var_name }}_value, _{{ var_name }}_scale(matta.get(d, _{{ var_name }}_value)));
-            return _{{ var_name }}_scale(matta.get(d, _{{ var_name }}_value));
+            //console.log('_{{ var_name }}', d, _{{ var_name }}_value, _{{ var_name }}_scale(datagramas.get(d, _{{ var_name }}_value)));
+            return _{{ var_name }}_scale(datagramas.get(d, _{{ var_name }}_value));
         };
 
         _{{ var_name }}_update_scale_func = function(data) {
@@ -55,7 +55,7 @@
 
             _{{ var_name }}_scale.range([_{{ var_name }}_min, _{{ var_name }}_max]);
             _{{ var_name }}_scale.domain(d3.extent(data, function(d) {
-                return matta.get(d, _{{ var_name }}_value);
+                return datagramas.get(d, _{{ var_name }}_value);
                 })
             );
         };

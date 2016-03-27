@@ -24,7 +24,7 @@ if (_data_geometry !== null && typeof _data_geometry === 'object') {
 auxiliary.available_feature_ids = d3.set();
 
 auxiliary.geometry.features.forEach(function(d) {
-    auxiliary.available_feature_ids.add(matta.get(d, _feature_id));
+    auxiliary.available_feature_ids.add(datagramas.get(d, _feature_id));
 });
 
 var path = d3.geo.path().pointRadius(5);
@@ -121,7 +121,7 @@ var path = d3.geo.path().pointRadius(5);
     console.log(path.bounds(auxiliary.geometry));
 
     if (_fit_projection) {
-        var st = matta.fit_projection(map_width, map_height, path.bounds(auxiliary.geometry));
+        var st = datagramas.fit_projection(map_width, map_height, path.bounds(auxiliary.geometry));
         console.log(path.bounds(auxiliary.geometry));
         _projection.scale(st[0]).translate(st[1]);
         console.log(path.bounds(auxiliary.geometry));

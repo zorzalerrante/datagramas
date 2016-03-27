@@ -37,7 +37,7 @@ g.legendCells circle.swatch {
  */
 
 .rendered_html svg,
-div.output_area div.matta_figure div.leaflet_container svg {
+div.output_area div.datagram-figure div.leaflet_container svg {
   max-width: unset !important;
 }
 

@@ -1,6 +1,6 @@
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta'],
-    'visualization_name': 'matta.circlepack',
+    'requirements': ['d3', 'datagramas'],
+    'visualization_name': 'datagramas.circlepack',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

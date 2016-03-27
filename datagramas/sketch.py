@@ -11,12 +11,12 @@ from seaborn import color_palette
 from matplotlib.colors import rgb2hex
 from .js_utils import _dump_json, d3jsObject
 
-MATTA_TEMPLATE_FILES = {'base.js', 'base.attributes.js', 'base.colorables.js',
+DATAGRAMAS_TEMPLATE_FILES = {'base.js', 'base.attributes.js', 'base.colorables.js',
     'base.html', 'multiples.html', 'select-categories.html',
     'scaffold.js'}
 
 def _load_template(filename):
-    if filename in MATTA_TEMPLATE_FILES:
+    if filename in DATAGRAMAS_TEMPLATE_FILES:
         filename = '{0}/templates/{1}'.format(SRC_DIR, filename)
 
     with open(filename, 'r') as f:
@@ -127,7 +127,7 @@ class sketch(object):
             repr_args['figure_id'] = 'fig-{0}'.format(uuid.uuid4())
 
         if not 'vis_uuid' in repr_args or not repr_args['vis_uuid']:
-            repr_args['vis_uuid'] = 'matta-vis-{0}'.format(uuid.uuid4())
+            repr_args['vis_uuid'] = 'datagram-vis-{0}'.format(uuid.uuid4())
 
         if not 'define_js_module' in repr_args:
             repr_args['define_js_module'] = True

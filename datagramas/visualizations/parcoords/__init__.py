@@ -1,6 +1,6 @@
 VISUALIZATION_CONFIG = {
-    'requirements': ['d3', 'matta'],
-    'visualization_name': 'matta.parcoords',
+    'requirements': ['d3', 'datagramas'],
+    'visualization_name': 'datagramas.parcoords',
     'figure_id': None,
     'container_type': 'svg',
     'data': {

@@ -5,11 +5,12 @@ from IPython.display import HTML
 from .sketch import build_sketch, _dump_json
 from .libraries import init_javascript_code
 
-__version__ = '1.0.0-pre'
+__author__ = 'Eduardo Graells-Garrido'
+__version__ = '1.0.0'
 
-def init_javascript(path='/custom/matta'):
+def init_javascript(path='/custom/datagramas'):
     """
-    Inits the Javascript code needed to load matta libraries in the Jupyter Notebook when viewed on NBViewer.
+    Inits the Javascript code needed to load datagramas libraries in the Jupyter Notebook when viewed on NBViewer.
     """
 
     code = '''
@@ -21,7 +22,7 @@ $(document).ready(function() {{
 }});
 </script>'''
 
-    code = code.format(init_javascript_code(path)) + '<span class="label label-info">matta</span> Javascript code added.'
+    code = code.format(init_javascript_code(path)) + '<span class="label label-info">datagramas</span> Javascript code added.'
     return HTML(code)
 
 def dump_data(data, json_name):
@@ -33,7 +34,7 @@ def import_visualization(module_name, package=None):
     """
     Imports a Python module that contains a visualization using importlib.
 
-    A valid visualization for matta contains at least two files: __init__.py and template.js.
+    A valid visualization for datagramas contains at least two files: __init__.py and template.js.
     In __init__.py there must be a VISUALIZATION_CONFIG dictionary. Optionally, the file can contain
     a function named PROCESS_CONFIG.
 
@@ -68,13 +69,13 @@ def import_visualization(module_name, package=None):
     return build_sketch(config, opt_process=opt_process)
 
 # Included Visualizations
-cartogram = import_visualization('.visualizations.cartogram', package='matta')
-cartography = import_visualization('.visualizations.cartography', package='matta')
-circlepack = import_visualization('.visualizations.circlepack', package='matta')
-flow = import_visualization('.visualizations.flow', package='matta')
-force = import_visualization('.visualizations.force', package='matta')
-parcoords = import_visualization('.visualizations.parcoords', package='matta')
-treemap = import_visualization('.visualizations.treemap', package='matta')
-wordcloud = import_visualization('.visualizations.wordcloud', package='matta')
-parsets = import_visualization('.visualizations.parsets', package='matta')
+cartogram = import_visualization('.visualizations.cartogram', package='datagramas')
+cartography = import_visualization('.visualizations.cartography', package='datagramas')
+circlepack = import_visualization('.visualizations.circlepack', package='datagramas')
+flow = import_visualization('.visualizations.flow', package='datagramas')
+force = import_visualization('.visualizations.force', package='datagramas')
+parcoords = import_visualization('.visualizations.parcoords', package='datagramas')
+treemap = import_visualization('.visualizations.treemap', package='datagramas')
+wordcloud = import_visualization('.visualizations.wordcloud', package='datagramas')
+parsets = import_visualization('.visualizations.parsets', package='datagramas')
 
