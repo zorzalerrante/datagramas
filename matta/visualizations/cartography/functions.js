@@ -160,22 +160,11 @@ var draw_graph = function() {
 
     var line = d3.svg.line()
         .x(function(d) {
-            //console.log(d, _graph_feature_name? d[_graph_feature_name] : d.id);
-            //console.log('node positions', node_positions);
             return node_positions.get(_graph_feature_name? d[_graph_feature_name] : d.id)[0];
         })
         .y(function(d) {
             return node_positions.get(_graph_feature_name? d[_graph_feature_name] : d.id)[1];
         });
-
-//        var link_threshold;
-//        if (_link_color_scale_domain != null) {
-//            link_threshold = d3.scale.threshold()
-//                .domain(_link_color_scale_domain)
-//                .range(_link_color_scale_range);
-//        } else {
-//            link_threshold = d3.functor(_link_color);
-//        }
 
     {% if options.graph_bundle_links %}
         if (!_data_graph.hasOwnProperty('bundled')) {
@@ -227,7 +216,7 @@ var draw_graph = function() {
             });
         });
 
-        line.interpolate("linear");
+        line.interpolate('linear');
 
         var bundled_line = d3.svg.line()
             .x(function(d) { return d.screen_x; })
@@ -293,7 +282,7 @@ var update_area_colors = function() {
 };
 
 /**
- * @param p The selection of area paths from the geography.
+ * @param {selection} p - The selection of area paths from the geography.
  */
 var draw_areas = function(p) {
     _area_color_update_scale_func(_data_area_dataframe);
@@ -302,6 +291,7 @@ var draw_areas = function(p) {
     p.each(function(d) {
         if (auxiliary.area_colors.has(matta.get(d, _feature_id))) {
             d3.select(this)
+                .classed('has-area-color', true)
                 .transition()
                 .delay(_area_transition_delay)
                 .attr({
@@ -309,15 +299,57 @@ var draw_areas = function(p) {
                     'opacity': _area_opacity
                 });
         } else {
-            d3.select(this).attr({
-                'display': 'none'
-            });
+            d3.select(this)
+                .classed('has-area-color', false)
+                .transition()
+                .delay(_area_transition_delay)
+                .attr(_area_na_color !== null ? {
+                    'fill': _area_na_color,
+                    'opacity': _area_opacity
+                } : {'display': 'none'});
         }
     });
 };
 
 var draw_topojson = function() {
-    var p = path_g.selectAll('path')
+    if (_graticule) {
+        if (visualization_defs.selectAll('path.border-sphere').empty()) {
+            auxiliary.graticule_border_id = matta.generate_uuid();
+
+            visualization_defs.append('path')
+                .datum({type: 'Sphere'})
+                .attr('id', auxiliary.graticule_border_id)
+                .attr('d', path);
+
+            visualization_defs.append('clipPath')
+                .attr('id', 'clip')
+                .append('use')
+                .attr('xlink:href', '#' + auxiliary.graticule_border_id);
+        }
+
+        var border = path_g.selectAll('use.stroke').data([1]);
+
+        border.enter()
+            .append('use')
+            .attr('class', 'graticule-stroke')
+            .attr('xlink:href', '#' + auxiliary.graticule_border_id);
+
+        var graticule = d3.geo.graticule()
+            .step(_graticule_step);
+
+        var lines = path_g.selectAll('path.graticule')
+            .data([graticule()]);
+
+        lines.enter()
+            .append('path').classed('graticule', true);
+
+        lines.attr('d', path);
+
+        lines.exit()
+            .remove();
+    }
+
+    var p = path_g.selectAll('path.feature')
         .data(auxiliary.geometry.features, function(d) {
             //console.log(d, matta.get(d, _feature_id));
             return matta.get(d, _feature_id);
@@ -325,6 +357,7 @@ var draw_topojson = function() {
 
     p.enter()
         .append('path')
+        .classed('feature', true)
         .attr({
             'fill': function(d) {
                 return _data_area_dataframe !== null? null : _fill_color(d);

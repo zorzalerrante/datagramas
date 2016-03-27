@@ -1,3 +1,16 @@
 {% if options.leaflet %}
 .rendered_html img.leaflet-tile { margin: 0; }
 {% endif %}
+
+.graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: .5px;
+  stroke-opacity: .5;
+}
+
+.graticule-stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}

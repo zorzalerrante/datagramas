@@ -1,3 +1,5 @@
+from matta.js_utils import d3jsObject, JSCode
+
 
 VISUALIZATION_CONFIG = {
     'requirements': ['d3', 'matta', 'topojson'],
@@ -14,7 +16,7 @@ VISUALIZATION_CONFIG = {
     'options': {
         'leaflet': False,
         'background_color': False,
-        'graph_bundle_links': False
+        'graph_bundle_links': False,
     },
     'variables': {
         'width': 960,
@@ -32,6 +34,7 @@ VISUALIZATION_CONFIG = {
         'area_index': 'index',
         'area_feature_name': None,
         'area_transition_delay': 0,
+        'area_na_color': 'grey',
         # we use 'index' instead of 'id' because we usually serialize after calling the reset_index() method of a DataFrame.
         'mark_index': 'index',
         'mark_feature_name': None,
@@ -55,6 +58,14 @@ VISUALIZATION_CONFIG = {
         'bounding_box': None,
         'leaflet_map_link': '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
         'leaflet_tile_layer': 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        # cartographic options
+        'graticule': False,
+        'graticule_step': [10, 10],
+        'projection_name': 'mercator',
+        'fit_projection': False
+    },
+    'objects': {
+        'projection': None
     },
     'attributes': {
         'area_opacity': {'min': 0.25, 'max': 1.0, 'value': None, 'scale': None, 'legend': False},
@@ -83,15 +94,69 @@ VISUALIZATION_CONFIG = {
         # the list of colors per area
         'area_colors',
         # here we save the geometry specified - it can be either GeoJSON or TopoJSON.
-        'geometry'
+        'geometry',
+        # this is the identifier of the graticule border. It is generated randomly, so we need to save it.
+        'graticule_border_id'
     }
 }
 
+
+AVAILABLE_PROJECTIONS = {
+    'mercator': d3jsObject('d3.geo.mercator', options={'center': [0,0], 'scale': 1, 'translate': [0, 0]}),
+    'stereographic': d3jsObject('d3.geo.stereographic', options={
+        'translate': JSCode('[_vis_width / 2, _vis_height / 2]'),
+        'rotate': [-20, 0],
+        'clipAngle': JSCode('180 - 1e-4'),
+        'clipExtent': JSCode('[[0, 0], [_vis_width, _vis_height]]'),
+        'precision': 0.1
+    }),
+    # d3.geo.projection plugin
+    'laskowski': d3jsObject('d3.geo.laskowski', options={
+        'scale': 150,
+        'translate': JSCode('[_vis_width / 2, _vis_height / 2]'),
+        'precision': 0.1
+    }, dependencies={'d3-geo-projection'})
+}
+
+
 def PROCESS_CONFIG(config):
     if config['options']['leaflet'] is True:
+        # if we use Leaflet, we need to change the container type, as well as raising exceptions in case of incompatible options
         config['container_type'] = 'div'
         config['requirements'].append('leaflet')
+
+        if config['variables']['graticule'] is True:
+            raise Exception('Graticule is not supported when using Leaflet.')
+
+        if config['variables']['fit_projection'] is True:
+            raise Exception('Projection fitting is not supported when using Leaflet.')
     else:
         config['container_type'] = 'svg'
+
     if config['options']['graph_bundle_links'] is True:
         config['requirements'].append('force_edge_bundling')
+
+    if config['variables']['projection_name'] is not None:
+        proj = config['variables']['projection_name']
+
+        if type(proj) == str:
+            if proj not in AVAILABLE_PROJECTIONS:
+                raise Exception('Not supported projection name.')
+            else:
+                if proj != 'mercator' and config['variables']['fit_projection']:
+                    raise Exception('Projection fitting is not supported with a different projection than Mercator.')
+
+            config['objects']['projection'] = AVAILABLE_PROJECTIONS[proj]
+
+        elif type(proj) == d3jsObject:
+            config['objects']['projection'] = proj
+            config['variables']['projection_name'] = proj.js_name
+        else:
+            raise Exception('Invalid projection object parameter.')
+    else:
+        raise Exception('A projection is required.')
+
+    proj_obj = config['objects']['projection']
+    if proj_obj.dependencies is not None:
+        for dep in proj_obj.dependencies:
+            config['requirements'].append(dep)

@@ -116,18 +116,16 @@ var path = d3.geo.path().pointRadius(5);
 
     setup_containers();
 
-    _projection = d3.geo.mercator()
-        .center([0,0])
-        .scale(1)
-        .translate([0, 0]);
-
     path.projection(_projection);
 
     console.log(path.bounds(auxiliary.geometry));
-    var st = matta.fit_projection(map_width, map_height, path.bounds(auxiliary.geometry));
-    console.log(path.bounds(auxiliary.geometry));
-    _projection.scale(st[0]).translate(st[1]);
-    console.log(path.bounds(auxiliary.geometry));
+
+    if (_fit_projection) {
+        var st = matta.fit_projection(map_width, map_height, path.bounds(auxiliary.geometry));
+        console.log(path.bounds(auxiliary.geometry));
+        _projection.scale(st[0]).translate(st[1]);
+        console.log(path.bounds(auxiliary.geometry));
+    }
 
     filter_non_valid_marks();
     update_mark_positions();
