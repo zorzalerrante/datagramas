@@ -1,7 +1,7 @@
 
 /**
  * {% if author_comment %}{{ author_comment }}{% endif %}
- * {{ visualization_name }} was scaffolded using matta - https://github.com/carnby/matta
+ * {{ visualization_name }} was scaffolded using Datagramas - https://github.com/carnby/datagramas
  * Variables that start with an underscore (_) are passed as arguments in Python.
  * Variables that start with _data are data parameters of the visualization, and expected to be given as datum.
  *
@@ -10,7 +10,7 @@
  *
  */
 
-var matta_{{ visualization_name }} = function() {
+var datagram_{{ visualization_name }} = function() {
     "use strict";
 
     var __fill_data__ = function(__data__) {
@@ -47,6 +47,7 @@ var matta_{{ visualization_name }} = function() {
             var container = null;
             var figure_dom_element = this;
             var container_legends = null;
+            var visualization_defs = null;
 
             if (d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container').empty()) {
                 {% if container_type == 'svg' %}
@@ -69,6 +70,8 @@ var matta_{{ visualization_name }} = function() {
                     container_legends = svg.append('g')
                         .classed('{{ visualization_name }}-legends', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
+
+                    visualization_defs = container.append('defs');
 
                 {% elif container_type == 'div' %}
                     // NOTE: a vis. of this kind should manage the legends container (which should be an svg) by itself.
@@ -129,12 +132,12 @@ var matta_{{ visualization_name }} = function() {
          * This function draws the current legends into the specified container.
          */
 
-        var legend = container_legends.selectAll('g.matta-legend')
+        var legend = container_legends.selectAll('g.datagram-legend')
             .data(active_legends, function(d) { return d['variable']; });
 
         legend.enter()
             .append('g')
-            .attr('class', function(d) { return 'matta-legend'; });
+            .attr('class', function(d) { return 'datagram-legend'; });
 
         legend.exit()
             .remove();

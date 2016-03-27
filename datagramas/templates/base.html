@@ -19,12 +19,12 @@ $(function() {
                 .attr('id', '{{ figure_id }}');
         }
 
-        var vis_instance = matta_{{ visualization_name }}();
+        var vis_instance = datagram_{{ visualization_name }}();
 
         var data = {{ data }};
         console.log(data);
         d3.selectAll('#{{ figure_id }}')
-            .classed('matta_figure', true)
+            .classed('datagram-figure', true)
             .data([data])
             .call(vis_instance);
     };
