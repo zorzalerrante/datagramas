@@ -95,6 +95,14 @@ LIBRARIES = {
         'version': '0.2.16',
         'dependencies': {'d3'},
         'exports': 'd3.projections'
+    },
+    'd3-tip': {
+        'source': 'd3-tip/index',
+        'author': 'Justin Palmer',
+        'vendor_url': 'https://github.com/Caged/d3-tip',
+        'version': '0.6.7',
+        'dependencies': {'d3'},
+        'exports': 'd3.tip'
     }
 }
 
