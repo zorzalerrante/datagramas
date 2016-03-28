@@ -1,4 +1,6 @@
+import networkx as nx
 from scipy.constants import golden_ratio
+
 
 VISUALIZATION_CONFIG = {
     'requirements': ['d3', 'datagramas'],
@@ -35,3 +37,14 @@ VISUALIZATION_CONFIG = {
         'node_color': {'value': 'parent.name', 'scale': 'ordinal', 'palette': 'husl', 'n_colors': 15, 'legend': False}
     }
 }
+
+
+def PROCESS_CONFIG(config):
+    if config['data']['tree'] is not None:
+        tree = config['data']['tree']
+
+        if type(tree) not in (nx.DiGraph, nx.MultiDiGraph, nx.OrderedDiGraph, nx.OrderedMultiDiGraph):
+            raise Exception('Treemap needs a directed networkx graph as input data.')
+
+        if not nx.is_arborescence(tree):
+            raise Exception('Treemap needs a tree as input.')

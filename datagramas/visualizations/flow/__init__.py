@@ -1,3 +1,5 @@
+import networkx as nx
+
 VISUALIZATION_CONFIG = {
     'requirements': ['d3', 'datagramas', 'sankey'],
     'visualization_name': 'datagramas.flow',
@@ -29,3 +31,11 @@ VISUALIZATION_CONFIG = {
         'link_color': {'value': '#efefef', 'palette': None, 'scale': None, 'legend': False, 'n_colors': None},
     }
 }
+
+
+def PROCESS_CONFIG(config):
+    if config['data']['graph'] is not None:
+        graph = config['data']['graph']
+
+        if type(graph) not in (nx.DiGraph, nx.MultiDiGraph, nx.OrderedDiGraph, nx.OrderedMultiDiGraph):
+            raise Exception('Flow needs a directed networkx graph as input data.')
