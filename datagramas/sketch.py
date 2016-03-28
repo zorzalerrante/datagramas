@@ -9,7 +9,7 @@ from cytoolz.dicttoolz import valmap, merge
 from IPython.display import display_html
 from seaborn import color_palette
 from matplotlib.colors import rgb2hex
-from .js_utils import _dump_json, d3jsObject
+from .js_utils import _dump_json, d3jsObject, JSCode
 
 DATAGRAMAS_TEMPLATE_FILES = {'base.js', 'base.attributes.js', 'base.colorables.js',
     'base.html', 'multiples.html', 'select-categories.html',
@@ -66,10 +66,25 @@ class sketch(object):
         else:
             self.configuration['colorables'] = {}
 
+        if 'allowed_events' in self.configuration['options'] and self.configuration['options']['allowed_events']:
+            if 'events' in self.configuration:
+                self.configuration['events'] = {k: self.process_event(k, v) for k, v in self.configuration['events'].items() if v is not None}
+
         self.configuration['__data_variables__'] = list(self.configuration['data'].keys())
         self.configuration['data'] = _dump_json(self.configuration['data'])
         if 'facets' in self.configuration:
             self.configuration['facets'] = _dump_json(self.configuration['facets'])
+
+    def process_event(self, key, variable):
+        if type(variable) != JSCode:
+            raise Exception('Events can only be of JSCode type.')
+
+        if key not in self.configuration['options']['allowed_events']:
+            raise Exception('Unsupported event: {0}.'.format(key))
+
+        rendered = variable.render(context=self.configuration)
+
+        return rendered
 
     def process_objects(self, variable):
         if type(variable) != d3jsObject:
@@ -227,7 +242,7 @@ def build_sketch(default_args, opt_process=None):
         """
         sketch_args = copy.deepcopy(default_args)
 
-        for key, value in list(kwargs.items()):
+        for key, value in kwargs.items():
             if key in sketch_args:
                 sketch_args[key] = value
 

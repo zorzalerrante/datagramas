@@ -24,8 +24,8 @@ var datagram_{{ visualization_name }} = function() {
         {% endfor %}
     };
 
-    {% if options.events %}
-        var dispatch = d3.dispatch('{{ options.events|join('\', \'') }}');
+    {% if options.allowed_events %}
+        var dispatch = d3.dispatch('{{ options.allowed_events|join('\', \'') }}');
     {% endif %}
 
     var func_{{ visualization_name }} = function (selection) {
@@ -38,6 +38,12 @@ var datagram_{{ visualization_name }} = function() {
         if (_{{ var_name }} === null) {
             _{{ var_name }} = {{ var_value }};
         }
+        {% endfor %}
+        {% endif %}
+
+        {% if events %}
+        {% for var_name, var_value in events.items() %}
+        dispatch.on('{{ var_name }}', {{ var_value }});
         {% endfor %}
         {% endif %}
 
