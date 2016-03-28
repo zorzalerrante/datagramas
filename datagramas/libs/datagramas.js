@@ -1,10 +1,11 @@
-define('datagramas', ['d3', 'legend'], function(d3, legend) {
+define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
     "use strict";
 
     var datagramas = {};
 
-    // we wrap d3.legend.
+    // we wrap d3-legend and d3-tip
     datagramas.legend = legend;
+    datagramas.tip = tip;
 
     datagramas.add_css = function(url) {
         d3.select('head').append('link').attr({rel: 'stylesheet', href: url});

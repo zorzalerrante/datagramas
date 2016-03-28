@@ -35,6 +35,8 @@ class sketch(object):
     configuration dictionary provided by each visualization. See build_sketch.
     """
 
+    datagram_events = ['datagram_start', 'datagram_end']
+
     def __init__(self, **kwargs):
         if not 'container_type' in kwargs:
             raise Exception('need to define a container element')
@@ -75,11 +77,13 @@ class sketch(object):
         if 'facets' in self.configuration:
             self.configuration['facets'] = _dump_json(self.configuration['facets'])
 
+        self.configuration['datagram_events'] = self.datagram_events
+
     def process_event(self, key, variable):
         if type(variable) != JSCode:
             raise Exception('Events can only be of JSCode type.')
 
-        if key not in self.configuration['options']['allowed_events']:
+        if key not in self.configuration['options']['allowed_events'] and key not in self.datagram_events:
             raise Exception('Unsupported event: {0}.'.format(key))
 
         rendered = variable.render(context=self.configuration)
@@ -155,6 +159,15 @@ class sketch(object):
 
         # some dependencies have names with invalid characters for variable names in Javascript
         repr_args['requirements_as_args'] = list(map(lambda x: x.replace('-', '_'), repr_args['requirements']))
+
+        # if there are defined events, we merge them here
+        repr_args['event_names'] = []
+
+        if 'allowed_events' in repr_args['options'] and repr_args['options']['allowed_events']:
+            repr_args['event_names'].extend(repr_args['options']['allowed_events'])
+
+        repr_args['event_names'].extend(self.datagram_events)
+        repr_args['event_names'] = list(set(repr_args['event_names']))
 
         return template.render(**repr_args)
 

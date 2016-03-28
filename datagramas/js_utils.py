@@ -39,8 +39,9 @@ class JSCode(object):
     """
     A class that wraps a JavaScript code sentence rendered into a template considering a visualization context.
     """
-    def __init__(self, code):
+    def __init__(self, code, dependencies=None):
         self.code = code
+        self.dependencies = dependencies
 
     def render(self, **opts):
         return jinja2.Template(self.code).render(**opts)
@@ -70,6 +71,9 @@ class d3jsObject(object):
     This would render the option as:
 
     .translate([_vis_width / 2, _vis_height / 2]).
+
+    When datagramas is rendering a sketch into a visualization, the render() method is called.
+    As context, it receives the current sketch configuration.
     """
     def __init__(self, js_name, options=None, dependencies=None):
         self.js_name = js_name

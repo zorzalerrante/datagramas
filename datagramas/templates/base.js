@@ -24,8 +24,8 @@ var datagram_{{ visualization_name }} = function() {
         {% endfor %}
     };
 
-    {% if options.allowed_events %}
-        var dispatch = d3.dispatch('{{ options.allowed_events|join('\', \'') }}');
+    {% if event_names %}
+        var dispatch = d3.dispatch('{{ event_names|join('\', \'') }}');
     {% endif %}
 
     var func_{{ visualization_name }} = function (selection) {
@@ -41,12 +41,6 @@ var datagram_{{ visualization_name }} = function() {
         {% endfor %}
         {% endif %}
 
-        {% if events %}
-        {% for var_name, var_value in events.items() %}
-        dispatch.on('{{ var_name }}', {{ var_value }});
-        {% endfor %}
-        {% endif %}
-
         selection.each(function(__data__) {
             __fill_data__(__data__);
 
@@ -54,6 +48,13 @@ var datagram_{{ visualization_name }} = function() {
             var figure_dom_element = this;
             var container_legends = null;
             var visualization_defs = null;
+
+            {% if events %}
+            {% for var_name, var_value in events.items() %}
+            console.log('{{ var_name }}', {{ var_value }})
+            dispatch.on('{{ var_name }}', {{ var_value }});
+            {% endfor %}
+            {% endif %}
 
             if (d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container').empty()) {
                 {% if container_type == 'svg' %}
@@ -106,8 +107,12 @@ var datagram_{{ visualization_name }} = function() {
                 container = d3.select(this).select('{{ container_type }}.{{ visualization_name }}-container');
             }
 
+            dispatch.datagram_start.apply(container.node());
+
             {% if functions_js %}{{ functions_js }}{% endif %}
             {% if visualization_js %}{{ visualization_js }}{% endif %}
+
+            dispatch.datagram_end.apply(container.node());
         });
     };
 
@@ -203,15 +208,16 @@ var datagram_{{ visualization_name }} = function() {
     {% endfor %}
     {% endif %}
 
+    var auxiliary = {};
+
     {% if auxiliary %}
-        var auxiliary = {};
     {% for var_name in auxiliary %}
         auxiliary.{{ var_name }} = null;
     {% endfor %}
     {% endif %}
 
-    {% if options.events %}
-        {% for event in options.events %}
+    {% if event_names %}
+        {% for event in event_names %}
             d3.rebind(func_{{ visualization_name }}, dispatch, '{{ event }}');
         {% endfor %}
         d3.rebind(func_{{ visualization_name }}, dispatch, 'on');
