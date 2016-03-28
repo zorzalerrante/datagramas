@@ -1,35 +1,36 @@
-# matta
+# Datagramas
 
 A Python library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org). It works with Python 2.7 and 3.4.
 
 **NOTE** We are currently updating this library to the 1.0.0 version. Please help us test if installation works ok :)
 
-![matta screenshot](examples/matta_screenshot.png?raw=true "A Screenshot of matta in action")
+![datagramas screenshot](examples/datagramas_screenshot.png?raw=true "A Screenshot of datagramas in action")
 
 ## Overview
 
-matta is a visualization development support tool and a visualization library at the same time. Initially I implemented
+Datagramas is a visualization development support tool and a visualization library at the same time. Initially I implemented
 it to help me develop visualizations in the context of my doctoral thesis. I was researching the mixture of algorithms
 and visualizations, and therefore I was always iterating over algorithm and visualization design. 
+Hence, currently datagramas supports some visualizations that I needed to implement in my doctoral thesis, plus other examples
+I found to be interesting to explore.
 
-Currently matta supports some visualizations that I needed to implement in my doctoral thesis.
-The main idea is to have a generalizable template to build visualizations on, and to be able to reuse the visualizations
-to explore data in the Jupyter Notebook.
+The main objective of datagramas is to provide an environment to bootstrap visualization implementations, and use scaffolding
+through templates to be able to reuse the visualizations and to explore data in the Jupyter Notebook.
 
-An important aspect of matta is that it works with standard scientific Python data-structures: pandas DataFrames and NetworkX graphs.
-By using matta to develop your visualization, you do not need to worry about data structures and formats. For instance,
+An important aspect of datagramas is that it works with standard scientific Python data-structures: pandas DataFrames and NetworkX graphs.
+By using datagramas to develop your visualization, you do not need to worry about data structures and formats. For instance,
 have you ever found an example visualization that seemed to be what you wanted, but the data structure used was arbitrarily
 chosen by the developer? And that structure was completely different from what you were using/expecting? 
-By using matta there are no arbitrary choices - you use DataFrames and specify which columns will
+By using datagramas there are no arbitrary choices - you use DataFrames and specify which columns will
 be mapped to the visualization, and that's it.
 
 ## Examples / Documentation
 
 In addition to this readme, the following notebooks serve as examples/documentation:
 
-  * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
-  * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)
-  * [Let's Make a Map Too (and a Cartogram!)](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
+  * [Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/datagramas/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)
+  * [Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/datagramas/blob/master/examples/Basic%20Examples.ipynb)
+  * [Let's Make a Map Too (and a Cartogram!)](http://nbviewer.ipython.org/github/carnby/datagramas/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)
 
 ## Initialization / Installation
 
@@ -40,29 +41,31 @@ $ pip install -r requirements.txt
 $ python setup.py install
 ```
 
-Then make a symbolic link in your IPython profile to matta libs:
+Then make a symbolic link in your IPython profile to the datagramas libs folder:
 
 ```
 $ cd ~/.jupyter/custom
-$ ~/.jupyter/custom$ ln -s ~/path_to_matta/matta/libs/ matta
+$ ~/.jupyter/custom$ ln -s ~/path_to_datagramas/datagramas/libs/ datagramas
 ```
 
-And finally, edit the `custom.js` file and add the following lines:
+And finally, edit the `custom.js` file and add the following lines (if there is no such file, create it):
 
 ```javascript
 require.config({
     paths: {
-          "sankey": "/custom/matta/d3-sankey/sankey", 
-          "cartogram": "/custom/matta/d3-cartogram/cartogram", 
-          "d3": "/custom/matta/d3/d3.min", 
-          "leaflet": "/custom/matta/leaflet/leaflet", 
-          "topojson": "/custom/matta/topojson/topojson.min", 
-          "parsets": "/custom/matta/d3-parsets-1.2.4/d3.parsets", 
-          "matta": "/custom/matta/matta", 
-          "force_edge_bundling": "/custom/matta/d3-force-bundling/d3.ForceEdgeBundling", 
-          "legend": "/custom/matta/d3-legend/d3-legend.min", 
-          "cloud": "/custom/matta/d3-cloud/d3.layout.cloud", 
-          "cola": "/custom/matta/cola/cola.min"
+          "sankey": "/custom/datagramas/d3-sankey/sankey",
+          "cartogram": "/custom/datagramas/d3-cartogram/cartogram",
+          "d3": "/custom/datagramas/d3/d3.min",
+          "leaflet": "/custom/datagramas/leaflet/leaflet",
+          "topojson": "/custom/datagramas/topojson/topojson.min",
+          "parsets": "/custom/datagramas/d3-parsets-1.2.4/d3.parsets",
+          "datagramas": "/custom/datagramas/datagramas",
+          "force_edge_bundling": "/custom/datagramas/d3-force-bundling/d3.ForceEdgeBundling",
+          "legend": "/custom/datagramas/d3-legend/d3-legend.min",
+          "cloud": "/custom/datagramas/d3-cloud/d3.layout.cloud",
+          "cola": "/custom/datagramas/cola/cola.min",
+          "d3-geo-projection": "/custom/datagramas/d3-geo-projection/d3.geo.projection.min",
+          "d3-tip": "/custom/datagramas/d3-tip/index"
         },
     shim: {
       "sankey": {
@@ -84,26 +87,36 @@ require.config({
       "legend": {
         "exports": "d3.legend", 
         "deps": ["d3"]
-      }
+      },
+      "d3-geo-projection": {
+        "exports": "d3.geo.projection",
+        "deps": ["d3"]
+      },
+      "d3-tip": {
+        "exports": "d3.tip",
+        "deps": ["d3"]
+      },
     },
 });
 
-require(['matta'], function(matta) {
-    matta.add_css('/custom/matta/matta.css');
+require(['datagramas'], function(datagramas) {
+    datagramas.add_css('/custom/datagramas/datagramas.css');
 });
 ```
 
-This will make Jupyter to load matta every time you load a notebook file. If you use an older version of Jupyter Notebook,
-note that you will need to include the "/static" prefix to those URLs. This code can be generated by the function `matta.init_javascript_code(path='/custom/matta')`.
+This code can be generated by the function `datagramas.init_javascript_code(path='/custom/datagramas')`.
+It will make Jupyter to load the necessary Javascript code for datagramas every time you load a notebook file.
+If you use an older version of Jupyter Notebook, note that you will need to include the "/static" prefix to those URLs.
 
 ## Visualization Modules
 
-All visualizations in matta are specified as Python modules (see the `matta/visualizations` folder). A module is composed of a configuration and several template and style files. 
+All visualizations in datagramas are specified as Python modules (see the `datagramas/visualizations` folder).
+A module is composed of a configuration and several template and style files.
 
-The **[Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)** 
+The **[Let's <del>Make</del> Scaffold a Barchart](http://nbviewer.ipython.org/github/carnby/datagramas/blob/master/examples/Let's%20Make%20a%20Barchart.ipynb)** 
 example notebook contains a basic visualization that showcases some of these concepts.
 
-Currently, matta includes the following visualizations (in alphabetical order):
+Currently, datagramas includes the following visualizations (in alphabetical order):
 
   * `cartogram` of a TopoJSON topology and a pandas DataFrame.
   * `cartography` of a Topo/GeoJSON geometry, pandas DataFrames for marks and area colors, and NetworkX graphs over the map. 
@@ -115,22 +128,22 @@ Currently, matta includes the following visualizations (in alphabetical order):
   * `treemap` of a NetworkX tree.
   * `wordcloud` of a pandas DataFrame.
 
-The **[Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Basic%20Examples.ipynb)** notebook 
+The **[Basic Notebook Examples](http://nbviewer.ipython.org/github/carnby/datagramas/blob/master/examples/Basic%20Examples.ipynb)** notebook 
 showcases the usage of most of those visualizations.
 
-The **[Let's Make a Map Too (and a Cartogram!)](http://nbviewer.ipython.org/github/carnby/matta/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)**
+The **[Let's Make a Map Too (and a Cartogram!)](http://nbviewer.ipython.org/github/carnby/datagramas/blob/master/examples/Let's%20Make%20a%20Map%20Too.ipynb)**
 notebook showcases the usage of `cartogram` and `cartography`.
 
 ### Template Files
 
-The following are the template files rendered by matta:
+The following are the template files rendered by datagramas:
 
   * `template.js`: the main template of each visualization module. Think of this file as the body of a `draw()` function in 
   a typical visualization module. 
   * `template.css` (optional)
   * `functions.js` (optional)
 
-When matta renders your visualization, it embeds those files into a bigger visualization that follows the [reusable 
+When datagramas renders your visualization, it embeds those files into a bigger visualization that follows the [reusable
 chart pattern](http://bost.ocks.org/mike/chart/) by Mike Bostock.
 
 ### Configuration
@@ -227,12 +240,12 @@ with at least some of the following elements:
   Following the `force` example, in Python you can specify a `node_ratio` when calling the visualization in three ways
   (note that `g` is a `NetworkX` graph):
   
-  `matta.force(graph=g, node_ratio=15)`: all nodes will have ratio 15. 
+  `datagramas.force(graph=g, node_ratio=15)`: all nodes will have ratio 15.
   
-  `matta.force(graph=g, node_ratio='size')`: node ratio will be proportional to the `size` node attribute,
+  `datagramas.force(graph=g, node_ratio='size')`: node ratio will be proportional to the `size` node attribute,
   using the default minimum and maximum values, and the default scale. 
   
-  `matta.force(graph=g, node_ratio={'value': 'size', 'scale': 'sqrt', 'max': 32})`: node ratio will be proportional to the 
+  `datagramas.force(graph=g, node_ratio={'value': 'size', 'scale': 'sqrt', 'max': 32})`: node ratio will be proportional to the
   `size` node attribute, with `sqrt` scale, with a maximum value of 32. 
    
   * Colorables: these are mappings between data attributes and colors. For instance, the `force` visualization defines
@@ -246,9 +259,9 @@ with at least some of the following elements:
   In a similar way to mapped attributes, you can specify a color directly, or by overriding the dictionary for each
   colorable: 
   
-  `matta.force(graph=g, link_color='purple)`: all links will be colored purple.
+  `datagramas.force(graph=g, link_color='purple)`: all links will be colored purple.
   
-  `matta.force(graph=g, link_color={'value': 'source.bipartite', 'palette': 'Set2', 'scale': 'ordinal'})`: all links
+  `datagramas.force(graph=g, link_color={'value': 'source.bipartite', 'palette': 'Set2', 'scale': 'ordinal'})`: all links
   will be colored according to the `source.bipartite` attribute of each link (this translates to the `bipartite`
   attribute of the source node of each link - yes, you can use dot notation).
   
@@ -256,7 +269,9 @@ with at least some of the following elements:
   need to specify the arguments dictionary. 
   
   The palette name must be recognized by the function [`seaborn.color_palette`](http://stanford.edu/~mwaskom/software/seaborn/tutorial/color_palettes.html#building-color-palettes-with-color-palette).
- 
+
+  * Objects: these are d3js objects wrapped in a Python class. See "Extra Functions" below.
+
 Here is an example of how nodes and links are rendered in their `template.js` file:
  
 ```javascript
@@ -282,17 +297,20 @@ link.enter()
   
 ### Extra Functions
 
-Your visualization's `__init__.py` file can define other functions. Meanwhile, matta supports the following one:
+Your visualization's `__init__.py` file can define auxiliary functions and attributes.
+Datagramas particularly supports the following one:
 
-  * `PROCESS_CONFIG(config)`: where `config` is the current instance of the `VISUALIZATION_CONFIG` dictionary. This is
-  used to handle dependencies. For instance, if you specify `leaflet=True` in `cartography`, leaflet is added as a 
-  dependency.
+  * `PROCESS_CONFIG(config)`: where `config` is the current instance of the `VISUALIZATION_CONFIG` dictionary.
+
+Among other uses, this function could be used to handle dependencies. For instance, if you specify `leaflet=True` in
+`cartography`, leaflet is added as a dependency. Or, if you specify a projection name (through the `projection_name`
+variable), a d3js object is added to the current visualization objects.
   
 ### Scaffolding
 
-Until now, we have explained how matta allows you to code and render visualizations. They are already usable on the Jupyter
+Until now, we have explained how datagramas allows you to code and render visualizations. They are already usable on the Jupyter
 Notebook, but you want to export the visualization into a reusable chart that you can use in your projects. If so, 
-it's your lucky day! matta includes that functionality through a method called `scaffold`.
+it's your lucky day! datagramas includes that functionality through a method called `scaffold`.
 
 For example, if you look at the `barchart` example you will find this notebook cell:
 
@@ -306,48 +324,53 @@ you can find a couple of links with scaffolded visualizations.
 
 ## Credits
 
-matta bundles the following libraries (see the `matta/libs` subfolder):
+Datagramas bundles the following libraries (see the `datagramas/libs` subfolder):
 
  * [d3.js](http://d3js.org)
  * [d3.sankey](http://bost.ocks.org/mike/sankey/)
  * [d3.layout.cloud](http://www.jasondavies.com/wordcloud/#%2F%2Fwww.jasondavies.com%2Fwordtree%2Fcat-in-the-hat.txt)
  * [d3.ForceEdgeBundling](https://github.com/upphiminn/d3.ForceBundle)
  * [d3.parsets](https://github.com/jasondavies/d3-parsets)
- * [topojson 1.6.18](https://github.com/mbostock/topojson)
+ * [topojson](https://github.com/mbostock/topojson)
  * [leaflet](http://leafletjs.com)
  * [cartogram.js](http://prag.ma/code/d3-cartogram/)
  * [WebCola](http://marvl.infotech.monash.edu/webcola/)
  * [d3-legend](http://d3-legend.susielu.com/)
+ * [d3-geo-projection](https://github.com/d3/d3-geo-projection)
+ * [d3-tip](https://github.com/Caged/d3-tip)
 
-It also contains snippets of code from:
+The file `datagramas/libraries.py` specifies library versions and other meta-data.
+
+Datagramas also contains snippets of code from:
 
  * [D3 Plus](http://d3plus.org/): we use the color text function.
+ * Utilitary Javascript functions from Stack Overflow users, acknowledged on `datagramas/libs/datagramas.js`.
 
 ## Next Steps?
 
 In no particular order:
 
   * Facet data with small-multiples or visualization widgets (in a similar way to seaborn's FacetGrid).
-  * Build a plug-in structure to define behavior at visualization events (e.g., tooltips, callbacks).
   * Bundle a tooltip library (for instance, [d3-tip](https://github.com/Caged/d3-tip)).
   * Allow to export template versions of visualizations+data (e.g., export to gist).
   * Events. Actually this is supported currently (see the Data Portraits links below), but it is not exposed (nor used) in
     any of the included visualizations.
+  * Build a plug-in structure to define behavior at visualization events (e.g., tooltips, callbacks)
   * Improve the legend support. Currently legend positioning is not smart, and legend activation is not automatic for charts.
   * Support other bundled layouts/plugins with d3.js.
   * Support layers in the cartography module.
 
-## About the name
+## About the (old) name
 
-See [Roberto Matta @ Wikipedia](https://en.wikipedia.org/wiki/Roberto_Matta).
-He has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/photos/83257355@N00/1352671334/?rb=1) (_desarrolladores_ is spanish for developers).
+The first official version of Datagramas is titled "datagramas" in honor of [Roberto Matta](https://en.wikipedia.org/wiki/Roberto_Matta).
+Curiously, he has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/photos/83257355@N00/1352671334/?rb=1) (_desarrolladores_ is spanish for developers).
 
 ## In the Wild
 
   * [2|S: Los Dos Santiagos](http://dcc.uchile.cl/~egraells/abrecl/): this is a project where we scaffolded many
     visualizations (Sankey, TopoJSON, Force Edge Bundle) to visualize transport data in Santiago, Chile.
-    All visualizations in the page were scaffolded with matta! _Note: the site is in spanish_.
-  * [Twitter Data Portraits](http://auroratwittera.cl/perfil/carnby/): this visualization was implemented in matta for my
+    All visualizations in the page were scaffolded with datagramas! _Note: the site is in spanish_.
+  * [Twitter Data Portraits](http://auroratwittera.cl/perfil/carnby/): this visualization was implemented in datagramas for my
   doctoral thesis. I needed a way to visualize Twitter profiles and the output of a recommender algorithm. Since the
   data used in the visualization was constantly changing (because algorithms were being developed), I needed a more 
   dynamic way to implement the visualization than always editing JS/HTML files and then reloading everything, 
@@ -355,7 +378,7 @@ He has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/p
   
 ## Versioning
 
-matta will use semantic versioning. We start with 1.0.0.
+Datagramas uses semantic versioning. We start with 1.0.0.
 
 ## Testing
 

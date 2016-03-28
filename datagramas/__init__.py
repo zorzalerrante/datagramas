@@ -6,7 +6,7 @@ from .sketch import build_sketch, _dump_json
 from .libraries import init_javascript_code
 
 __author__ = 'Eduardo Graells-Garrido'
-__version__ = '1.0.0'
+__version__ = '1.0.0-beta'
 
 def init_javascript(path='/custom/datagramas'):
     """
