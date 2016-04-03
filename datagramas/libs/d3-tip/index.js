@@ -29,18 +29,20 @@
         node      = initNode(),
         svg       = null,
         point     = null,
-        target    = null
+        target    = null,
+        parent    = null,
+        fixed_el  = null
 
     function tip(vis) {
       svg = getSVGNode(vis)
       point = svg.createSVGPoint()
-      document.body.appendChild(node)
     }
 
     // Public - show the tooltip on the screen
     //
     // Returns a tip
     tip.show = function() {
+      if(!parent) tip.parent(document.body);
       var args = Array.prototype.slice.call(arguments)
       if(args[args.length - 1] instanceof SVGElement) target = args.pop()
 
@@ -50,17 +52,16 @@
           nodel   = getNodeEl(),
           i       = directions.length,
           coords,
-          scrollTop  = document.documentElement.scrollTop || document.body.scrollTop,
-          scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft
+          parentCoords = node.offsetParent.getBoundingClientRect()
 
       nodel.html(content)
-        .style({ opacity: 1, 'pointer-events': 'all' })
+        .style({ visibility: 'visible', opacity: 1, 'pointer-events': 'all' })
 
       while(i--) nodel.classed(directions[i], false)
       coords = direction_callbacks.get(dir).apply(this)
       nodel.classed(dir, true).style({
-        top: (coords.top +  poffset[0]) + scrollTop + 'px',
-        left: (coords.left + poffset[1]) + scrollLeft + 'px'
+        top: (coords.top + poffset[0]) - parentCoords.top + 'px',
+        left: (coords.left + poffset[1]) - parentCoords.left + 'px'
       })
 
       return tip
@@ -71,7 +72,7 @@
     // Returns a tip
     tip.hide = function() {
       var nodel = getNodeEl()
-      nodel.style({ opacity: 0, 'pointer-events': 'none' })
+      nodel.style({ visibility: 'hidden', opacity: 0, 'pointer-events': 'none' })
       return tip
     }
 
@@ -109,17 +110,29 @@
       return tip
     }
 
-    // Public: Set or get the direction of the tooltip
+    // Public: Set or get the direction or fixed position of the tooltip
     //
     // v - One of n(north), s(south), e(east), or w(west), nw(northwest),
-    //     sw(southwest), ne(northeast) or se(southeast)
+    //     sw(southwest), ne(northeast) or se(southeast). May also be set
+    //     to 'fixed', which requires a seconds parameter: the id of an
+    //     SVG element on the page to which the tip will be fixed in its
+    //     position. It will be fixed to the nw corner of the element. Use
+    //     the offset call when creating the tip to adjust position relative
+    //     to the nw corner of the fixed element. Example call:
+    //         .direction('fixed', '#choropleth')
+    //    
     //
     // Returns tip or direction
     tip.direction = function(v) {
-      if (!arguments.length) return direction
-      direction = v == null ? v : d3.functor(v)
+      if (!arguments.length) {
+        return direction;
 
-      return tip
+      } else if (arguments.length == 2) {
+        fixed_el = arguments[1];
+      }
+
+      direction = v == null ? v : d3.functor(v);
+      return tip;
     }
 
     // Public: Sets or gets the offset of the tip
@@ -146,6 +159,26 @@
       return tip
     }
 
+    // Public: Sets or gets the parent of the tooltip element
+    //
+    // v - New parent for the tip
+    //
+    // Returns parent element or tip
+    tip.parent = function(v) {
+      if (!arguments.length) return parent
+      parent = v || document.body
+      parent.appendChild(node)
+
+      // Make sure offsetParent has a position so the tip can be
+      // based from it. Mainly a concern with <body>.
+      var offsetParent = d3.select(node.offsetParent)
+      if (offsetParent.style('position') === 'static') {
+        offsetParent.style('position', 'relative')
+      }
+
+      return tip
+    }
+
     // Public: destroys the tooltip and removes it from the DOM
     //
     // Returns a tip
@@ -162,6 +195,7 @@
     function d3_tip_html() { return ' ' }
 
     var direction_callbacks = d3.map({
+      fixed: direction_fixed,
       n:  direction_n,
       s:  direction_s,
       e:  direction_e,
@@ -173,6 +207,14 @@
     }),
 
     directions = direction_callbacks.keys()
+
+    function direction_fixed() {
+      var bbox = getScreenBBox(fixed_el);
+      return {
+        top:  bbox.nw.y,
+        left: bbox.nw.x
+      }
+    }
 
     function direction_n() {
       var bbox = getScreenBBox()
@@ -281,9 +323,15 @@
     //    +-+-+
     //
     // Returns an Object {n, s, e, w, nw, sw, ne, se}
-    function getScreenBBox() {
-      var targetel   = target || d3.event.target;
+    function getScreenBBox(fixed_element) {
+      var targetel;
 
+      if (fixed_element){
+        targetel = d3.select(fixed_element)[0][0];
+      } else {
+        targetel = target || d3.event.target;
+      }
+      
       while ('undefined' === typeof targetel.getScreenCTM && 'undefined' === targetel.parentNode) {
           targetel = targetel.parentNode;
       }

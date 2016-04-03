@@ -19,7 +19,7 @@ class DatagramasJSONEncoder(json.JSONEncoder):
             return obj.item()
         elif isinstance(obj, nx.Graph) or isinstance(obj, nx.DiGraph):
             if nx.is_tree(obj) and 'root' in obj.graph:
-                # NOTE: there must be a root graph attribute, or the root must be the first node added.
+                # NOTE: there must be a root graph attribute.
                 # otherwise it won't work
                 return json_graph.tree_data(obj, obj.graph['root'])
             else:
@@ -28,6 +28,8 @@ class DatagramasJSONEncoder(json.JSONEncoder):
             return obj.to_dict(orient='records')
         elif isinstance(obj, pd.Timedelta):
             return obj.total_seconds()
+        elif isinstance(obj, JSCode):
+            return obj.render()
         return json.JSONEncoder.default(self, obj)
 
 
@@ -40,11 +42,17 @@ class JSCode(object):
     A class that wraps a JavaScript code sentence rendered into a template considering a visualization context.
     """
     def __init__(self, code, dependencies=None):
-        self.code = code
+        self.code = code.strip()
         self.dependencies = dependencies
 
     def render(self, **opts):
         return jinja2.Template(self.code).render(**opts)
+
+    def __call__(self):
+        return self.render()
+
+    def __str__(self):
+        return self.render()
 
 
 class d3jsObject(object):

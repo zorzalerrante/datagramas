@@ -1,4 +1,4 @@
-from __future__ import print_function, unicode_literals
+from __future__ import unicode_literals
 import uuid
 import jinja2
 import os
@@ -257,6 +257,9 @@ def build_sketch(default_args, opt_process=None):
 
         for key, value in kwargs.items():
             if key in sketch_args:
+                sketch_args[key] = value
+
+            elif key == 'events' and 'options' in sketch_args and 'allowed_events' in sketch_args['options']:
                 sketch_args[key] = value
 
             elif key in sketch_args['data']:
