@@ -1,18 +1,18 @@
-
-var diameter = Math.min(_vis_width, _vis_height),
-    format = d3.format(",d");
+var diameter = Math.min(_vis_width, _vis_height);
 
 var pack = d3.layout.pack()
     .size([diameter - 4, diameter - 4])
-    .value(function(d) { return d[_node_value]; });
+    .value(function(d) { return datagramas.get(d, _node_value); })
+    .children(function (d) {
+        return datagramas.get(d, _node_children);
+    });
 
 var root = pack.nodes(_data_tree);
-_node_color_update_scale_func(root);
+console.log('root', root);
+_node_color_update_scale_func(root.filter(function(d) { return datagramas.get(d, _node_value) > 0; }));
 
-
-var node = container.datum(_data_tree).selectAll('.node')
+var node = container.selectAll('.node')
     .data(root);
-
 
 var node_background = function (d) {
     if (_color_level >= 0 && _color_level !== d.depth) {
@@ -23,7 +23,6 @@ var node_background = function (d) {
         return 'none';
     }
 
-    console.log('colorable', datagramas.get(d, _node_label), datagramas.get(d, _node_value), _node_color(d), d);
     return _node_color(d);
 };
 
@@ -34,14 +33,16 @@ var node_text = function (d) {
     return _node_label != null ? datagramas.get(d, _node_label) : null;
 };
 
-node.enter().append('g').each(function(d) {
+node.enter().append('g').each(function(d, i) {
     var self = d3.select(this);
     self.append('circle');
     self.append('text').attr('text-anchor', 'middle');
+
+    dispatch.node_selection_enter.apply(this, arguments);
 });
 
-node.attr('class', function(d) { return d.children ? "node node-depth-" + d.depth  : "node-leaf node node-depth-" + d.depth; })
-    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+node.attr('class', function(d) { return d.children ? 'node node-depth-' + d.depth  : 'node-leaf node node-depth-' + d.depth; })
+    .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
 
 node.selectAll('circle')
     .attr({
@@ -59,4 +60,7 @@ node.selectAll('circle')
 node.selectAll('text')
     .text(node_text);
 
-node.exit().remove();
+node.exit().each(function(d, i) {
+        dispatch.node_selection_exit.apply(this, arguments);
+    })
+    .remove();

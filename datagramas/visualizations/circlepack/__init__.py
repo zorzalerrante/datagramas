@@ -1,5 +1,4 @@
 import networkx as nx
-from datagramas.js_utils import JSCode
 
 
 VISUALIZATION_CONFIG = {
@@ -13,7 +12,7 @@ VISUALIZATION_CONFIG = {
     'options': {
         'background_color': None,
         'fit_labels': False,
-        'allowed_events': ['node_click']
+        'allowed_events': ['node_selection_enter', 'node_selection_exit', 'node_click']
     },
     'variables': {
         'width': 960,
@@ -28,16 +27,17 @@ VISUALIZATION_CONFIG = {
         'font_size': 14,
         'node_border': 1,
         'node_border_color': 'rgb(31, 119, 180)',
-        'sticky': True,
         'label_leaves_only': True,
         # < 0: paint only leaves.
         'color_level': -1,
     },
     'colorables': {
-        'node_color': {'value': 'parent.name', 'scale': 'ordinal', 'palette': 'husl', 'n_colors': 15, 'legend': False}
+        'node_color': {'value': 'parent.id', 'scale': 'ordinal', 'palette': 'husl', 'n_colors': 15, 'legend': False}
     },
     'events': {
-        'node_click': None
+        'node_click': None,
+        'node_selection_enter': None,
+        'node_selection_exit': None
     }
 }
 
@@ -51,3 +51,6 @@ def PROCESS_CONFIG(config):
 
         if not nx.is_arborescence(tree):
             raise Exception('Circle Pack needs a tree as input.')
+
+        if 'root' not in tree.graph:
+            raise Exception('Circle Pack needs a \'root\' attribute in the graph.')

@@ -21,10 +21,10 @@ if (_data_geometry !== null && typeof _data_geometry === 'object') {
     throw 'No valid geography found.';
 }
 
-auxiliary.available_feature_ids = d3.set();
+auxiliary.available_feature_ids = d3.map();
 
 auxiliary.geometry.features.forEach(function(d) {
-    auxiliary.available_feature_ids.add(datagramas.get(d, _feature_id));
+    auxiliary.available_feature_ids.set(datagramas.get(d, _feature_id), d);
 });
 
 var path = d3.geo.path().pointRadius(5);

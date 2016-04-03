@@ -17,6 +17,7 @@ VISUALIZATION_CONFIG = {
         'leaflet': False,
         'background_color': False,
         'graph_bundle_links': False,
+        'allowed_events': ['area_click', 'mark_click']
     },
     'variables': {
         'width': 960,
@@ -89,7 +90,7 @@ VISUALIZATION_CONFIG = {
     'auxiliary': {
         # a set to save mark positions. since there are two possible sources of positions, we need to do this.
         'mark_positions',
-        # the list of available features from the geometry source.
+        # the map of available features from the geometry source: {feature_id => feature}
         'available_feature_ids',
         # the list of colors per area
         'area_colors',
@@ -112,7 +113,7 @@ AVAILABLE_PROJECTIONS = {
     }),
     # d3.geo.projection plugin
     'laskowski': d3jsObject('d3.geo.laskowski', options={
-        'scale': 150,
+        'scale': 120,
         'translate': JSCode('[_vis_width / 2, _vis_height / 2]'),
         'precision': 0.1
     }, dependencies={'d3-geo-projection'})

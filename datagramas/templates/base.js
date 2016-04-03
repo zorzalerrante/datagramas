@@ -74,7 +74,7 @@ var datagram_{{ visualization_name }} = function() {
                         .classed('{{ visualization_name }}-container', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
 
-                    container_legends = svg.append('g')
+                    container_legends = container.append('g')
                         .classed('{{ visualization_name }}-legends', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
 

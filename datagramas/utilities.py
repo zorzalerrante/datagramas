@@ -39,9 +39,9 @@ def dataframe_to_geojson_points(df, lat_col='lat', lon_col='lon', idx_col=None, 
 def dataframe_to_graph(df, src_col, dst_col, edge_col='weight', src_label_format=None, dst_label_format=None,
                        node_attrs=None, edge_attrs=None):
     """
-    Generates a NetworkX graph from a Pandas DataFrame.
+    Generates a NetworkX graph from a long-form pandas DataFrame.
 
-    :param df: the source dataframe.
+    :param df: the source dataframe. It has to be long-form (1 row per observation).
     :param src_col: the column used as source for edges.
     :param dst_col: the column used as target for edges.
     :param edge_col: the column used as edge weight -- (default: 'weight')

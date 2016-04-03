@@ -48,3 +48,6 @@ def PROCESS_CONFIG(config):
 
         if not nx.is_arborescence(tree):
             raise Exception('Treemap needs a tree as input.')
+
+        if 'root' not in tree.graph:
+            raise Exception('Treemap needs a \'root\' attribute in the graph.')

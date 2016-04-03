@@ -90,6 +90,8 @@ var draw_marks = function() {
             'cy': position[1],
             'fill': _mark_color
         });
+    }).on('click', function(d, i) {
+        dispatch.mark_click.apply(this, arguments);
     });
 
     mark.transition()
@@ -269,9 +271,18 @@ var update_area_colors = function() {
 
     if (_data_area_dataframe !== null) {
         _data_area_dataframe.forEach(function (d) {
-            var color = _area_color(d);
-            if (color !== null) {
-                auxiliary.area_colors.set(datagramas.get(d, _area_feature_name), color);
+            var feature_id = datagramas.get(d, _area_feature_name);
+
+            // we add a pointer to the dataframe row to access it later.
+            console.log('update', d, feature_id);
+            if (auxiliary.available_feature_ids.has(feature_id)) {
+                var properties = auxiliary.available_feature_ids.get(feature_id);
+                properties['properties']['__dataframe_row__'] = d;
+
+                var color = _area_color(d);
+                if (color !== null) {
+                    auxiliary.area_colors.set(feature_id, color);
+                }
             }
         });
     } else {
@@ -298,6 +309,10 @@ var draw_areas = function(p) {
                     'fill': auxiliary.area_colors.get(datagramas.get(d, _feature_id)),
                     'opacity': _area_opacity
                 });
+
+            d3.select(this).on('click', function(d, i) {
+                    dispatch.area_click.apply(this, [d.properties.__dataframe_row__, i, d]);
+                });
         } else {
             d3.select(this)
                 .classed('has-area-color', false)
@@ -307,6 +322,8 @@ var draw_areas = function(p) {
                     'fill': _area_na_color,
                     'opacity': _area_opacity
                 } : {'display': 'none'});
+
+            d3.select(this).on('click', null);
         }
     });
 };
