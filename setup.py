@@ -18,8 +18,10 @@ setup(name = 'datagramas',
             [os.path.join('visualizations', '*.*')] +
             [os.path.join('visualizations', '*', '*')] +
             [os.path.join('templates', 'base.html'),
-            os.path.join('templates', 'base.js'),
-            os.path.join('templates', 'scaffold.js')
+             os.path.join('templates', 'base.js'),
+             os.path.join('templates', 'base.attributes.js'),
+             os.path.join('templates', 'base.colorables.js'),
+             os.path.join('templates', 'scaffold.js')
             ]
         )
     },
