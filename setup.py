@@ -1,30 +1,25 @@
 from distutils.core import setup
-import glob
-
-with open('requirements.txt', 'rt') as f:
-    requirements = f.read().splitlines()
+import os
 
 setup(name = 'datagramas',
-    version = '1.0.0-beta',
-    description = 'Ready-made visualization usage and scaffolding for your IPython notebook',
+    version = '1.0.0b',
+    description = 'Ready-made visualization usage and scaffolding for your Jupyter notebook',
     author = 'Eduardo Graells-Garrido',
     author_email = 'eduardo.graells@telefonica.com',
     license = 'MIT License',
-    url = 'http://github.com/carnby/matta',
+    url = 'http://github.com/carnby/datagramas',
     packages = ['datagramas'],
     package_dir = {'datagramas': 'datagramas'},
-    include_package_data = True,
-    install_requires = requirements,
     package_data = {
-        'matta' : (
-            glob.glob('libs/*.*') +
-            glob.glob('libs/*/*') +
-            glob.glob('libs/*/*/*') +
-            glob.glob('visualizations/*.*') +
-            glob.glob('visualizations/*/*') +
-            ['templates/base.html',
-            'templates/base.js',
-            'templates/scaffold.js'
+        'datagramas' : (
+            [os.path.join('libs', '*.*')] +
+            [os.path.join('libs', '*', '*')] +
+            [os.path.join('libs', '*', '*', '*')] +
+            [os.path.join('visualizations', '*.*')] +
+            [os.path.join('visualizations', '*', '*')] +
+            [os.path.join('templates', 'base.html'),
+            os.path.join('templates', 'base.js'),
+            os.path.join('templates', 'scaffold.js')
             ]
         )
     },
