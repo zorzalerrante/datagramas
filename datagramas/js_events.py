@@ -17,12 +17,12 @@ def tooltip_events(click_event, tooltip_content):
     """
     events = {}
 
+    # figure is defined in the base.js template
     code = jinja2.Template('''
     function() {
-            console.log(svg);
             auxiliary.tip = datagramas.tip()
                 .attr('class', 'd3-tip')
-                .parent(svg.node().parentNode)
+                .parent(figure.node().parentNode)
                 .html(function(d) {
                     console.log('tip', d);
                     var tooltip_content = '<dl>';

@@ -44,6 +44,7 @@ var datagram_{{ visualization_name }} = function() {
         selection.each(function(__data__) {
             __fill_data__(__data__);
 
+            var figure = null;
             var container = null;
             var figure_dom_element = this;
             var container_legends = null;
@@ -74,6 +75,8 @@ var datagram_{{ visualization_name }} = function() {
                         .classed('{{ visualization_name }}-container', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
 
+                    figure = svg;
+
                     container_legends = container.append('g')
                         .classed('{{ visualization_name }}-legends', true)
                         .attr('transform', 'translate(' + _padding.left + ',' + _padding.top + ')');
@@ -98,6 +101,7 @@ var datagram_{{ visualization_name }} = function() {
                     {% endif %}
 
                     container = div;
+                    figure = div;
 
                 {% else %}
                     console.log('unsupported container type!');

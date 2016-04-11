@@ -53,7 +53,7 @@ class sketch(object):
 
         self.configuration['visualization_name'] = self.configuration['visualization_name'].replace('-', '_').replace('.', '_')
 
-        self.configuration['variables'] = valmap(_dump_json, self.configuration['variables'])
+        self.configuration['variables'] = valmap(self.process_variable, self.configuration['variables'])
 
         if 'objects' in self.configuration:
             self.configuration['objects'] = valmap(self.process_objects, self.configuration['objects'])
@@ -78,6 +78,12 @@ class sketch(object):
             self.configuration['facets'] = _dump_json(self.configuration['facets'])
 
         self.configuration['datagram_events'] = self.datagram_events
+
+    def process_variable(self, variable):
+        if type(variable) != JSCode:
+            return _dump_json(variable)
+
+        return variable.render(context=self.configuration)
 
     def process_event(self, key, variable):
         if type(variable) != JSCode:
@@ -105,9 +111,18 @@ class sketch(object):
         return valmap(_dump_json, attribute)
 
     def process_colorable(self, colorable):
+        if 'domain' not in colorable:
+            colorable['domain'] = None
+
         if 'n_colors' not in colorable or colorable['n_colors'] is None:
-            # this is the seaborn default
-            colorable['n_colors'] = 6
+            if colorable['domain'] is None:
+                # this is the seaborn default
+                colorable['n_colors'] = 6
+            else:
+                colorable['n_colors'] = len(colorable['domain'])
+        else:
+            if type(colorable['n_colors']) != int or colorable['n_colors'] < 1:
+                raise Exception('Number of colors must be an integer greater or equal than 1.')
 
         if 'palette' in colorable and colorable['palette'] is not None:
             if type(colorable['palette']) == str:
@@ -120,9 +135,6 @@ class sketch(object):
                 colorable['n_colors'] = len(colorable['palette'])
         else:
             colorable['palette'] = None
-
-        if 'domain' not in colorable:
-            colorable['domain'] = None
 
         if 'legend' not in colorable:
             colorable['legend'] = False
