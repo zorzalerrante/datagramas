@@ -30,7 +30,6 @@ setup(name = 'datagramas',
         in d3.js for usage inside the Jupyter notebook, as well as tools to
         scaffold visualizations.''',
     classifiers=[
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4'
     ]
 )
