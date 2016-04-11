@@ -1,6 +1,6 @@
 # Datagramas
 
-A Python library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org). It works with Python 2.7 and 3.4.
+A Python library for your Jupyter Notebook that helps you to use and scaffold visualizations with [d3.js](http://d3js.org). It works with 3.4 or newer.
 
 **NOTE** We are currently updating this library to the 1.0.0 version. Please help us test if installation works ok :)
 
@@ -95,7 +95,7 @@ require.config({
       "d3-tip": {
         "exports": "d3.tip",
         "deps": ["d3"]
-      },
+      }
     },
 });
 
@@ -272,29 +272,6 @@ with at least some of the following elements:
 
   * Objects: these are d3js objects wrapped in a Python class. See "Extra Functions" below.
 
-Here is an example of how nodes and links are rendered in their `template.js` file:
- 
-```javascript
-var ratio = _node_ratio(d);
-d3.select(this).append('circle')
-    .attr('r', ratio)
-    .attr('cx', ratio)
-    .attr('cy', ratio)
-    .attr('stroke', 'grey')
-    .attr('stroke-width', 2)
-    .attr('fill', _node_color);
-```  
-    
-```javascript
-link.enter()
-    .append("line")
-    .classed('link', true)
-    .attr({
-        'stroke': _link_color,
-        'stroke-width': _link_width
-    });
-```  
-  
 ### Extra Functions
 
 Your visualization's `__init__.py` file can define auxiliary functions and attributes.
@@ -310,7 +287,7 @@ variable), a d3js object is added to the current visualization objects.
 
 Until now, we have explained how datagramas allows you to code and render visualizations. They are already usable on the Jupyter
 Notebook, but you want to export the visualization into a reusable chart that you can use in your projects. If so, 
-it's your lucky day! datagramas includes that functionality through a method called `scaffold`.
+it's your lucky day! Datagramas includes that functionality through a method called `scaffold`.
 
 For example, if you look at the `barchart` example you will find this notebook cell:
 
@@ -337,7 +314,7 @@ Datagramas bundles the following libraries (see the `datagramas/libs` subfolder)
  * [WebCola](http://marvl.infotech.monash.edu/webcola/)
  * [d3-legend](http://d3-legend.susielu.com/)
  * [d3-geo-projection](https://github.com/d3/d3-geo-projection)
- * [d3-tip](https://github.com/Caged/d3-tip)
+ * [d3-tip](https://github.com/rtidatascience/d3-tip)
 
 The file `datagramas/libraries.py` specifies library versions and other meta-data.
 
@@ -350,19 +327,16 @@ Datagramas also contains snippets of code from:
 
 In no particular order:
 
+  * Add events to all included visualizations (currently a few of them supportn events).
   * Facet data with small-multiples or visualization widgets (in a similar way to seaborn's FacetGrid).
-  * Bundle a tooltip library (for instance, [d3-tip](https://github.com/Caged/d3-tip)).
   * Allow to export template versions of visualizations+data (e.g., export to gist).
-  * Events. Actually this is supported currently (see the Data Portraits links below), but it is not exposed (nor used) in
-    any of the included visualizations.
-  * Build a plug-in structure to define behavior at visualization events (e.g., tooltips, callbacks)
   * Improve the legend support. Currently legend positioning is not smart, and legend activation is not automatic for charts.
   * Support other bundled layouts/plugins with d3.js.
   * Support layers in the cartography module.
 
 ## About the (old) name
 
-The first official version of Datagramas is titled "datagramas" in honor of [Roberto Matta](https://en.wikipedia.org/wiki/Roberto_Matta).
+The first official version of Datagramas is titled "Matta" in honor of [Roberto Matta](https://en.wikipedia.org/wiki/Roberto_Matta).
 Curiously, he has a painting named ["ojo con los desarrolladores"](https://www.flickr.com/photos/83257355@N00/1352671334/?rb=1) (_desarrolladores_ is spanish for developers).
 
 ## In the Wild
