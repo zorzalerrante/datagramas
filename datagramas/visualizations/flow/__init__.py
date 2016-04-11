@@ -23,7 +23,7 @@ VISUALIZATION_CONFIG = {
         'node_opacity': 0.85,
         'node_width': 15,
         'node_padding': 10,
-        'node_label': 'name',
+        'node_label': 'id',
         'link_weight': 'weight',
     },
     'colorables': {

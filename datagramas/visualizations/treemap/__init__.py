@@ -13,6 +13,7 @@ VISUALIZATION_CONFIG = {
     'options': {
         'background_color': None,
         'fit_labels': False,
+        'allowed_events': ['node_click']
     },
     'variables': {
         'width': 960,
