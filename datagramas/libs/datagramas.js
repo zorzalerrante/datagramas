@@ -81,20 +81,25 @@ define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
         return [s, t];
     };
 
-    datagramas.get = function(obj, path) {
+    datagramas.get = function(obj, path_or_function) {
         /**
          * Given a path to an object member (e.g., 'parent.name'), return the object if it exists, null otherwise.
+         * Otherwise, if it is a function, call it with the object as argument.
          */
-        if (path === null) {
+        if (path_or_function === null) {
             return null;
         }
 
-        if (typeof(path) === 'number') {
-            return obj[path];
+        if (typeof(path_or_function) === 'function') {
+            return path_or_function(obj);
+        }
+
+        if (typeof(path_or_function) === 'number') {
+            return obj[path_or_function];
         }
 
         var current = obj;
-        var properties = path.split('.');
+        var properties = path_or_function.split('.');
 
         for (var i = 0; i < properties.length; i++) {
             var property = properties[i];
