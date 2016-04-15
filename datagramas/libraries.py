@@ -9,7 +9,7 @@ LIBRARIES = {
         'source': 'd3/d3.min',
         'author': 'Mike Bostock',
         'vendor_url': 'http://d3js.org/',
-        'version': '3.5.10',
+        'version': '3.5.16',
         'dependencies': {}
     },
     'datagramas': {
@@ -84,7 +84,7 @@ LIBRARIES = {
         'source': 'd3-legend/d3-legend.min',
         'author': 'Susie Lu',
         'vendor_url': 'http://d3-legend.susielu.com/',
-        'version': '1.6.0',
+        'version': '1.10.0',
         'dependencies': {'d3'},
         'exports': 'd3.legend'
     },

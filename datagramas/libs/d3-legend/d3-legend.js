@@ -87,13 +87,13 @@ module.exports = function(){
 
 
   legend.scale = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return scale;
     scale = _;
     return legend;
   };
 
   legend.cells = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return cells;
     if (_.length > 1 || _ >= 2 ){
       cells = _;
     }
@@ -101,7 +101,7 @@ module.exports = function(){
   };
 
   legend.shape = function(_, d) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shape;
     if (_ == "rect" || _ == "circle" || _ == "line" || (_ == "path" && (typeof d === 'string')) ){
       shape = _;
       path = d;
@@ -110,37 +110,37 @@ module.exports = function(){
   };
 
   legend.shapeWidth = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapeWidth;
     shapeWidth = +_;
     return legend;
   };
 
   legend.shapeHeight = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapeHeight;
     shapeHeight = +_;
     return legend;
   };
 
   legend.shapeRadius = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapeRadius;
     shapeRadius = +_;
     return legend;
   };
 
   legend.shapePadding = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapePadding;
     shapePadding = +_;
     return legend;
   };
 
   legend.labels = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labels;
     labels = _;
     return legend;
   };
 
   legend.labelAlign = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelAlign;
     if (_ == "start" || _ == "end" || _ == "middle") {
       labelAlign = _;
     }
@@ -148,25 +148,25 @@ module.exports = function(){
   };
 
   legend.labelFormat = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelFormat;
     labelFormat = _;
     return legend;
   };
 
   legend.labelOffset = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelOffset;
     labelOffset = +_;
     return legend;
   };
 
   legend.labelDelimiter = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelDelimiter;
     labelDelimiter = _;
     return legend;
   };
 
   legend.useClass = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return useClass;
     if (_ === true || _ === false){
       useClass = _;
     }
@@ -174,7 +174,7 @@ module.exports = function(){
   };
 
   legend.orient = function(_){
-    if (!arguments.length) return legend;
+    if (!arguments.length) return orient;
     _ = _.toLowerCase();
     if (_ == "horizontal" || _ == "vertical") {
       orient = _;
@@ -183,19 +183,19 @@ module.exports = function(){
   };
 
   legend.ascending = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return ascending;
     ascending = !!_;
     return legend;
   };
 
   legend.classPrefix = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return classPrefix;
     classPrefix = _;
     return legend;
   };
 
   legend.title = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return title;
     title = _;
     return legend;
   };
@@ -294,7 +294,7 @@ module.exports = {
 
   d3_addText: function (svg, enter, labels, classPrefix){
     enter.append("text").attr("class", classPrefix + "label");
-    svg.selectAll("g.cell text").data(labels).text(this.d3_identity);
+    svg.selectAll("g." + classPrefix + "cell text").data(labels).text(this.d3_identity);
   },
 
   d3_calcType: function (scale, ascending, cells, labels, labelFormat, labelDelimiter){
@@ -351,16 +351,18 @@ module.exports = {
   d3_title: function(svg, cellsSvg, title, classPrefix){
     if (title !== ""){
 
-      var text_elem = null;
-      if (!svg.select('text.' + classPrefix + 'legendTitle').empty()) {
-          text_elem = svg.select('text.' + classPrefix + 'legendTitle');
-      } else {
-          text_elem = svg.append('text').classed(classPrefix + 'legendTitle', true);
-      }
+      var titleText = svg.selectAll('text.' + classPrefix + 'legendTitle');
 
-      text_elem.text(title);
+      titleText.data([title])
+        .enter()
+        .append('text')
+        .attr('class', classPrefix + 'legendTitle');
 
-      var yOffset = text_elem.map(function(d) { return d[0].getBBox().height})[0],
+        svg.selectAll('text.' + classPrefix + 'legendTitle')
+            .text(title)
+
+      var yOffset = svg.select('.' + classPrefix + 'legendTitle')
+          .map(function(d) { return d[0].getBBox().height})[0],
       xOffset = -cellsSvg.map(function(d) { return d[0].getBBox().x})[0];
 
       cellsSvg.attr('transform', 'translate(' + xOffset + ',' + (yOffset + 10) + ')');
@@ -470,13 +472,13 @@ module.exports =  function(){
     }
 
   legend.scale = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return scale;
     scale = _;
     return legend;
   };
 
   legend.cells = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return cells;
     if (_.length > 1 || _ >= 2 ){
       cells = _;
     }
@@ -485,7 +487,7 @@ module.exports =  function(){
 
 
   legend.shape = function(_, d) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shape;
     if (_ == "rect" || _ == "circle" || _ == "line" ){
       shape = _;
       path = d;
@@ -494,25 +496,25 @@ module.exports =  function(){
   };
 
   legend.shapeWidth = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapeWidth;
     shapeWidth = +_;
     return legend;
   };
 
   legend.shapePadding = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapePadding;
     shapePadding = +_;
     return legend;
   };
 
   legend.labels = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labels;
     labels = _;
     return legend;
   };
 
   legend.labelAlign = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelAlign;
     if (_ == "start" || _ == "end" || _ == "middle") {
       labelAlign = _;
     }
@@ -520,25 +522,25 @@ module.exports =  function(){
   };
 
   legend.labelFormat = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelFormat;
     labelFormat = _;
     return legend;
   };
 
   legend.labelOffset = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelOffset;
     labelOffset = +_;
     return legend;
   };
 
   legend.labelDelimiter = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelDelimiter;
     labelDelimiter = _;
     return legend;
   };
 
   legend.orient = function(_){
-    if (!arguments.length) return legend;
+    if (!arguments.length) return orient;
     _ = _.toLowerCase();
     if (_ == "horizontal" || _ == "vertical") {
       orient = _;
@@ -547,19 +549,19 @@ module.exports =  function(){
   };
 
   legend.ascending = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return ascending;
     ascending = !!_;
     return legend;
   };
 
   legend.classPrefix = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return classPrefix;
     classPrefix = _;
     return legend;
   };
 
   legend.title = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return title;
     title = _;
     return legend;
   };
@@ -646,13 +648,13 @@ module.exports = function(){
 
 
   legend.scale = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return scale;
     scale = _;
     return legend;
   };
 
   legend.cells = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return cells;
     if (_.length > 1 || _ >= 2 ){
       cells = _;
     }
@@ -660,19 +662,19 @@ module.exports = function(){
   };
 
   legend.shapePadding = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return shapePadding;
     shapePadding = +_;
     return legend;
   };
 
   legend.labels = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labels;
     labels = _;
     return legend;
   };
 
   legend.labelAlign = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelAlign;
     if (_ == "start" || _ == "end" || _ == "middle") {
       labelAlign = _;
     }
@@ -680,25 +682,25 @@ module.exports = function(){
   };
 
   legend.labelFormat = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelFormat;
     labelFormat = _;
     return legend;
   };
 
   legend.labelOffset = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelOffset;
     labelOffset = +_;
     return legend;
   };
 
   legend.labelDelimiter = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return labelDelimiter;
     labelDelimiter = _;
     return legend;
   };
 
   legend.orient = function(_){
-    if (!arguments.length) return legend;
+    if (!arguments.length) return orient;
     _ = _.toLowerCase();
     if (_ == "horizontal" || _ == "vertical") {
       orient = _;
@@ -707,19 +709,19 @@ module.exports = function(){
   };
 
   legend.ascending = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return ascending;
     ascending = !!_;
     return legend;
   };
 
   legend.classPrefix = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return classPrefix;
     classPrefix = _;
     return legend;
   };
 
   legend.title = function(_) {
-    if (!arguments.length) return legend;
+    if (!arguments.length) return title;
     title = _;
     return legend;
   };
