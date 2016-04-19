@@ -419,7 +419,9 @@ var draw_topojson = function() {
         draw_graph();
     }
 
-    draw_legends(container_legends, _vis_width, _vis_height);
+    {% if leaflet %}
+    datagramas.draw_legends(active_legends, container_legends, _vis_width, _vis_height);
+    {% endif %}
 };
 
 var setup_containers = function() {

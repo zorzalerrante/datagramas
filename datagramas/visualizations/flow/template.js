@@ -1,7 +1,7 @@
 
-// we do this because the d3-sankey layout has hardcoded the value variable.
 datagramas.prepare_graph(_data_graph);
 
+// we do this because the d3-sankey layout has hardcoded the value variable.
 _data_graph.links.forEach(function(d) {
     d.value = datagramas.get(d, _link_weight);
 });
@@ -78,16 +78,14 @@ link.enter().append("path")
 link.exit()
     .remove();
 
-link.style({
+link.attr({
         'stroke-width': function(d){ return Math.max(1, d.dy); },
         'opacity': _link_opacity,
         'stroke': _link_color,
-        'fill': 'none'
+        'fill': 'none',
+        'd': sankey_path
     })
     .sort(function(a, b){ return b.dy - a.dy; });
-
-link.attr("d", sankey_path);
-link.style('stroke', _link_color);
 
 var node = nodes_g.selectAll("g.node")
     .data(_data_graph.nodes);

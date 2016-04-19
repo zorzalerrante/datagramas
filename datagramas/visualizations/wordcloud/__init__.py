@@ -26,5 +26,8 @@ VISUALIZATION_CONFIG = {
     },
     'colorables': {
         'font_color': {'value': 'grey', 'palette': None, 'scale': None, 'legend': False}
+    },
+    'auxiliary': {
+        'color_map',
     }
 }

@@ -1,6 +1,5 @@
 
 var cloud_draw = function(vis_container, words, bounds) {
-    statusText.style("display", "none");
     var scale = bounds ? Math.min(
         _vis_width / Math.abs(bounds[1].x - _vis_width / 2),
         _vis_width / Math.abs(bounds[0].x - _vis_width / 2),
@@ -26,6 +25,6 @@ var cloud_draw = function(vis_container, words, bounds) {
 
     text.style("font-family", function(d){ return d.font; })
         .style("font-weight", _font_weight)
-        .style("fill", _font_color)
+        .style("fill", function(d) { console.log('fill', d); return _font_color(d); })
         .text(function(d){ return datagramas.get(d, _text); });
 };

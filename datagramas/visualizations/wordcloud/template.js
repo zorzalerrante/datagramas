@@ -1,6 +1,3 @@
-
-var statusText = container.append('text').attr('class', "wordcloud-status").attr('y', 10);
-
 var complete = 0;
 var max = _data_dataframe.length;
 var vis = container.append("g").attr("transform", "translate(" + [_vis_width >> 1, _vis_height >> 1] + ")");
@@ -24,10 +21,8 @@ var layout = cloud()
     .fontSize(_font_size)
     .text(function(d) { return datagramas.get(d, _text); })
     .rotate(_rotation)
-    .on("word", function(d) { return statusText.text(++complete + "/" + max); })
     .on("end", function(words, bounds) {
         cloud_draw(vis, words, bounds);
     });
 
-statusText.style("display", null);
 layout.stop().words(_data_dataframe).start();
