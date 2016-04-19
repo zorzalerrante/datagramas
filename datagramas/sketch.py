@@ -108,7 +108,7 @@ class sketch(object):
         if 'legend' not in attribute:
             attribute['legend'] = False
 
-        return valmap(_dump_json, attribute)
+        return valmap(self.process_variable, attribute)
 
     def process_colorable(self, colorable):
         if 'domain' not in colorable:
@@ -139,7 +139,7 @@ class sketch(object):
         if 'legend' not in colorable:
             colorable['legend'] = False
 
-        return valmap(_dump_json, colorable)
+        return valmap(self.process_variable, colorable)
 
     def _render_(self, template_name='base.html', **extra_args):
         repr_args = merge(self.configuration.copy(), extra_args)
