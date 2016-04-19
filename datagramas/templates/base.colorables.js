@@ -64,7 +64,15 @@
             _{{ var_name }}_scale_locked = true;
         }
 
-        _{{ var_name }}_update_scale_func = function(data) {
+        _{{ var_name }}_update_scale_func = function() {
+            // optionally you can input the source attribute
+            if (!arguments.length) {
+                throw 'Need to specify at least data to update scale!';
+            }
+
+            var data = arguments[0];
+            var source_variable = arguments.length > 1 ? arguments[1] : _{{ var_name }}_value;
+
             // updates the domain before draw
             if (_{{ var_name }}_scale_locked) {
                 return;
@@ -72,16 +80,27 @@
 
             _{{ var_name }}_scale.domain(
                 _{{ var_name }}_scale_type === 'threshold' || _{{ var_name }}_scale_type === 'quantize' ?
-                    d3.extent(data, function(d) { return datagramas.get(d, _{{ var_name }}_value); }) :
-                    d3.set(data.map(function (d) { return datagramas.get(d, _{{ var_name }}_value); })).values().sort()
+                    d3.extent(data, function(d) { return datagramas.get(d, source_variable); }) :
+                    d3.set(data.map(function (d) { return datagramas.get(d, source_variable); })).values().sort()
             );
             console.log('{{ var_name }} scale range', _{{ var_name }}_scale.range());
             console.log('{{ var_name }} scale domain', _{{ var_name }}_scale.domain());
+
+            if (_{{ var_name }}_show_legend && _{{ var_name }}_legend) {
+                _{{ var_name }}_legend.scale(_{{ var_name }}_scale);
+            }
         };
 
-        _{{ var_name }} = function(d) {
-            //console.log('_{{ var_name }}', d, _{{ var_name }}_value, datagramas.get(d, _{{ var_name }}_value), _{{ var_name }}_scale(datagramas.get(d, _{{ var_name }}_value)));
-            return _{{ var_name }}_scale(datagramas.get(d, _{{ var_name }}_value));
+        _{{ var_name }} = function() {
+            if (!arguments.length) {
+                throw 'You need to specify at least a datum!'
+            }
+
+            var d = arguments[0];
+            // supports specifying a string as second argument. it will replace the source attribute _{{ var_name }}_value
+            var source_variable = arguments.length > 1 && typeof(arguments[1]) === 'string' ? arguments[1] : _{{ var_name }}_value;
+
+            return _{{ var_name }}_scale(datagramas.get(d, source_variable));
         };
 
         console.log('{{ var_name }} show legend', _{{ var_name }}_show_legend);

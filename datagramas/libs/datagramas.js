@@ -170,5 +170,43 @@ define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
         return uuid;
     };
 
+    // TODO: Allow "outer", "middle" and "center"
+    var allowed_legend_locations = [['upper', 'right'], ['lower', 'right'], ['lower', 'left'], ['upper', 'left']];
+
+    datagramas.draw_legends = function (legend_objects, container, width, height) {
+        /**
+         * This function draws the provided legends into the specified container.
+         * TODO: this should be smarter :)
+         */
+
+        console.log('draw legends', container, width, height);
+        var legend = container.selectAll('g.datagram-legend')
+            .data(legend_objects, function (d) {
+                return d['variable'];
+            });
+
+        legend.enter()
+            .append('g')
+            .attr('class', 'datagram-legend');
+
+        legend.exit()
+            .remove();
+
+        legend.each(function (d, i) {
+            var self = d3.select(this);
+            self.call(d);
+
+            var bbox = self.node().getBBox();
+
+            var location = allowed_legend_locations[i % allowed_legend_locations.length];
+            console.log('location', location);
+
+            var pos_y = location[0] === 'upper' ? 10 : height - 10 - bbox.height;
+            var pos_x = location[1] === 'left' ? 10 : width - 10 - bbox.width;
+            console.log(i, location, bbox, pos_x, pos_y);
+            self.attr('transform', 'translate(' + [pos_x, pos_y] + ')');
+        });
+    };
+
     return datagramas;
 });
