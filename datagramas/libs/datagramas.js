@@ -113,6 +113,47 @@ define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
         return current;
     };
 
+    datagramas.set = function(obj, path, value) {
+        /**
+         * Sets the specified value on obj according to path.
+         * Note that object keys in path cannot contain dots.
+         */
+        if (path === null) {
+            return null;
+        }
+
+        if (typeof(path) === 'number') {
+            obj[path] = value;
+        } else {
+            var properties = path.split('.');
+
+            if (properties.length == 1) {
+                obj[path] = value;
+            } else {
+                var current = obj;
+                var n = properties.length - 1;
+
+                for (var i = 0; i <= n; i++) {
+                    var property = properties[i];
+
+                    if (i === n) {
+                        current[property] = value;
+                    } else {
+                        if (!current.hasOwnProperty(property)) {
+                            current[property] = {};
+                        } else if (typeof(current[property]) !== 'object') {
+                            throw 'Key exists but it is not an object!'
+                        }
+                    }
+
+                    current = current[property];
+                }
+            }
+        }
+
+        return obj;
+    };
+
     datagramas.text_color = function(color) {
         /**
          * Given a color, return a suitable text color.
