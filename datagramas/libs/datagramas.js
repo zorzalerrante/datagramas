@@ -55,7 +55,6 @@ define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
         }
 
         graph['__datagramas_prepared__'] = true;
-        console.log('prepared graph', graph);
     };
 
     datagramas.scale = function(name) {
@@ -211,16 +210,17 @@ define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
         return uuid;
     };
 
-    // TODO: Allow "outer", "middle" and "center"
-    var allowed_legend_locations = [['upper', 'right'], ['lower', 'right'], ['lower', 'left'], ['upper', 'left']];
+    // TODO: check coherence with matplotlib's legend locations
+    var allowed_legend_locations = ['upper right', 'lower right', 'lower left', 'upper left',
+        'lower middle', 'center left', 'center right'];
 
     datagramas.draw_legends = function (legend_objects, container, width, height) {
         /**
          * This function draws the provided legends into the specified container.
-         * TODO: this should be smarter :)
+         * Each legend object is from d3.legend, with two variables added in the visualization
+         * templates: 'variable' (name) and 'location' (a string, e.g., 'upper left').
          */
 
-        console.log('draw legends', container, width, height);
         var legend = container.selectAll('g.datagram-legend')
             .data(legend_objects, function (d) {
                 return d['variable'];
@@ -239,12 +239,41 @@ define('datagramas', ['d3', 'legend', 'd3-tip'], function(d3, legend, tip) {
 
             var bbox = self.node().getBBox();
 
-            var location = allowed_legend_locations[i % allowed_legend_locations.length];
-            console.log('location', location);
+            // TODO: this should be smarter :)
+            var location = (d.hasOwnProperty('location') && d['location'] !== null) ?
+                d['location'].split(' ') :
+                allowed_legend_locations[i % allowed_legend_locations.length].split(' ');
 
-            var pos_y = location[0] === 'upper' ? 10 : height - 10 - bbox.height;
-            var pos_x = location[1] === 'left' ? 10 : width - 10 - bbox.width;
-            console.log(i, location, bbox, pos_x, pos_y);
+            var pos_x, pos_y;
+
+            switch (location[0]) {
+                case 'upper':
+                    pos_y = 10;
+                    break;
+                case 'lower':
+                    pos_y = height - 10 - bbox.height;
+                    break;
+                case 'center':
+                    pos_y = (height - bbox.height) * 0.5;
+                    break;
+                default:
+                    throw 'Non valid legend position';
+            }
+
+            switch (location[1]) {
+                case 'left':
+                    pos_x = 10;
+                    break;
+                case 'right':
+                    pos_x = width - 10 - bbox.width;
+                    break;
+                case 'middle':
+                    pos_x = (width - bbox.width) * 0.5;
+                    break;
+                default:
+                    throw 'Non valid legend position';
+            }
+
             self.attr('transform', 'translate(' + [pos_x, pos_y] + ')');
         });
     };

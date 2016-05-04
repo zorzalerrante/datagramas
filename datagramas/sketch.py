@@ -108,6 +108,12 @@ class sketch(object):
         if 'legend' not in attribute:
             attribute['legend'] = False
 
+        if 'legend_location' not in attribute:
+            attribute['legend_location'] = None
+
+        if 'legend_orientation' not in attribute:
+            attribute['legend_orientation'] = None
+
         return valmap(self.process_variable, attribute)
 
     def process_colorable(self, colorable):
@@ -138,6 +144,12 @@ class sketch(object):
 
         if 'legend' not in colorable:
             colorable['legend'] = False
+
+        if 'legend_location' not in colorable:
+            colorable['legend_location'] = None
+
+        if 'legend_orientation' not in colorable:
+            colorable['legend_orientation'] = None
 
         return valmap(self.process_variable, colorable)
 

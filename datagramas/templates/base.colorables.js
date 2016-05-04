@@ -47,6 +47,8 @@
     var _{{ var_name }}_show_legend = {{ var_values.legend }};
     var _{{ var_name }}_legend = null;
     var _{{ var_name }}_legend_container = null;
+    var _{{ var_name }}_legend_location = {{ var_values.legend_location }};
+    var _{{ var_name }}_legend_orientation = {{ var_values.legend_orientation }};
 
     if (_{{ var_name }}_palette !== null) {
         if (_{{ var_name }}_scale_type === 'threshold' || _{{ var_name }}_scale_type === 'quantize') {
@@ -114,6 +116,12 @@
                     .title(_{{ var_name }}_value);
 
             _{{ var_name }}_legend['variable'] = '{{ var_name }}';
+            _{{ var_name }}_legend['location'] = _{{ var_name }}_legend_location;
+
+            if (_{{ var_name }}_legend_orientation !== null) {
+                _{{ var_name }}_legend.orient(_{{ var_name }}_legend_orientation);
+            }
+
             active_legends.push(_{{ var_name }}_legend);
             console.log('{{ var_name }} legend', _{{ var_name }}_legend);
         }
