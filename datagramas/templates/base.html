@@ -22,7 +22,7 @@ $(function() {
         var vis_instance = datagram_{{ visualization_name }}();
 
         var data = {{ data }};
-        console.log(data);
+        //console.log(data);
         d3.selectAll('#{{ figure_id }}')
             .classed('datagram-figure', true)
             .data([data])

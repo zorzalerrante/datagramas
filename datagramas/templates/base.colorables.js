@@ -13,7 +13,7 @@
          */
         if (arguments.length) {
             _{{ var_name }}_scale_locked = __;
-            console.log('set {{ var_name }}_scale_locked', _{{ var_name }}_scale_locked);
+            //console.log('set {{ var_name }}_scale_locked', _{{ var_name }}_scale_locked);
             return func_{{ visualization_name }};
         }
         return _{{ var_name }}_scale_locked;
@@ -85,8 +85,8 @@
                     d3.extent(data, function(d) { return datagramas.get(d, source_variable); }) :
                     d3.set(data.map(function (d) { return datagramas.get(d, source_variable); })).values().sort()
             );
-            console.log('{{ var_name }} scale range', _{{ var_name }}_scale.range());
-            console.log('{{ var_name }} scale domain', _{{ var_name }}_scale.domain());
+            //console.log('{{ var_name }} scale range', _{{ var_name }}_scale.range());
+            //console.log('{{ var_name }} scale domain', _{{ var_name }}_scale.domain());
 
             if (_{{ var_name }}_show_legend && _{{ var_name }}_legend) {
                 _{{ var_name }}_legend.scale(_{{ var_name }}_scale);
@@ -105,7 +105,7 @@
             return _{{ var_name }}_scale(datagramas.get(d, source_variable));
         };
 
-        console.log('{{ var_name }} show legend', _{{ var_name }}_show_legend);
+        //console.log('{{ var_name }} show legend', _{{ var_name }}_show_legend);
         // we can create the legend if desired
         if (_{{ var_name }}_show_legend) {
             _{{ var_name }}_legend = datagramas.legend.color()
@@ -123,7 +123,7 @@
             }
 
             active_legends.push(_{{ var_name }}_legend);
-            console.log('{{ var_name }} legend', _{{ var_name }}_legend);
+            //console.log('{{ var_name }} legend', _{{ var_name }}_legend);
         }
 
     } else {

@@ -52,7 +52,7 @@ var datagram_{{ visualization_name }} = function() {
 
             {% if events %}
             {% for var_name, var_value in events.items() %}
-            console.log('{{ var_name }}', {{ var_value }})
+            //console.log('{{ var_name }}', {{ var_value }})
             dispatch.on('{{ var_name }}', {{ var_value }});
             {% endfor %}
             {% endif %}
@@ -104,7 +104,7 @@ var datagram_{{ visualization_name }} = function() {
                     figure = div;
 
                 {% else %}
-                    console.log('unsupported container type!');
+                    //console.log('unsupported container type!');
                     return;
                 {% endif %}
             } else {
@@ -130,10 +130,10 @@ var datagram_{{ visualization_name }} = function() {
     {% for var_name in __data_variables__ %}
         var _data_{{ var_name }} = null;
         func_{{ visualization_name }}.{{ var_name }} = function(__) {
-            console.log('DATA {{ var_name }}', arguments);
+            //console.log('DATA {{ var_name }}', arguments);
             if (arguments.length) {
                 _data_{{ var_name }} = __;
-                console.log('SET DATA {{ var_name }}', _data_{{ var_name }});
+                //console.log('SET DATA {{ var_name }}', _data_{{ var_name }});
                 return func_{{ visualization_name }};
             }
             return _data_{{ var_name }};
@@ -160,7 +160,7 @@ var datagram_{{ visualization_name }} = function() {
         func_{{ visualization_name }}.{{ var_name }} = function(__) {
             if (arguments.length) {
                 _{{ var_name }} = __;
-                console.log('set {{ var_name }}', _{{ var_name }});
+                //console.log('set {{ var_name }}', _{{ var_name }});
                 return func_{{ visualization_name }};
             }
             return _{{ var_name }};
@@ -174,7 +174,7 @@ var datagram_{{ visualization_name }} = function() {
         func_{{ visualization_name }}.{{ var_name }} = function(__) {
             if (arguments.length) {
                 _{{ var_name }} = __;
-                console.log('set object {{ var_name }}', _{{ var_name }});
+                //console.log('set object {{ var_name }}', _{{ var_name }});
                 return func_{{ visualization_name }};
             }
             return _{{ var_name }};
