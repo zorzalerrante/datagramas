@@ -3,7 +3,7 @@ import os
 
 setup(name = 'datagramas',
     version = '1.0.0b',
-    description = 'Ready-made visualization usage and scaffolding for your Jupyter notebook',
+    description = 'A set of tools to scaffold and use visualizations based on d3.js on the Jupyter notebook.',
     author = 'Eduardo Graells-Garrido',
     author_email = 'eduardo.graells@telefonica.com',
     license = 'MIT License',
@@ -26,9 +26,8 @@ setup(name = 'datagramas',
         )
     },
     scripts = [],
-    long_description = '''A set of ready-made visualizations written
-        in d3.js for usage inside the Jupyter notebook, as well as tools to
-        scaffold visualizations.''',
+    long_description = '''A set of tools to scaffold and use visualizations based on d3.js
+        on the Jupyter notebook.''',
     classifiers=[
         'Programming Language :: Python :: 3.4'
     ]
