@@ -120,7 +120,7 @@ var datagram_{{ visualization_name }} = function() {
             {% if visualization_js %}{{ visualization_js }}{% endif %}
 
             {% if container_type == 'svg' %}
-            datagramas.draw_legends(active_legends, container_legends, _vis_width, _vis_height);
+            datagramas.draw_legends(active_legends, container_legends, _width, _height);
             {% endif %}
 
             dispatch.datagram_end.apply(container.node());
